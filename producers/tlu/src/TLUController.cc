@@ -134,15 +134,15 @@ namespace tlu {
         << " = " << Timestamp2Seconds(m_timestamp);
   }
 
-  // Modified to allow for a flag to choose between a 0.0V->1.0V (vref = 0.5) or 0.0V->2.0V (vref = 1.0) range
-  // The default is vref = 0.5, but the TLU can be modified by cutting the LC1 trace and strapping the LO1 pads
-  //   on the PMT supply board (which changes the SET pin on the ADR130 chip, thus doubling the reference voltage).
-  unsigned TLUController::CalcPMTDACValue(double voltage)
-  {
-    double vref;
+    // Modified to allow for a flag to choose between a 0.0V->1.0V (vref = 0.5) or 0.0V->2.0V (vref = 1.0) range
+    // The default is vref = 0.5, but the TLU can be modified by cutting the LC1 trace and strapping the LO1 pads
+    //   on the PMT supply board (which changes the SET pin on the ADR130 chip, thus doubling the reference voltage).
+    unsigned TLUController::CalcPMTDACValue(double voltage)
+    {
+        double vref;
 	
-    static const double vgain = 2.0;  
-    static const unsigned fullscale = 0x3ffU;   // 10-bits (AD5316 used on standard TLU)
+	static const double vgain = 2.0;  
+	static const unsigned fullscale = 0x3ffU;   // 10-bits (AD5316 used on standard TLU)
 
     if(m_pmtvcntlmod == 0)
       {
@@ -171,7 +171,7 @@ namespace tlu {
     m_amask(0),
     m_omask(0),
     m_ipsel(0xff),
-    m_handshakemode(0x3F), //$$ change
+    m_handshakemode(0), //$$ change
     m_triggerint(0),
     m_inhibit(true),
     m_vetostatus(0),
@@ -193,7 +193,8 @@ namespace tlu {
     m_correctable_blockread_errors(0),
     m_uncorrectable_blockread_errors(0),
     m_usb_timeout_errors(0),
-    m_debug_level(0)
+    m_debug_level(0),
+	m_TriggerInformation(0)
   {
     errorhandleraborts(errorhandler == 0);
     for (int i = 0; i < TLU_TRIGGER_INPUTS; ++i) {
@@ -508,6 +509,11 @@ namespace tlu {
   void TLUController::SetTriggerInterval(unsigned millis) {
     m_triggerint = millis;
     if (m_addr) WriteRegister(m_addr->TLU_INTERNAL_TRIGGER_INTERVAL, m_triggerint);
+  }
+  void TLUController::SetTriggerInformation( unsigned TriggerInf )
+  {m_TriggerInformation=TriggerInf;
+
+  if (m_addr) WriteRegister(m_addr->TLU_WRITE_TRIGGER_BITS_MODE_ADDRESS, m_TriggerInformation);
   }
 
   unsigned char TLUController::GetAndMask() const {
