@@ -11,8 +11,13 @@ if (ROOT_FOUND)
 endif (ROOT_FOUND)
 
 AUX_SOURCE_DIRECTORY( src library_sources )
-ADD_LIBRARY( ${PROJECT_NAME} SHARED ${library_sources} )
 
+ADD_LIBRARY( ${PROJECT_NAME} SHARED ${library_sources} )
+SOURCE_GROUP(plugins .*Plugin.*cc)
+SOURCE_GROUP(FileIO .*File.*cc)
+SOURCE_GROUP(TCPIP .*Transport.*cc)
+SOURCE_GROUP(Event .*Event.*cc)
+SOURCE_GROUP(Utilities FILES src\\Utils.cc src\\Time.cc src\\Mutex.cc src\\EudaqThread.cc)
 target_link_libraries( ${PROJECT_NAME} ${EUDAQ_THREADS_LIB})
 
 INSTALL(TARGETS ${PROJECT_NAME}
