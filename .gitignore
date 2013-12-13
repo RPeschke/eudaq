@@ -36,3 +36,4 @@ debug/*
 logs/2*
 release/*
 *.orig
+extern/*

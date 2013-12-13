@@ -31,12 +31,13 @@ IF(MSVC)
   FIND_PATH(LIBUSB_INCLUDE_DIRS 
     NAMES usb.h lusb0_usb.h 
     PATHS "$ENV{ProgramFiles}/LibUSB-Win32/include" "${PROJECT_SOURCE_DIR}/extern/libusb-w32/include" "${PROJECT_SOURCE_DIR}/extern/libusb-win32/include")
+
   if (${EX_PLATFORM} EQUAL 64)
     # on x64 (win64)
     FIND_LIBRARY(LIBUSB_LIBRARIES NAMES libusb PATHS "$ENV{ProgramFiles}/LibUSB-Win32/lib/msvc_x64" "${PROJECT_SOURCE_DIR}/extern/libusb-w32/msvc_x64" "${PROJECT_SOURCE_DIR}/extern/libusb-win32/msvc_x64")
   ELSE(${EX_PLATFORM} EQUAL 64)
     # on x86 (win32)
-    FIND_LIBRARY(LIBUSB_LIBRARIES NAMES libusb PATHS "$ENV{ProgramFiles}/LibUSB-Win32/lib/msvc" "${PROJECT_SOURCE_DIR}/extern/libusb-w32/msvc" "${PROJECT_SOURCE_DIR}/extern/libusb-win32/msvc")
+        FIND_LIBRARY(LIBUSB_LIBRARIES NAMES libusb PATHS "$ENV{ProgramFiles}/LibUSB-Win32/lib/msvc" "${PROJECT_SOURCE_DIR}/extern/libusb-w32/lib/msvc" "${PROJECT_SOURCE_DIR}/extern/libusb-win32/lib/msvc")
   ENDIF(${EX_PLATFORM} EQUAL 64)
 ELSE(MSVC)
   # If not MS Visual Studio we use PkgConfig
