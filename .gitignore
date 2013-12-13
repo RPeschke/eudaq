@@ -35,3 +35,4 @@ extern/libusb*
 debug/*
 logs/2*
 release/*
+*.orig
