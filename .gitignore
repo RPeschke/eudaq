@@ -1,8 +1,12 @@
 # Ignore binaries:
-bin/*.exe
+bin/*
 
 # Ignore libraries:
 lib/*
+
+# Ignore data files:
+data/*.raw
+data/runnumber.dat
 
 # ignore emacs autosaves
 \#*#
@@ -22,6 +26,12 @@ extern/pthreads*
 bin/*
 extern/libusb*
 data/r*
+# Ignore paths to windows libraries installed by user:
+extern/pthreads*
+extern/libusb*
+
+# ignore python byte code
+*.pyc
 debug/*
 logs/2*
 release/*

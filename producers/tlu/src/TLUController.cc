@@ -153,36 +153,36 @@ namespace tlu {
 	 
   }
 
-    // Modified to allow for a flag to choose between a 0.0V->1.0V (vref = 0.5) or 0.0V->2.0V (vref = 1.0) range
-    // The default is vref = 0.5, but the TLU can be modified by cutting the LC1 trace and strapping the LO1 pads
-    //   on the PMT supply board (which changes the SET pin on the ADR130 chip, thus doubling the reference voltage).
-    unsigned TLUController::CalcPMTDACValue(double voltage)
-    {
-        double vref;
+  // Modified to allow for a flag to choose between a 0.0V->1.0V (vref = 0.5) or 0.0V->2.0V (vref = 1.0) range
+  // The default is vref = 0.5, but the TLU can be modified by cutting the LC1 trace and strapping the LO1 pads
+  //   on the PMT supply board (which changes the SET pin on the ADR130 chip, thus doubling the reference voltage).
+  unsigned TLUController::CalcPMTDACValue(double voltage)
+  {
+    double vref;
 	
-	static const double vgain = 2.0;  
-	static const unsigned fullscale = 0x3ffU;   // 10-bits (AD5316 used on standard TLU)
+    static const double vgain = 2.0;  
+    static const unsigned fullscale = 0x3ffU;   // 10-bits (AD5316 used on standard TLU)
 
-	if(m_pmtvcntlmod == 0)
-	{
-	  vref = 0.5;  // Standard TLU as shipped
-	}
-	else
-	{
-	  vref = 1.0;  // After hardware modification on PMT power board (cut LC1, jumper LO1)
-	}
-	
-        if(voltage < 0.0 || voltage > vref * 2.0)
-	{
-	    std::cout << "Input voltage range [0, " << (unsigned)(vref * 2.0) << ".0 V] " << std::endl;
-	    return 0;
-	}
+    if(m_pmtvcntlmod == 0)
+      {
+	vref = 0.5;  // Standard TLU as shipped
+      }
+    else
+      {
+	vref = 1.0;  // After hardware modification on PMT power board (cut LC1, jumper LO1)
+      }
 
-	unsigned dac_orig = 0xb000 | ((unsigned)(fullscale * (voltage / (vref * vgain))) & fullscale) << 2; 
+    if(voltage < 0.0 || voltage > vref * 2.0)
+      {
+	std::cout << "Input voltage range [0, " << (unsigned)(vref * 2.0) << ".0 V] " << std::endl;
+	return 0;
+      }
 
-        // repack the data and return
-        return((dac_orig >> 8) | ((dac_orig & 0x00ff) << 8));
-    }
+    unsigned dac_orig = 0xb000 | ((unsigned)(fullscale * (voltage / (vref * vgain))) & fullscale) << 2; 
+
+    // repack the data and return
+    return((dac_orig >> 8) | ((dac_orig & 0x00ff) << 8));
+  }
 
   TLUController::TLUController(int errorhandler) :
     m_mask(0),
@@ -190,7 +190,7 @@ namespace tlu {
     m_amask(0),
     m_omask(0),
     m_ipsel(0xff),
-    m_handshakemode(0), //$$ change
+    m_handshakemode(0x3F), //$$ change
     m_triggerint(0),
     m_inhibit(true),
     m_vetostatus(0),
@@ -356,7 +356,7 @@ namespace tlu {
     Initialize();
   }
 
-    // Sets all DACs to the same value (value passed is in mV)
+
     bool TLUController::SetPMTVcntl(unsigned value)
     {
         SelectBus(m_addr->TLU_I2C_BUS_DISPLAY);
@@ -528,10 +528,10 @@ namespace tlu {
     }
   }
 
-  void TLUController::SetHandShakeMode(unsigned handshakemode) {  //$$change
-    m_handshakemode = handshakemode;
-    if (m_addr) WriteRegister(m_addr->TLU_HANDSHAKE_MODE_ADDRESS, m_handshakemode);
-  }
+   void TLUController::SetHandShakeMode(unsigned handshakemode) {  //$$change
+     m_handshakemode = handshakemode;
+     if (m_addr) WriteRegister(m_addr->TLU_HANDSHAKE_MODE_ADDRESS, m_handshakemode);
+   }
 
   void TLUController::SetTriggerInterval(unsigned millis) {
     m_triggerint = millis;
@@ -1373,3 +1373,4 @@ namespace tlu {
   }
 
 }
+

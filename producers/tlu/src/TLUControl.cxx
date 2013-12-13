@@ -41,8 +41,8 @@ int main(int /*argc*/, char ** argv) {
                                    "The bitfile containing the TLU firmware to be loaded");
   eudaq::Option<int>         trigg(op, "t", "trigger", 0, "msecs",
                                    "The interval in milliseconds for internally generated triggers (0 = off)");
-  eudaq::Option<int>         hsmode(op, "hm", "handshakemode", 0, "nohandshake",
-                                   "In this mode the TLU issues a fixed-length pulse on the trigger line (0 = no hand shake)");
+  eudaq::Option<int>         hsmode(op, "hm", "handshakemode", 0x3F, "nohandshake",
+                                   "Bit mask for handshake mode. Set to zero and in this mode the TLU issues a fixed-length pulse on the trigger line (0 = no hand shake)");
   eudaq::Option<int>         dmask(op, "d", "dutmask", 0, "mask",
                                    "The mask for enabling the DUT connections");
   eudaq::Option<int>         vmask(op, "v", "vetomask", 0, "mask",
@@ -72,6 +72,7 @@ int main(int /*argc*/, char ** argv) {
   eudaq::Option<int>         pmtvcntl_3(op, "p3", "pmtvcntl3", -1, "mV", "PMT 3 Vcntl (will override \"pv\" value if set to 0 or greater)");
   eudaq::Option<int>         pmtvcntl_4(op, "p4", "pmtvcntl4", -1, "mV", "PMT 4 Vcntl (will override \"pv\" value if set to 0 or greater)");
   eudaq::Option<int>         pmtvcntlmod(op, "pm", "pmtvcntlmod", 0, "value", "0: unmodified (<= 1000mV); 1: modified Vcntl range 0 to 2000mV");
+
   eudaq::OptionFlag          nots(op, "n", "notimestamp", "Do not read out timestamp buffer");
   eudaq::OptionFlag          quit(op, "q", "quit", "Quit after configuring TLU");
   eudaq::OptionFlag          pause(op, "u", "wait-for-user", "Wait for user input before starting triggers");
@@ -82,11 +83,9 @@ int main(int /*argc*/, char ** argv) {
                                    "prepend - for only errors, or + for all data (including block transfers)");
   try {
     op.Parse(argv);
-
     for (size_t i = TLU_LEMO_DUTS; i < ipsel.NumItems(); ++i) {
       if (TLUController::DUTnum(ipsel.Item(i)) != TLUController::IN_RJ45) throw eudaq::OptionException("Invalid DUT input selection");
     }
-
     unsigned pmt_override_set = 0;
     for(int i = 0; i < TLU_PMTS; i++)
     {
@@ -122,12 +121,11 @@ int main(int /*argc*/, char ** argv) {
 	    }
 	}
     }
-
     std::cout << "Using options:\n"
               << "TLU version = " << fwver.Value() << (fwver.Value() == 0 ? " (auto)" : "") << "\n"
               << "Bit file name = '" << fname.Value() << "'" << (fname.Value() == "" ? " (auto)" : "") << "\n"
-              << "Hand shake mode = " << hsmode.Value()
-              << "Trigger interval = " << trigg.Value()
+              << "Hand shake mode = " << hsmode.Value() << "\n"
+              << "Trigger interval = " << trigg.Value() << "\n"
               << (trigg.Value() > 0 ? " ms (" + to_string(1e3/trigg.Value()) + " Hz)" : std::string()) << "\n"
               << "DUT Mask  = " << hexdec(dmask.Value(), 2) << "\n"
               << "Veto Mask = " << hexdec(vmask.Value(), 2) << "\n"
@@ -186,7 +184,6 @@ int main(int /*argc*/, char ** argv) {
     TLU.SetOrMask(omask.Value());
     TLU.SetStrobe(strobeperiod.Value() , strobelength.Value());
     TLU.SetEnableDUTVeto(enabledutveto.Value());
-    // TLU.SetupLVPower(lvpowervctrl.Value());
     if(pmt_override_set)
     {
 	TLU.SetPMTVcntl(pmtvcntl_values);
@@ -248,3 +245,4 @@ int main(int /*argc*/, char ** argv) {
   }
   return 0;
 }
+

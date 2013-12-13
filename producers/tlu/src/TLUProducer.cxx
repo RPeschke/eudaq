@@ -102,10 +102,10 @@ public:
 			strobe_period = param.Get("StrobePeriod", 0);
 			strobe_width = param.Get("StrobeWidth", 0);
 			enable_dut_veto = param.Get("EnableDUTVeto", 0);
+			handshake_mode = param.Get("HandShakeMode" , 63);
 			veto_mask = param.Get("VetoMask", 0);
 			trig_rollover = param.Get("TrigRollover", 0);
 			timestamps = param.Get("Timestamps", 1);
-			// If it doesn't find a specific entry "PMTVcntl_#", it will use the setting for "PMTVcntl", or else 800 if neither is found
 			for(int i = 0; i < TLU_PMTS; i++)  // Override with any individually set values
 			{
 			  pmtvcntl[i] = (unsigned)param.Get("PMTVcntl" + to_string(i + 1), "PMTVcntl", PMT_VCNTL_DEFAULT);
@@ -133,8 +133,7 @@ public:
 			m_tlu->SetOrMask(or_mask);
 			m_tlu->SetStrobe(strobe_period, strobe_width);
 			m_tlu->SetEnableDUTVeto(enable_dut_veto);
-			auto i=m_tlu->getTriggerInformation();
-			std::cout<<i<<std::endl;
+			m_tlu->SetHandShakeMode(handshake_mode);
 			m_tlu->SetTriggerInformation(USE_TRIGGER_INPUT_INFORMATION);
 			m_tlu->ResetTimestamp();
 
@@ -265,10 +264,10 @@ public:
 		SetStatus(eudaq::Status::LVL_WARN, "Unrecognised command");
 	}
 private:
-        unsigned m_run, m_ev;
-        unsigned trigger_interval, dut_mask, veto_mask, and_mask, or_mask, pmtvcntl[TLU_PMTS], pmtvcntlmod;
-        unsigned long strobe_period, strobe_width;
-	unsigned enable_dut_veto;
+	unsigned m_run, m_ev;
+    unsigned trigger_interval, dut_mask, veto_mask, and_mask, or_mask, pmtvcntl[TLU_PMTS], pmtvcntlmod;
+	unsigned long strobe_period, strobe_width;
+    unsigned enable_dut_veto , handshake_mode;
 	unsigned trig_rollover, readout_delay;
 	bool timestamps, done, timestamp_per_run;
 	bool TLUStarted;
@@ -299,3 +298,4 @@ int main(int /*argc*/, const char ** argv) {
 	}
 	return 0;
 }
+
