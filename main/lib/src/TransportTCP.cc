@@ -431,7 +431,7 @@ namespace eudaq {
             setup_socket(peersock);
             std::string host = inet_ntoa(addr.sin_addr);
             host += ":" + to_string(ntohs(addr.sin_port));
-            counted_ptr<ConnectionInfo> ptr(new ConnectionInfoTCP(peersock, host));
+            std::shared_ptr<ConnectionInfo> ptr(new ConnectionInfoTCP(peersock, host));
             bool inserted = false;
             for (size_t i = 0; i < m_conn.size(); ++i) {
               if (m_conn[i]->GetState() < 0) {

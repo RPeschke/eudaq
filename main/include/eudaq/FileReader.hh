@@ -4,10 +4,13 @@
 #include "eudaq/FileSerializer.hh"
 #include "eudaq/DetectorEvent.hh"
 #include "eudaq/StandardEvent.hh"
-#include "eudaq/counted_ptr.hh"
+//#include "eudaq/counted_ptr.hh"
 #include <string>
+#include "EventSynchronisationBase.hh"
+#include <memory>
 
 namespace eudaq {
+	class eventqueue_t;
 
   class DLLEXPORT FileReader {
     public:
@@ -21,13 +24,14 @@ namespace eudaq {
       const DetectorEvent & GetDetectorEvent() const;
       const StandardEvent & GetStandardEvent() const;
       void Interrupt() { m_des.Interrupt(); }
-      class eventqueue_t;
+      
     private:
       std::string m_filename;
       FileDeserializer m_des;
-      counted_ptr<eudaq::Event> m_ev;
+     std::shared_ptr<eudaq::Event> m_ev;
       unsigned m_ver;
-      eventqueue_t * m_queue;
+	  std::shared_ptr<eudaq::SyncBase> m_sync;
+      
   };
 
 }

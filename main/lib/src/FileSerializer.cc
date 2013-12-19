@@ -2,9 +2,11 @@
 #include "eudaq/Logger.hh"
 #include "eudaq/Platform.hh"
 #include "eudaq/Utils.hh"
+#include "eudaq/Event.hh"
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <iostream>
+
 
 namespace eudaq {
 
@@ -110,5 +112,30 @@ namespace eudaq {
     Deserialize(data, len);
   }
   }
+
+  bool FileDeserializer::ReadEvent( int ver, eudaq::Event * & ev, size_t skip /*= 0*/ )
+  {
+	  if (!HasData()) {
+		  return false;
+	  }
+	  if (ver < 2) {
+		  for (size_t i = 0; i <= skip; ++i) {
+			  if (!HasData()) break;
+			  ev = EventFactory::Create(*this);
+		  }
+	  } else {
+		  BufferSerializer buf;
+		  for (size_t i = 0; i <= skip; ++i) {
+			  if (!HasData()) break;
+			  read(buf);
+		  }
+		  ev = eudaq::EventFactory::Create(buf);
+	  }
+	  return true;
+  }
+  
+
+
+
 
 }

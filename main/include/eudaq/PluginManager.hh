@@ -26,8 +26,8 @@ namespace eudaq {
        */
       void RegisterPlugin(DataConverterPlugin * plugin);
 
-      /** Get the instance of the plugin manager. As this is a songleton class with
-       *  private constructor and copy constructor, this is the only way to acces it.
+      /** Get the instance of the plugin manager. As this is a singleton class with
+       *  private constructor and copy constructor, this is the only way to access it.
        */
       static PluginManager & GetInstance();
 

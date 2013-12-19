@@ -1,7 +1,7 @@
 #include "eudaq/FileReader.hh"
 #include "eudaq/FileWriter.hh"
 #include "eudaq/OptionParser.hh"
-#include "eudaq/counted_ptr.hh"
+//#include "eudaq/counted_ptr.hh"
 #include "eudaq/Utils.hh"
 #include "eudaq/Logger.hh"
 
@@ -51,7 +51,7 @@ int main(int, char ** argv) {
     std::vector<unsigned> numbers = parsenumbers(events.Value());
     for (size_t i = 0; i < op.NumArgs(); ++i) {
       eudaq::FileReader reader(op.GetArg(i), ipat.Value(), sync.IsSet());
-      counted_ptr<eudaq::FileWriter> writer(FileWriterFactory::Create(type.Value()));
+      std::shared_ptr<eudaq::FileWriter> writer(FileWriterFactory::Create(type.Value()));
       writer->SetFilePattern(opat.Value());
       writer->StartRun(reader.RunNumber());
       do {

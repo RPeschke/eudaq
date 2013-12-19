@@ -1,5 +1,5 @@
 #include "eudaq\EventSynchronisationBase.hh"
-#include "eudaq\counted_ptr.hh"
+//#include "eudaq\counted_ptr.hh"
 #include "eudaq/Event.hh"
 
 #include <iostream>
