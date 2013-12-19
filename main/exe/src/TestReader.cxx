@@ -139,7 +139,7 @@ int main(int /*argc*/, char ** argv) {
 
     bool showlast = std::find(displaynumbers.begin(), displaynumbers.end(), (unsigned)-1) != displaynumbers.end();
 
-    counted_ptr<eudaq::Event> lastevent;
+    std::shared_ptr<eudaq::Event> lastevent;
 
     if (do_event_to_ttree.IsSet()) throw eudaq::MessageException("The -r option is deprecated: use \"./Converter.exe -t root\" instead.");
 
@@ -188,7 +188,7 @@ int main(int /*argc*/, char ** argv) {
             bool dump = (do_dump.IsSet());
             shown = DoEvent(ndata, *dev, proc, show, do_zs.IsSet(), dump);
             if (showlast && !shown) {
-              lastevent = counted_ptr<eudaq::Event>(new eudaq::DetectorEvent(*dev));
+              lastevent = std::shared_ptr<eudaq::Event>(new eudaq::DetectorEvent(*dev));
             }
           } else if (const StandardEvent * sev = dynamic_cast<const StandardEvent *>(&ev)) {
             bool show = std::find(displaynumbers.begin(), displaynumbers.end(), ndata) != displaynumbers.end();
@@ -196,7 +196,7 @@ int main(int /*argc*/, char ** argv) {
               std::cout << *sev << std::endl;
               shown = true;
             } else {
-              if (showlast) lastevent = counted_ptr<eudaq::Event>(new eudaq::StandardEvent(*sev));
+              if (showlast) lastevent = std::shared_ptr<eudaq::Event>(new eudaq::StandardEvent(*sev));
             }
           }
         }

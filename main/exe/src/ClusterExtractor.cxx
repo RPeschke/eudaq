@@ -78,7 +78,7 @@ int main(int /*argc*/, char ** argv) {
   eudaq::Option<std::vector<unsigned> > xmarkers(op, "xm", "xmarkers", "values", ",", "Marker pixels in X");
   eudaq::Option<std::vector<unsigned> > ymarkers(op, "ym", "ymarkers", "values", ",", "Marker pixels in Y");
 
-  typedef counted_ptr<std::ofstream> fileptr_t;
+  typedef std::shared_ptr<std::ofstream> fileptr_t;
   typedef std::map<int, fileptr_t> filemap_t;
   filemap_t files;
   try {

@@ -145,7 +145,7 @@ RunControlGUI::RunControlGUI(const std::string & listenaddress,
   setWindowIcon(QIcon("../images/Icon_euRun.png"));
 }
 
-void RunControlGUI::OnReceive(const eudaq::ConnectionInfo & id, counted_ptr<eudaq::Status> status) {
+void RunControlGUI::OnReceive(const eudaq::ConnectionInfo & id, std::shared_ptr<eudaq::Status> status) {
   static bool registered = false;
   if (!registered) {
     qRegisterMetaType<QModelIndex>("QModelIndex");

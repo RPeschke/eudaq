@@ -51,7 +51,7 @@ class RunControlGUI : public QMainWindow, public Ui::wndRun, public eudaq::RunCo
     virtual void OnDisconnect(const eudaq::ConnectionInfo & id) {
       m_run.disconnected(id);
     }
-    virtual void OnReceive(const eudaq::ConnectionInfo & id, counted_ptr<eudaq::Status> status);
+    virtual void OnReceive(const eudaq::ConnectionInfo & id, std::shared_ptr<eudaq::Status> status);
     void EmitStatus(const char * name, const std::string & val) {
       if (val == "") return;
       emit StatusChanged(name, val.c_str());
