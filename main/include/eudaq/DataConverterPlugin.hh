@@ -15,6 +15,20 @@
 using namespace IMPL;
 using namespace UTIL;
 #endif
+#include "TLUEvent.hh"
+
+#define NOTIMESTAMPSET (unsigned long long)-1
+#define NOTIMEDURATIONSET 0
+
+
+
+//////////////////////////////////////////////////////////////////////////
+// Compare Time stamps
+#define Event_IS_EARLY -1
+#define Event_IS_LATE 1
+#define Event_IS_Sync 0
+
+
 
 
 namespace EVENT { class LCEvent; class LCRunHeader; }
@@ -45,8 +59,10 @@ namespace eudaq{
       virtual void Initialize(eudaq::Event const &, eudaq::Configuration const &) {}
 
       virtual unsigned GetTriggerID(eudaq::Event const &) const;
+	  virtual int IsSyncWithTLU(eudaq::Event const & ev,eudaq::TLUEvent const & tlu) const {return Event_IS_Sync;}
 
-      virtual void GetLCIORunHeader(lcio::LCRunHeader &, eudaq::Event const &, eudaq::Configuration const &) const {}
+	  virtual void GetLCIORunHeader(lcio::LCRunHeader &, eudaq::Event const &, eudaq::Configuration const &) const {}
+	  
 
       /** Returns the LCIO version of the event.
        */
@@ -86,6 +102,61 @@ namespace eudaq{
       DataConverterPlugin(DataConverterPlugin &);
       DataConverterPlugin & operator = (const DataConverterPlugin &);
   };
+
+
+  template <typename T>
+  inline int hasTimeOVerlaping(T eventBegin, T EventEnd, T TLUStart,T TLUEnd){
+
+
+
+	  if (eventBegin<=TLUEnd)
+	  {
+		  if (EventEnd>=TLUStart)
+		  {
+
+			  	  /*
+
+	                    | event start  |event End
+	  ----------------------------------------->
+	                                           t
+
+                 | tlu start  | tlu End
+	  ------------------------------------------>
+											   t
+
+	  */
+			  return Event_IS_Sync;
+		  }
+
+		  	  /*
+
+	    | event start  |event End
+	  ----------------------------------------->
+	                                           t
+
+                               | tlu start  | tlu End
+	  ------------------------------------------>
+											   t
+
+	  */
+		  return Event_IS_EARLY;
+	  }
+
+	 
+	  /*
+
+	                     | event start  |event End
+	  ----------------------------------------->
+	                                           t
+
+        | tlu start  | tlu End
+	  ------------------------------------------>
+											   t
+
+	  */
+
+	  return  Event_IS_LATE;
+  }
 
 }//namespace eudaq
 

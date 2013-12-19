@@ -73,6 +73,18 @@ namespace eudaq {
         return (unsigned)-1;
       }
 
+	   virtual int IsSyncWithTLU(eudaq::Event const & ev,eudaq::TLUEvent const & tlu) const {
+		   unsigned long long duration=1000;
+		   unsigned long long tluBegin=tlu.GetTimestamp(),tluEnd=tlu.GetTimestamp()+duration;
+
+		   unsigned long long sctBegin=ev.GetTimestamp(), sctEnd=ev.GetTimestamp()+duration;
+
+
+
+		   return hasTimeOVerlaping(sctBegin,sctEnd,tluBegin,tluEnd);
+	   
+	   
+	   }
       // Here, the data from the RawDataEvent is extracted into a StandardEvent.
       // The return value indicates whether the conversion was successful.
       // Again, this is just an example, adapted it for the actual data layout.

@@ -58,6 +58,26 @@ namespace eudaq {
     return GetInstance().GetPlugin(ev).GetTriggerID(ev);
   }
 
+//   unsigned long long PluginManager::GetTimeStamp( const Event& ev)
+//   {
+// 	  return GetInstance().GetPlugin(ev).GetTimeStamp(ev);
+//   }
+// 
+//   unsigned long long PluginManager::GetTimeDuration( const Event& ev )
+//   {
+// 	  return GetInstance().GetPlugin(ev).GetTimeDuration(ev);
+//   }
+  int PluginManager::IsSyncWithTLU( eudaq::Event const & ev,eudaq::TLUEvent const & tlu )
+  {
+	  return GetInstance().GetPlugin(ev).IsSyncWithTLU(ev,tlu);
+  }
+
+
+  PluginManager::t_eventid PluginManager::getEventId( eudaq::Event const & ev)
+  {
+	  return GetInstance().GetPlugin(ev).GetEventType();
+  }
+
 #if USE_LCIO && USE_EUTELESCOPE
   lcio::LCRunHeader * PluginManager::GetLCRunHeader(const DetectorEvent & bore) {
     IMPL::LCRunHeaderImpl * lcHeader = new IMPL::LCRunHeaderImpl;
@@ -133,5 +153,8 @@ namespace eudaq {
   void PluginManager::ConvertLCIOSubEvent(lcio::LCEvent & dest, const Event & source) {
     GetInstance().GetPlugin(source).GetLCIOSubEvent(dest, source);
   }
+
+
+
 
 }//namespace eudaq

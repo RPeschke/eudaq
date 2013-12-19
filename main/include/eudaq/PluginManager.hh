@@ -32,6 +32,12 @@ namespace eudaq {
       static PluginManager & GetInstance();
 
       static unsigned GetTriggerID(const Event &);
+// 	  static unsigned long long GetTimeStamp(const Event&);
+// 	  static unsigned long long GetTimeDuration(const Event&);
+	  static int IsSyncWithTLU(eudaq::Event const & ev,eudaq::TLUEvent const & tlu);
+	  static t_eventid getEventId( eudaq::Event const & ev);
+
+
       static void Initialize(const DetectorEvent &);
       static lcio::LCRunHeader * GetLCRunHeader(const DetectorEvent &);
       static StandardEvent ConvertToStandard(const DetectorEvent &);

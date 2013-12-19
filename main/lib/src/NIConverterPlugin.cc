@@ -69,6 +69,22 @@ namespace eudaq {
       return GET(rawev.GetBlock(0), 1) >> 16;
     }
 
+	 virtual int IsSyncWithTLU(eudaq::Event const & ev,eudaq::TLUEvent const & tlu) const {
+
+		 auto triggerID=GetTriggerID(ev);
+		 auto tlu_triggerID=tlu.GetEventNumber();
+
+		 if (triggerID<tlu_triggerID)
+		 {
+			 return Event_IS_LATE;
+		 }else if (triggerID>tlu_triggerID)
+		 {
+			 return Event_IS_EARLY;
+		 }
+		
+		 return Event_IS_Sync;
+   }
+
     virtual bool GetStandardSubEvent(StandardEvent & result, const Event & source) const {
       if (source.IsBORE()) {
         std::cout << "GetStandardSubEvent : got BORE" << std::endl;
