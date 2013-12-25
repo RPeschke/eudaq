@@ -9,71 +9,217 @@
 using std::cout;
 using std::endl;
 using std::shared_ptr;
+using namespace std;
 namespace eudaq{
-bool SyncBase::SynEvents( FileDeserializer & des, int ver, eudaq::Event * & ev )
+bool SyncBase::SynEvents( FileDeserializer & des, int ver, std::shared_ptr<eudaq::Event>  & ev )
 {
-	
-	do{
-	
-		des.ReadEvent(ver,ev);
-	eudaq::DetectorEvent* detEvent=dynamic_cast<eudaq::DetectorEvent*>(ev);
-	for(size_t i=0;i< detEvent->NumEvents();++i){
-		cout<<detEvent->GetEventPtr(i)->get_id()<<endl;
-		auto &q=getQueuefromId(i);
-		q.m_queue.push(detEvent->GetEventPtr(i));
-	}
-	}while(!isSynchron());
-	
-	
-	
-	
-
-	
-	
-	return true;
-}
-
-SyncBase::SyncBase( size_t numberOfProducer ):m_registertProducer(0),m_ProducerEventQueue(numberOfProducer)
-{
-	cout<<numberOfProducer<<endl;
-}
-
-int SyncBase::isSynchron()
-{
-	if (m_ProducerEventQueue.size()==0)
+	if (m_ver==0)
 	{
-		return 0;
+		m_des=&des;
+		m_ver=ver;
 	}
-	auto TLU=m_ProducerEventQueue.begin();
-	auto beginTLU=PluginManager::GetTimeStamp(*(TLU->m_queue.front()));
-	auto endTLU=beginTLU+PluginManager::GetTimeDuration(*(TLU->m_queue.front()));
-	std::shared_ptr<TLUEvent> tlu=std::dynamic_pointer_cast<TLUEvent>(TLU->m_queue.front());
-	for (auto i=(m_ProducerEventQueue.begin());i!=m_ProducerEventQueue.end();++i)
-	{
-		cout<<"************************************************************************"<<endl;
-		cout<<Event::id2str(PluginManager::getEventId(*(i->m_queue.front())).first)<< "  "<<PluginManager::getEventId(*(i->m_queue.front())).second<<endl;
-		cout<<PluginManager::IsSyncWithTLU(*(i->m_queue.front()),*tlu)<<endl;
-		cout<<"i->m_queue.front()->GetTimestamp():  "<<i->m_queue.front()->GetTimestamp()<<endl;
-	//	cout<<"PluginManager::GetTimeDuration():  "<<PluginManager::GetTimeDuration(*(i->m_queue.front()))<<endl;
-	//	cout<<"PluginManager::GetTimeStamp():  "<<PluginManager::GetTimeStamp(*(i->m_queue.front()))<<endl;
-		cout<<"************************************************************************"<<endl;
-		//cout<<"PluginManager::GetEventType():  "<<PluginManager::GetEventType(*(i->m_queue.front()))<<endl;
-	}
-	return 0;
+		
+	return getNextEvent(ev);
 }
 
-void SyncBase::AddNextEventToQueue()
+bool SyncBase::getNextEvent(  std::shared_ptr<eudaq::Event>  & ev )
 {
+	SyncFirstEvent();
 
+		if (!m_DetectorEventQueue.empty())
+		{
+			
+			ev=m_DetectorEventQueue.front();
+			return true;
+		}
+	return false;
 }
+
+SyncBase::SyncBase( size_t numberOfProducer ):m_registertProducer(0),m_ProducerEventQueue(numberOfProducer),m_des(nullptr),m_ver(0)
+{
+	//cout<<numberOfProducer<<endl;
+}
+
+
+
 
 eudaq::eventqueue_t& SyncBase::getQueuefromId( unsigned producerID )
 {
 	if(m_ProducerId2Eventqueue.find(producerID)==m_ProducerId2Eventqueue.end()){
  		m_ProducerId2Eventqueue[producerID]=m_registertProducer++;
  	}
-	cout<<m_ProducerId2Eventqueue[producerID]<<endl;
+//	cout<<m_ProducerId2Eventqueue[producerID]<<endl;
 	return m_ProducerEventQueue[m_ProducerId2Eventqueue[producerID]];
+}
+
+bool SyncBase::AddNextEventToQueue()
+{
+	if (event_queue_size()<5)
+	{
+	
+		std::shared_ptr<eudaq::Event> ev;
+		m_queueStatus=m_des->ReadEvent(m_ver,ev);
+	
+		std::shared_ptr<eudaq::DetectorEvent> detEvent=std::dynamic_pointer_cast<eudaq::DetectorEvent>(ev);
+		for(size_t i=0;i< detEvent->NumEvents();++i){
+		//	cout<<detEvent->GetEventPtr(i)->get_id()<<endl;
+			auto &q=getQueuefromId(i);
+			q.m_queue.push_back(detEvent->GetEventPtr(i));
+		}
+
+		return m_queueStatus;
+	}
+	return true;
+}
+
+
+
+bool SyncBase::SyncFirstEvent()
+{
+
+	if (m_ProducerEventQueue.size()==0)
+	{
+		
+		EUDAQ_THROW("Producer Event queue is empty");
+	}
+	auto& TLU_queue=m_ProducerEventQueue.begin();
+	//	auto beginTLU=PluginManager::GetTimeStamp(*(TLU->m_queue.front()));
+	//	auto endTLU=beginTLU+PluginManager::GetTimeDuration(*(TLU->m_queue.front()));
+	//(unsigned runnumber, unsigned eventnumber, unsigned long long timestamp) :
+
+
+	if (TLU_queue->empty())
+	{
+		if (!AddNextEventToQueue())
+		{
+			return false;
+		}
+		
+	}
+
+	do 
+	{
+		if (compareTLUwithEventQueues(TLU_queue->front()))
+		{
+			makeDetectorEvent();
+			return true;
+		}
+		TLU_queue->pop();
+		if (TLU_queue->empty())
+		{
+			if (!AddNextEventToQueue())
+			{
+				return false;
+			}
+
+		}
+	} while (event_queue_size()>0);
+
+	
+	
+
+
+	return false;
+}
+
+void SyncBase::makeDetectorEvent()
+{
+	auto &TLU=m_ProducerEventQueue[0].front();
+	shared_ptr<DetectorEvent> det=make_shared<DetectorEvent>(TLU->GetRunNumber(),TLU->GetEventNumber(),TLU->GetTimestamp());
+	det->AddEvent(TLU);
+	for (size_t i=1;i<m_ProducerEventQueue.size();++i)
+	{
+
+		det->AddEvent(m_ProducerEventQueue[i].front());
+
+	}
+
+	//	TLU_queue->m_queue.pop();
+	m_DetectorEventQueue.push(det);
+	event_queue_pop();
+	
+}
+
+void SyncBase::event_queue_pop()
+{
+	for (auto &q:m_ProducerEventQueue)
+	{
+		
+			q.pop();
+		
+	}
+
+}
+
+size_t SyncBase::event_queue_size()
+{size_t returnValue=(size_t)-1;
+	for (auto &q:m_ProducerEventQueue)
+	{
+		if (returnValue>q.size())
+		{
+			returnValue=q.size();
+		}
+	}
+	return returnValue;
+}
+
+bool SyncBase::compareTLUwithEventQueue( std::shared_ptr<eudaq::Event>& tlu_event,eudaq::eventqueue_t& event_queue )
+{
+	int ReturnValue=0;
+
+	std::shared_ptr<TLUEvent> tlu=std::dynamic_pointer_cast<TLUEvent>(tlu_event);
+
+	auto currentEvent=event_queue.begin();
+
+	do
+	{
+
+		//shared_ptr<eudaq::Event> currentEvent=event_queue.m_queue.front();
+
+
+	//	cout<<"************************************************************************"<<endl;
+	//	cout<<Event::id2str(PluginManager::getEventId(**currentEvent).first)<< "  "<<PluginManager::getEventId(**currentEvent).second<<endl;
+		ReturnValue=PluginManager::IsSyncWithTLU(**currentEvent,*tlu);
+		if (ReturnValue== Event_IS_Sync )
+		{
+			
+			return true;
+			
+		}
+		else if (ReturnValue==Event_IS_LATE)
+		{
+			
+			event_queue.pop();
+			if(!AddNextEventToQueue()) {
+				return false;
+			}
+		}else if (ReturnValue==Event_IS_EARLY)
+		{
+			return false;
+		}
+
+		currentEvent=event_queue.begin();
+
+
+	}while (currentEvent!=event_queue.end());
+	//	cout<<"PluginManager::GetTimeDuration():  "<<PluginManager::GetTimeDuration(*(i->m_queue.front()))<<endl;
+	//	cout<<"PluginManager::GetTimeStamp():  "<<PluginManager::GetTimeStamp(*(i->m_queue.front()))<<endl;
+	//cout<<"************************************************************************"<<endl;
+	//cout<<"PluginManager::GetEventType():  "<<PluginManager::GetEventType(*(i->m_queue.front()))<<endl;
+	return false;
+}
+
+bool SyncBase::compareTLUwithEventQueues( std::shared_ptr<eudaq::Event>& tlu_event )
+{
+	for (size_t i=1;i<m_ProducerEventQueue.size();++i)
+	{
+		if(!compareTLUwithEventQueue( tlu_event,m_ProducerEventQueue[i])){
+			// could not sync event.
+			// TLU event is to early or event queue is empty;
+			return false;
+		}
+	}
+	return true;
 }
 
 }

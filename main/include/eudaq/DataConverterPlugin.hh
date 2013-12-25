@@ -27,6 +27,8 @@ using namespace UTIL;
 #define Event_IS_EARLY -1
 #define Event_IS_LATE 1
 #define Event_IS_Sync 0
+#define Event_queue_is_empty 3
+#define Event_Invert(EVENT_STATUS) (-1)*EVENT_STATUS
 
 
 
@@ -60,7 +62,6 @@ namespace eudaq{
 
       virtual unsigned GetTriggerID(eudaq::Event const &) const;
 	  virtual int IsSyncWithTLU(eudaq::Event const & ev,eudaq::TLUEvent const & tlu) const {return Event_IS_Sync;}
-
 	  virtual void GetLCIORunHeader(lcio::LCRunHeader &, eudaq::Event const &, eudaq::Configuration const &) const {}
 	  
 

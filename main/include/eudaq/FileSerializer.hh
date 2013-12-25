@@ -6,7 +6,7 @@
 #include "eudaq/Serializer.hh"
 #include "eudaq/Exception.hh"
 #include "eudaq/BufferSerializer.hh"
-
+#include <memory>
 namespace eudaq {
 	class Event;
   class DLLEXPORT FileSerializer : public Serializer {
@@ -33,7 +33,7 @@ namespace eudaq {
           buf.read(result);
           return result;
         }
-		 bool  ReadEvent(int ver, eudaq::Event * & ev, size_t skip = 0); 
+		 bool  ReadEvent(int ver, std::shared_ptr<eudaq::Event>  & ev, size_t skip = 0); 
     private:
       virtual void Deserialize(unsigned char * data, size_t len);
       size_t FillBuffer(size_t min = 0);

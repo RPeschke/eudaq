@@ -12,9 +12,15 @@ class DLLEXPORT eventqueue_t {
 public:
 void debug(std::ostream & os) const;
 
-std::queue<std::shared_ptr<eudaq::Event>> m_queue;
+std::vector<std::shared_ptr<eudaq::Event>> m_queue;
 
+void pop();
+size_t size();
+std::vector<std::shared_ptr<eudaq::Event>>::iterator begin();
+std::vector<std::shared_ptr<eudaq::Event>>::iterator end();
+std::vector<std::shared_ptr<eudaq::Event>>::reference front();
 
+bool empty();
 };
 
 }

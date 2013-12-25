@@ -54,11 +54,17 @@ int main(int, char ** argv) {
       std::shared_ptr<eudaq::FileWriter> writer(FileWriterFactory::Create(type.Value()));
       writer->SetFilePattern(opat.Value());
       writer->StartRun(reader.RunNumber());
+	  int event_nr=0;
       do {
         if (reader.GetDetectorEvent().IsBORE() || reader.GetDetectorEvent().IsEORE() || numbers.empty() ||
             std::find(numbers.begin(), numbers.end(), reader.GetDetectorEvent().GetEventNumber()) != numbers.end()) {
           writer->WriteEvent(reader.GetDetectorEvent());
           if(dbg>0)std::cout<< "writing one more event" << std::endl;
+		  ++event_nr;
+		  if (event_nr%1000==0)
+		  {
+			  std::cout<<"Processing event "<< event_nr<<std::endl;
+		  }
         }
       } while (reader.NextEvent());
       if(dbg>0)std::cout<< "no more events to read" << std::endl;

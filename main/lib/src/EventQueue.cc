@@ -151,3 +151,35 @@ void eudaq::eventqueue_t::debug( std::ostream & os ) const
 {
 
 }
+
+void eudaq::eventqueue_t::pop()
+{
+	m_queue.erase(m_queue.begin());
+}
+
+std::vector<std::shared_ptr<eudaq::Event>>::iterator eudaq::eventqueue_t::begin()
+{
+	return m_queue.begin();
+	
+}
+
+std::vector<std::shared_ptr<eudaq::Event>>::iterator eudaq::eventqueue_t::end()
+{
+	return m_queue.end();
+}
+
+bool eudaq::eventqueue_t::empty()
+{
+	return m_queue.empty();
+}
+
+std::vector<std::shared_ptr<eudaq::Event>>::reference eudaq::eventqueue_t::front()
+{
+	return m_queue.front();
+}
+
+size_t eudaq::eventqueue_t::size()
+{
+	return m_queue.size();
+}
+

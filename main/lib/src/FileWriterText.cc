@@ -110,7 +110,7 @@ namespace eudaq {
 					*m_out<<sev.GetRunNumber()<<"; ";
 					*m_out<<sev.GetEventNumber()<<"; ";
 				//	auto test=sev.GetTag("DUT_time");
-					*m_out<<std::stoull(sev.GetTag("DUT_time"))<<"; ";
+					*m_out<<sev.GetTag("DUT_time")<<"; ";
 					//*m_out<<std::stoull(sev.GetTag("TLU_event_nr"));
 
 					*m_out<<std::endl;

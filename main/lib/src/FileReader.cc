@@ -50,7 +50,7 @@ namespace eudaq {
   }
 
   bool FileReader::NextEvent(size_t skip) {
-    eudaq::Event * ev = 0;
+    std::shared_ptr<eudaq::Event> ev = 0;
     if (m_sync) {
       bool result = false;
       for (size_t i = 0; i <= skip; ++i) {
@@ -58,7 +58,7 @@ namespace eudaq {
         result = true;
       }
       if (ev) {
-        m_ev = std::shared_ptr<eudaq::Event>(ev);
+        m_ev =(ev);
       }
       return result;
     }

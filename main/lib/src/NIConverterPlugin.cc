@@ -53,6 +53,8 @@ namespace eudaq {
 
     virtual void Initialize(const Event & bore, const Configuration & /*c*/) {
 
+		
+
       m_boards = from_string(bore.GetTag("BOARDS"), 0);
       if( m_boards == 255 ) { m_boards = 6; }
 
@@ -73,16 +75,16 @@ namespace eudaq {
 
 		 auto triggerID=GetTriggerID(ev);
 		 auto tlu_triggerID=tlu.GetEventNumber();
-
-		 if (triggerID<tlu_triggerID)
+	//	 std::cout<< "triggerID "<<triggerID<<"  tlu_triggerID: "<<tlu_triggerID<<std::endl;
+		 if (triggerID==tlu_triggerID)
 		 {
-			 return Event_IS_LATE;
+			return Event_IS_Sync;	
 		 }else if (triggerID>tlu_triggerID)
 		 {
 			 return Event_IS_EARLY;
 		 }
-		
-		 return Event_IS_Sync;
+		 return Event_IS_LATE;
+		 
    }
 
     virtual bool GetStandardSubEvent(StandardEvent & result, const Event & source) const {

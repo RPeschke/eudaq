@@ -50,6 +50,7 @@ namespace eudaq {
       virtual void Initialize(const Event & bore,
           const Configuration & cnf) {
         m_exampleparam = bore.GetTag("SCTupgrade", 0);
+		
 #ifndef WIN32  //some linux Stuff //$$change
 		(void)cnf; // just to suppress a warning about unused parameter cnf
 #endif
@@ -76,8 +77,9 @@ namespace eudaq {
 	   virtual int IsSyncWithTLU(eudaq::Event const & ev,eudaq::TLUEvent const & tlu) const {
 		   unsigned long long duration=1000;
 		   unsigned long long tluBegin=tlu.GetTimestamp(),tluEnd=tlu.GetTimestamp()+duration;
+		   unsigned long long m=3.841e+5,b=2.991e9;
 
-		   unsigned long long sctBegin=ev.GetTimestamp(), sctEnd=ev.GetTimestamp()+duration;
+		   unsigned long long sctBegin=ev.GetTimestamp()*m+b, sctEnd=ev.GetTimestamp()*m+b+duration;
 
 
 

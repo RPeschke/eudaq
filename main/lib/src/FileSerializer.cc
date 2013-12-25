@@ -113,7 +113,7 @@ namespace eudaq {
   }
   }
 
-  bool FileDeserializer::ReadEvent( int ver, eudaq::Event * & ev, size_t skip /*= 0*/ )
+  bool FileDeserializer::ReadEvent( int ver, std::shared_ptr<eudaq::Event>  & ev, size_t skip /*= 0*/ )
   {
 	  if (!HasData()) {
 		  return false;
@@ -121,7 +121,7 @@ namespace eudaq {
 	  if (ver < 2) {
 		  for (size_t i = 0; i <= skip; ++i) {
 			  if (!HasData()) break;
-			  ev = EventFactory::Create(*this);
+			  ev = std::shared_ptr<eudaq::Event>(EventFactory::Create(*this));
 		  }
 	  } else {
 		  BufferSerializer buf;
@@ -129,7 +129,7 @@ namespace eudaq {
 			  if (!HasData()) break;
 			  read(buf);
 		  }
-		  ev = eudaq::EventFactory::Create(buf);
+		   ev = std::shared_ptr<eudaq::Event>(eudaq::EventFactory::Create(buf));
 	  }
 	  return true;
   }
