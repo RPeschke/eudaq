@@ -27,18 +27,21 @@ namespace eudaq{
     // virtual int isSynchron();
 	 virtual bool AddNextEventToQueue();
 	 virtual bool SyncFirstEvent();
+	 virtual bool SyncNEvents(int N);
 	 virtual bool getNextEvent( std::shared_ptr<eudaq::Event>  & ev);
 	 virtual bool SynEvents(FileDeserializer & des, int ver, std::shared_ptr<eudaq::Event>  & ev);
 	// virtual int extractCorrect_event(std::shared_ptr<eudaq::Event> tlu_event,eudaq::eventqueue_t& event_queue,std::shared_ptr<eudaq::Event>  &outputEvent);
 	 virtual bool compareTLUwithEventQueue(std::shared_ptr<eudaq::Event>& tlu_event,eudaq::eventqueue_t& event_queue);
 	 virtual bool compareTLUwithEventQueues(std::shared_ptr<eudaq::Event>& tlu_event);
 	 size_t event_queue_size();
+	 bool Event_Queue_Is_Empty();
 	 void event_queue_pop();
 	 void makeDetectorEvent();
+	 void clearDetectorQueue();
       /** The empty destructor. Need to add it to make it virtual.
        */
       virtual ~SyncBase() {}
-	  SyncBase(size_t numberOfProducer);
+	  SyncBase(size_t numberOfProducer,size_t NumberOfEventsToSync,unsigned long long longTimeDiff);
     protected:
 
 		eventqueue_t& getQueuefromId(unsigned producerID);
@@ -51,6 +54,10 @@ namespace eudaq{
 		int m_ver;
 		//int handleEventSync(int syncFlag, eudaq::eventqueue_t& producer_queue);
 		bool m_queueStatus;
+		long lastAsyncEvent_,currentEvent_;
+		size_t NumberOfEventsToSync_;
+		unsigned long long longTimeDiff_;
+
   };
 
 }//namespace eudaq

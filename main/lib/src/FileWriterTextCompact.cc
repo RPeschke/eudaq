@@ -97,9 +97,9 @@ namespace eudaq {
 				  *m_out<<plane.ID()<<"; ";
 				  *m_out<<plane.TLUEvent()<<"; ";
 				   *m_out<<sev.GetEventNumber()<<"; ";
-				  *m_out<<std::stoull(sev.GetTag("DUT_time"))-DUT_start_time<<"; ";
+				  *m_out<<std::stoull(sev.GetTag("DUT_time"))<<"; ";
 				  //std::string dummy=sev.GetTag("TLU_input");
-				//*m_out<<std::stoi(sev.GetTag("TLU_input"))<<"; ";
+		//		*m_out<<std::stoi(sev.GetTag("TLU_input"))<<"; ";
 				  *m_out<<std::endl;
 	  
 	  }

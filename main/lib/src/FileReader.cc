@@ -6,6 +6,7 @@
 #include "eudaq/EventQueue.hh"
 #include <list>
 #include "eudaq/FileSerializer.hh"
+#include "eudaq/Configuration.hh"
 
 namespace eudaq {
 
@@ -24,7 +25,7 @@ namespace eudaq {
 
 
 
-  FileReader::FileReader(const std::string & file, const std::string & filepattern, bool synctriggerid)
+  FileReader::FileReader(const std::string & file, const std::string & filepattern, bool synctriggerid,size_t syncEvents,unsigned long long longTimeDelay)
     : m_filename(FileNamer(filepattern).Set('X', ".raw").SetReplace('R', file)),
     m_des(m_filename),
     m_ev(EventFactory::Create(m_des)),
@@ -39,9 +40,17 @@ namespace eudaq {
       //}
       //EUDAQ_INFO("FileReader, version = " + to_string(m_ver));
       //NextEvent();
+		eudaq::Configuration conf(GetDetectorEvent().GetTag("CONFIG"));
+		
+		if (syncEvents==1)
+		{
+			syncEvents=stoul(conf.Get("syncEvents","0"));
+		}
+		
       if (synctriggerid) {
         
-		m_sync =std::shared_ptr<eudaq::SyncBase>(new eudaq::SyncBase(GetDetectorEvent().NumEvents()));
+		m_sync =std::make_shared<eudaq::SyncBase>(GetDetectorEvent().NumEvents(),syncEvents,longTimeDelay);
+		m_ev->SetTag("longTimeDelay",longTimeDelay);
       }
     }
 
@@ -64,7 +73,7 @@ namespace eudaq {
     }
 	// !m_sync  
     bool result = m_des.ReadEvent(m_ver, ev, skip);
-    if (ev) m_ev =  std::shared_ptr<eudaq::Event>(ev);
+    if (ev) m_ev =  ev;
     return result;
   }
 

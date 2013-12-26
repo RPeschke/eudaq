@@ -73,8 +73,8 @@ namespace eudaq {
 
 	 virtual int IsSyncWithTLU(eudaq::Event const & ev,eudaq::TLUEvent const & tlu) const {
 
-		 auto triggerID=GetTriggerID(ev);
-		 auto tlu_triggerID=tlu.GetEventNumber();
+		 auto triggerID=ev.GetEventNumber();//GetTriggerID(ev);
+		 auto tlu_triggerID=10+tlu.GetEventNumber();
 	//	 std::cout<< "triggerID "<<triggerID<<"  tlu_triggerID: "<<tlu_triggerID<<std::endl;
 		 if (triggerID==tlu_triggerID)
 		 {

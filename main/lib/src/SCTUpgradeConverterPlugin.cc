@@ -11,6 +11,7 @@
 #  include "lcio.h"
 #endif
 #include <iostream>
+#include "eudaq/Configuration.hh"
 #define EVENTHEADERSIZE 14
 #define MODULEHEADERSIZE 3
 #define STREAMHEADERSIZE 3
@@ -22,6 +23,10 @@
 #define ENDSTREAM1 (STARTSTREAM1+STREAMESIZE)
 #define TOTALMODULSIZE (MODULEHEADERSIZE+2*STREAMHEADERSIZE+2*STREAMESIZE)
 
+
+// #define TLU_longPause_time (384066*20)
+// #define DUT_LongPause_time (384066*20)
+#define TLU_chlocks_per_mirco_secound 384066
 void uchar2bool(std::vector<unsigned char>& in,int lOffset,int hOffset, std::vector<bool>& out){
 	for (auto i=in.begin()+lOffset;i!=in.begin()+hOffset;++i)
 	{
@@ -42,6 +47,8 @@ namespace eudaq {
   // Declare a new class that inherits from DataConverterPlugin
   class SCTupgradeConverterPlugin : public DataConverterPlugin {
 
+	 
+
     public:
 
       // This is called once at the beginning of each run.
@@ -50,7 +57,27 @@ namespace eudaq {
       virtual void Initialize(const Event & bore,
           const Configuration & cnf) {
         m_exampleparam = bore.GetTag("SCTupgrade", 0);
+		auto longdelay=cnf.Get("timeDelay","0");
+		auto sct_long_time=bore.GetTag("LongTimeDelay","0");
+	//	std::cout<<" longdelay "<< longdelay<<std::endl;
+		unsigned long long longPause_time_from_command_line=0;
 		
+		try{
+
+			longPause_time_from_command_line=TLU_chlocks_per_mirco_secound*stoull(longdelay);
+			longPause_time=TLU_chlocks_per_mirco_secound*stoull(sct_long_time);
+
+		}
+		catch(...)
+		{
+
+			std::string errorMsg="error in SCT Upgrade plugin \n unable to convert " + longdelay +"to unsigned long long";
+			EUDAQ_THROW(errorMsg);
+		}
+		if (longPause_time_from_command_line>0)
+		{
+			longPause_time=longPause_time_from_command_line;
+		}
 #ifndef WIN32  //some linux Stuff //$$change
 		(void)cnf; // just to suppress a warning about unused parameter cnf
 #endif
@@ -75,15 +102,46 @@ namespace eudaq {
       }
 
 	   virtual int IsSyncWithTLU(eudaq::Event const & ev,eudaq::TLUEvent const & tlu) const {
-		   unsigned long long duration=1000;
-		   unsigned long long tluBegin=tlu.GetTimestamp(),tluEnd=tlu.GetTimestamp()+duration;
-		   unsigned long long m=3.841e+5,b=2.991e9;
+		   int returnValue=Event_IS_Sync;
+		   unsigned long long tluTime=tlu.GetTimestamp();
+		   
 
-		   unsigned long long sctBegin=ev.GetTimestamp()*m+b, sctEnd=ev.GetTimestamp()*m+b+duration;
+		   unsigned long long sctTime=TLU_chlocks_per_mirco_secound*ev.GetTimestamp();
+// 		   std::cout<<"tluTime-last_TLU_time: "<<tluTime-last_TLU_time<<std::endl;
+// 		    std::cout<<"sctTime-Last_DUT_Time: "<<sctTime-Last_DUT_Time<<std::endl;
+		   if (tluTime-last_TLU_time<longPause_time&&sctTime-Last_DUT_Time<longPause_time)
+		   {
+			   returnValue=Event_IS_Sync;
+			   last_TLU_time=tluTime;
+			   Last_DUT_Time=sctTime;
+		   }else if (tluTime-last_TLU_time>=longPause_time
+			          &&
+					 sctTime-Last_DUT_Time<longPause_time)
+		   {
+			    Last_DUT_Time=sctTime;
+			   returnValue=Event_IS_LATE;
+			   std::cout<<"Event_IS_LATE "<<std::endl;
+		   }else if (tluTime-last_TLU_time<longPause_time
+			   &&
+			   sctTime-Last_DUT_Time>=longPause_time)
+		   {
+			    last_TLU_time=tluTime;
+			   returnValue=Event_IS_EARLY;
+			   std::cout<<"Event_IS_EARLY "<<std::endl;
+		   }else if (tluTime-last_TLU_time>=longPause_time
+			   &&
+			   sctTime-Last_DUT_Time>=longPause_time)
+		   {
+			   returnValue=Event_IS_Sync;
+			   last_TLU_time=tluTime;
+			   Last_DUT_Time=sctTime;
+		   }
+		   
+		 
+		  
 
 
-
-		   return hasTimeOVerlaping(sctBegin,sctEnd,tluBegin,tluEnd);
+		   return returnValue;//hasTimeOVerlaping(sctBegin,sctEnd,tluBegin,tluEnd);
 	   
 	   
 	   }
@@ -193,12 +251,12 @@ namespace eudaq {
       // in order to register this converter for the corresponding conversions
       // Member variables should also be initialized to default values here.
       SCTupgradeConverterPlugin()
-        : DataConverterPlugin(EVENT_TYPE), m_exampleparam(0)
+        : DataConverterPlugin(EVENT_TYPE), m_exampleparam(0),last_TLU_time(0),Last_DUT_Time(0),longPause_time(0)
       {}
 
       // Information extracted in Initialize() can be stored here:
       unsigned m_exampleparam;
-
+	 mutable  unsigned long long last_TLU_time,Last_DUT_Time,longPause_time;
       // The single instance of this converter plugin
       static SCTupgradeConverterPlugin m_instance;
   }; // class ExampleConverterPlugin

@@ -14,7 +14,7 @@ namespace eudaq {
 
   class DLLEXPORT FileReader {
     public:
-      FileReader(const std::string & filename, const std::string & filepattern = "", bool synctriggerid = false);
+      FileReader(const std::string & filename, const std::string & filepattern = "", bool synctriggerid = false,size_t syncEvents=1,unsigned long long longTimeDelay=0);
       ~FileReader();
       bool NextEvent(size_t skip = 0);
       std::string Filename() const { return m_filename; }
