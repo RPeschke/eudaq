@@ -1,7 +1,7 @@
 #include "eudaq/DataConverterPlugin.hh"
 #include "eudaq/StandardEvent.hh"
 #include "eudaq/Utils.hh"
-
+#include "eudaq/Configuration.hh"
 // All LCIO-specific parts are put in conditional compilation blocks
 // so that the other parts may still be used if LCIO is not available.
 #if USE_LCIO
@@ -11,7 +11,7 @@
 #  include "lcio.h"
 #endif
 #include <iostream>
-#include "eudaq/Configuration.hh"
+
 #define EVENTHEADERSIZE 14
 #define MODULEHEADERSIZE 3
 #define STREAMHEADERSIZE 3
@@ -24,8 +24,7 @@
 #define TOTALMODULSIZE (MODULEHEADERSIZE+2*STREAMHEADERSIZE+2*STREAMESIZE)
 
 
-// #define TLU_longPause_time (384066*20)
-// #define DUT_LongPause_time (384066*20)
+
 #define TLU_chlocks_per_mirco_secound 384066
 void uchar2bool(std::vector<unsigned char>& in,int lOffset,int hOffset, std::vector<bool>& out){
 	for (auto i=in.begin()+lOffset;i!=in.begin()+hOffset;++i)
@@ -58,14 +57,16 @@ namespace eudaq {
           const Configuration & cnf) {
         m_exampleparam = bore.GetTag("SCTupgrade", 0);
 		auto longdelay=cnf.Get("timeDelay","0");
-		auto sct_long_time=bore.GetTag("LongTimeDelay","0");
+		cnf.SetSection("EventStruct");
+
+		auto configFile_long_time=cnf.Get("LongBusyTime","0");
 	//	std::cout<<" longdelay "<< longdelay<<std::endl;
 		unsigned long long longPause_time_from_command_line=0;
 		
 		try{
 
 			longPause_time_from_command_line=TLU_chlocks_per_mirco_secound*stoull(longdelay);
-			longPause_time=TLU_chlocks_per_mirco_secound*stoull(sct_long_time);
+			longPause_time=TLU_chlocks_per_mirco_secound*stoull(configFile_long_time);
 
 		}
 		catch(...)

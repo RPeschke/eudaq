@@ -41,10 +41,13 @@ namespace eudaq {
       //EUDAQ_INFO("FileReader, version = " + to_string(m_ver));
       //NextEvent();
 		eudaq::Configuration conf(GetDetectorEvent().GetTag("CONFIG"));
-		
+		conf.SetSection("EventStruct");
+
+		std::cout<<"NumberOfEvents "<<conf.Get("NumberOfEvents",100)<<std::endl;
+		std::cout<<"LongBusyTime "<<conf.Get("LongBusyTime",0)<<std::endl;
 		if (syncEvents==1)
 		{
-			syncEvents=stoul(conf.Get("syncEvents","0"));
+			syncEvents=stoul(conf.Get("NumberOfEvents","1"));
 		}
 		
       if (synctriggerid) {
