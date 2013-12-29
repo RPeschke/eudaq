@@ -25,7 +25,7 @@ bool SyncBase::SynEvents( FileDeserializer & des, int ver, std::shared_ptr<eudaq
 bool SyncBase::getNextEvent(  std::shared_ptr<eudaq::Event>  & ev )
 {
 	//SyncFirstEvent();
-	if (m_DetectorEventQueue.size()<100)
+	if (m_DetectorEventQueue.size()<NumberOfEventsToSync_)
 	{
 		if(!SyncNEvents(NumberOfEventsToSync_)){
 			return false;
