@@ -27,7 +27,7 @@ bool SyncBase::getNextEvent(  std::shared_ptr<eudaq::Event>  & ev )
 	//SyncFirstEvent();
 	if (m_DetectorEventQueue.size()<NumberOfEventsToSync_)
 	{
-		if(!SyncNEvents(NumberOfEventsToSync_)){
+		if(!SyncNEvents(NumberOfEventsToSync_*2)){
 			return false;
 		}
 	}
@@ -142,7 +142,7 @@ bool SyncBase::SyncFirstEvent()
 
 bool SyncBase::SyncNEvents( int N )
 {
-	while (m_DetectorEventQueue.size()<=2*N)
+	while (m_DetectorEventQueue.size()<=N)
 	{
 		if (!SyncFirstEvent())
 		{
