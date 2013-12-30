@@ -61,7 +61,20 @@ namespace eudaq{
       virtual void Initialize(eudaq::Event const &, eudaq::Configuration const &) {}
 
       virtual unsigned GetTriggerID(eudaq::Event const &) const;
-	  virtual int IsSyncWithTLU(eudaq::Event const & ev,eudaq::TLUEvent const & tlu) const {return Event_IS_Sync;}
+	  virtual int IsSyncWithTLU(eudaq::Event const & ev,eudaq::TLUEvent const & tlu) const {
+		  // dummy comparator. it is just checking if the event numbers are the same.
+		  
+		  auto triggerID=ev.GetEventNumber();
+	  auto tlu_triggerID=tlu.GetEventNumber();
+	  if (triggerID==tlu_triggerID)
+	  {
+		  return Event_IS_Sync;	
+	  }else if (triggerID>tlu_triggerID)
+	  {
+		  return Event_IS_EARLY;
+	  }
+	  return Event_IS_LATE;
+	  }
 	  virtual void GetLCIORunHeader(lcio::LCRunHeader &, eudaq::Event const &, eudaq::Configuration const &) const {}
 	  
 
