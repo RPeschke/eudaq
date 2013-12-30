@@ -229,17 +229,7 @@ void SyncBase::event_queue_pop()
 
 }
 
-size_t SyncBase::event_queue_size()
-{size_t returnValue=(size_t)-1;
-	for (auto &q:m_ProducerEventQueue)
-	{
-		if (returnValue>q.size())
-		{
-			returnValue=q.size();
-		}
-	}
-	return returnValue;
-}
+
 
 bool SyncBase::compareTLUwithEventQueue( std::shared_ptr<eudaq::Event>& tlu_event,eudaq::SyncBase::eventqueue_t& event_queue )
 {

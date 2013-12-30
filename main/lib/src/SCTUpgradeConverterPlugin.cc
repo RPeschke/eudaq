@@ -122,14 +122,14 @@ namespace eudaq {
 		   {
 			    Last_DUT_Time=sctTime;
 			   returnValue=Event_IS_LATE;
-			   std::cout<<"Event_IS_LATE "<<std::endl;
+			//   std::cout<<"Event_IS_LATE "<<std::endl;
 		   }else if (tluTime-last_TLU_time<longPause_time
 			   &&
 			   sctTime-Last_DUT_Time>=longPause_time)
 		   {
 			    last_TLU_time=tluTime;
 			   returnValue=Event_IS_EARLY;
-			   std::cout<<"Event_IS_EARLY "<<std::endl;
+		//	   std::cout<<"Event_IS_EARLY "<<std::endl;
 		   }else if (tluTime-last_TLU_time>=longPause_time
 			   &&
 			   sctTime-Last_DUT_Time>=longPause_time)

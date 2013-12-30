@@ -33,7 +33,7 @@ namespace eudaq{
 	// virtual int extractCorrect_event(std::shared_ptr<eudaq::Event> tlu_event,eudaq::eventqueue_t& event_queue,std::shared_ptr<eudaq::Event>  &outputEvent);
 	 virtual bool compareTLUwithEventQueue(std::shared_ptr<eudaq::Event>& tlu_event,SyncBase::eventqueue_t& event_queue);
 	 virtual bool compareTLUwithEventQueues(std::shared_ptr<eudaq::Event>& tlu_event);
-	 size_t event_queue_size();
+
 	 bool Event_Queue_Is_Empty();
 	 void event_queue_pop();
 	 void makeDetectorEvent();
