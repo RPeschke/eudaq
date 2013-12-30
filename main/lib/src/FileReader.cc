@@ -46,8 +46,8 @@ namespace eudaq {
 		eudaq::Configuration conf(GetDetectorEvent().GetTag("CONFIG"));
 		conf.SetSection("EventStruct");
 
-		std::cout<<"NumberOfEvents "<<conf.Get("NumberOfEvents",100)<<std::endl;
-		std::cout<<"LongBusyTime "<<conf.Get("LongBusyTime",0)<<std::endl;
+// 		std::cout<<"NumberOfEvents "<<conf.Get("NumberOfEvents",100)<<std::endl;
+// 		std::cout<<"LongBusyTime "<<conf.Get("LongBusyTime",0)<<std::endl;
 
 		
       if (synctriggerid) {
