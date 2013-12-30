@@ -36,6 +36,9 @@ std::vector<unsigned> parsenumbers(const std::string & s) {
 }
 
 int main(int, char ** argv) {
+	std::clock_t    start;
+
+	start = std::clock();
   eudaq::OptionParser op("EUDAQ File Converter", "1.0", "", 1);
   eudaq::Option<std::string> type(op, "t", "type", "native", "name", "Output file type");
   eudaq::Option<std::string> events(op, "e", "events", "", "numbers", "Event numbers to convert (eg. '1-10,99' default is all)");
@@ -72,9 +75,10 @@ int main(int, char ** argv) {
       if(dbg>0)std::cout<< "no more events to read" << std::endl;
     }
   } catch (...) {
+	    std::cout << "Time: " << (std::clock() - start) / (double)(CLOCKS_PER_SEC / 1000) << " ms" << std::endl;
     return op.HandleMainException();
   }
-
+    std::cout << "Time: " << (std::clock() - start) / (double)(CLOCKS_PER_SEC / 1000) << " ms" << std::endl;
   if(dbg>0)std::cout<< "almost done with Converter. exiting" << std::endl;
   return 0;
 }

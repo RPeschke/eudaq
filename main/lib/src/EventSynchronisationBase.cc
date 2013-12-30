@@ -104,7 +104,7 @@ SyncBase::eventqueue_t& SyncBase::getQueuefromId( unsigned producerID )
 
 bool SyncBase::AddNextEventToQueue()
 {
-	if (event_queue_size()<5)
+	if (Event_Queue_Is_Empty())
 	{
 	
 		std::shared_ptr<eudaq::Event> ev;
@@ -136,9 +136,7 @@ bool SyncBase::SyncFirstEvent()
 		EUDAQ_THROW("Producer Event queue is empty");
 	}
 	auto& TLU_queue=m_ProducerEventQueue.begin();
-	//	auto beginTLU=PluginManager::GetTimeStamp(*(TLU->m_queue.front()));
-	//	auto endTLU=beginTLU+PluginManager::GetTimeDuration(*(TLU->m_queue.front()));
-	//(unsigned runnumber, unsigned eventnumber, unsigned long long timestamp) :
+
 
 
 	if (Event_Queue_Is_Empty())
@@ -152,7 +150,7 @@ bool SyncBase::SyncFirstEvent()
 
 	do 
 	{
-		//++currentEvent_;
+		
 		if (compareTLUwithEventQueues(TLU_queue->front()))
 		{
 			makeDetectorEvent();
@@ -166,7 +164,7 @@ bool SyncBase::SyncFirstEvent()
 		{
 			if (!AddNextEventToQueue())
 			{
-				//return false;
+				
 				cout<<"no more Elements"<<endl;
 			}
 
@@ -214,7 +212,7 @@ void SyncBase::makeDetectorEvent()
 
 	}
 
-	//	TLU_queue->m_queue.pop();
+	
 	m_DetectorEventQueue.push(det);
 	event_queue_pop();
 	
@@ -245,20 +243,16 @@ size_t SyncBase::event_queue_size()
 
 bool SyncBase::compareTLUwithEventQueue( std::shared_ptr<eudaq::Event>& tlu_event,eudaq::SyncBase::eventqueue_t& event_queue )
 {
-	int ReturnValue=0;
+	int ReturnValue=Event_IS_Sync;
 
 	std::shared_ptr<TLUEvent> tlu=std::dynamic_pointer_cast<TLUEvent>(tlu_event);
 
 	
-	//std::queue<std::shared_ptr<eudaq::Event>>::reference currentEvent;
+
 	while(!event_queue.empty())
 	{
 		auto& currentEvent=event_queue.front();
-		//shared_ptr<eudaq::Event> currentEvent=event_queue.m_queue.front();
 
-
-	//	cout<<"************************************************************************"<<endl;
-	//	cout<<Event::id2str(PluginManager::getEventId(**currentEvent).first)<< "  "<<PluginManager::getEventId(**currentEvent).second<<endl;
 		ReturnValue=PluginManager::IsSyncWithTLU(*currentEvent,*tlu);
 		if (ReturnValue== Event_IS_Sync )
 		{
@@ -268,7 +262,7 @@ bool SyncBase::compareTLUwithEventQueue( std::shared_ptr<eudaq::Event>& tlu_even
 		}
 		else if (ReturnValue==Event_IS_LATE)
 		{
-			//lastAsyncEvent_=currentEvent_;
+		
 			isAsync_=true;
 			event_queue.pop();
 			if(!AddNextEventToQueue()) {
@@ -276,18 +270,13 @@ bool SyncBase::compareTLUwithEventQueue( std::shared_ptr<eudaq::Event>& tlu_even
 			}
 		}else if (ReturnValue==Event_IS_EARLY)
 		{
-			//lastAsyncEvent_=currentEvent_;
-			isAsync_=true;
+		    isAsync_=true;
 			return false;
 		}
 
 
 
 	}
-	//	cout<<"PluginManager::GetTimeDuration():  "<<PluginManager::GetTimeDuration(*(i->m_queue.front()))<<endl;
-	//	cout<<"PluginManager::GetTimeStamp():  "<<PluginManager::GetTimeStamp(*(i->m_queue.front()))<<endl;
-	//cout<<"************************************************************************"<<endl;
-	//cout<<"PluginManager::GetEventType():  "<<PluginManager::GetEventType(*(i->m_queue.front()))<<endl;
 	return false;
 }
 
