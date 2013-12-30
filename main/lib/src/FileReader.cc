@@ -3,25 +3,13 @@
 #include "eudaq/PluginManager.hh"
 #include "eudaq/Event.hh"
 #include "eudaq/Logger.hh"
-#include "eudaq/EventQueue.hh"
 #include <list>
 #include "eudaq/FileSerializer.hh"
 #include "eudaq/Configuration.hh"
 
 namespace eudaq {
 
-  namespace {
-    static const unsigned TLUID = Event::str2id("_TLU");
-    static const unsigned IDMASK = 0x7fff;
-  }
 
-  std::ostream & operator << (std::ostream &, const eventqueue_t &);
-
-
-  std::ostream & operator << (std::ostream & os, const eventqueue_t & q) {
-    q.debug(os);
-    return os;
-  }
 
 
 
@@ -46,14 +34,14 @@ namespace eudaq {
 		eudaq::Configuration conf(GetDetectorEvent().GetTag("CONFIG"));
 		conf.SetSection("EventStruct");
 
-// 		std::cout<<"NumberOfEvents "<<conf.Get("NumberOfEvents",100)<<std::endl;
-// 		std::cout<<"LongBusyTime "<<conf.Get("LongBusyTime",0)<<std::endl;
+
 
 		
       if (synctriggerid) {
-        
+
+	// saves this information in the BOR event. the DataConverterPlugins can extract this information during initializing.
 		m_sync =std::make_shared<eudaq::SyncBase>(GetDetectorEvent());
-		// saves this information in the BOR event. the DataConverterPlugins can extract this information during initializing.
+
 
       }
     }
@@ -97,27 +85,6 @@ namespace eudaq {
     return dynamic_cast<const StandardEvent &>(*m_ev);
   }
 
-  //   const StandardEvent & FileReader::GetStandardEvent() const {
-  //     if (!m_sev) {
-  //       counted_ptr<StandardEvent> sevent(new StandardEvent);
-  //       const DetectorEvent & dev = GetDetectorEvent();
-  //       for (size_t i = 0; i < dev.NumEvents(); ++i) {
-  //         const eudaq::Event * subevent = dev.GetEvent(i);
-
-  //         try {
-  //           const DataConverterPlugin * converterplugin = PluginManager::GetInstance().GetPlugin(subevent->GetType());
-  //           converterplugin->GetStandardSubEvent(*sevent, *subevent);
-  //           //std::fprintf(m_file, "Event %d %d\n", devent.GetEventNumber(), standardevent->m_x.size());
-  //         } catch(eudaq::Exception & e) {
-  //           //std::cout <<  e.what() << std::endl;
-  //           std::cout <<  "FileWriterText::WriteEvent(): Ignoring event type "
-  //                     <<  subevent->GetType() << std::endl;
-  //           continue;
-  //         }
-  //       }
-  //       m_sev = sevent;
-  //     }
-  //     return *m_sev;
-  //   }
+ 
 
 }
