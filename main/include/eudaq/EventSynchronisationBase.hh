@@ -6,6 +6,7 @@
 #include "eudaq/FileSerializer.hh"
 #include "eudaq/EventQueue.hh"
 #include <memory>
+#include <queue>
 // base class for all Synchronization Plugins
 // it is desired to be as modular es possible with this approach.
 // first step is to separate the events from different Producers. 
@@ -22,16 +23,16 @@ namespace eudaq{
 
   class DLLEXPORT SyncBase {
     public:
-     
+     	 typedef std::queue<std::shared_ptr<eudaq::Event>> eventqueue_t ;
 
     // virtual int isSynchron();
 	 virtual bool AddNextEventToQueue();
 	 virtual bool SyncFirstEvent();
-	 virtual bool SyncNEvents(int N);
+	 virtual bool SyncNEvents(size_t N);
 	 virtual bool getNextEvent( std::shared_ptr<eudaq::Event>  & ev);
 	 virtual bool SynEvents(FileDeserializer & des, int ver, std::shared_ptr<eudaq::Event>  & ev);
 	// virtual int extractCorrect_event(std::shared_ptr<eudaq::Event> tlu_event,eudaq::eventqueue_t& event_queue,std::shared_ptr<eudaq::Event>  &outputEvent);
-	 virtual bool compareTLUwithEventQueue(std::shared_ptr<eudaq::Event>& tlu_event,eudaq::eventqueue_t& event_queue);
+	 virtual bool compareTLUwithEventQueue(std::shared_ptr<eudaq::Event>& tlu_event,SyncBase::eventqueue_t& event_queue);
 	 virtual bool compareTLUwithEventQueues(std::shared_ptr<eudaq::Event>& tlu_event);
 	 size_t event_queue_size();
 	 bool Event_Queue_Is_Empty();
@@ -42,6 +43,8 @@ namespace eudaq{
        */
 	 virtual ~SyncBase() {}
 	 SyncBase(const eudaq::DetectorEvent& BOREvent);
+
+
     protected:
 
 		eventqueue_t& getQueuefromId(unsigned producerID);
@@ -49,7 +52,8 @@ namespace eudaq{
 		std::map<unsigned,size_t> m_ProducerId2Eventqueue;
 		size_t m_registertProducer;
 		/* This vector saves for each producer an event queue */
-		std::vector<eudaq::eventqueue_t> m_ProducerEventQueue;
+		
+		std::vector<eventqueue_t> m_ProducerEventQueue;
 		std::queue<std::shared_ptr<eudaq::DetectorEvent>> m_DetectorEventQueue;
 		FileDeserializer* m_des;
 		int m_ver;

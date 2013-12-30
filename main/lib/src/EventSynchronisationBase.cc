@@ -93,7 +93,7 @@ bool SyncBase::getNextEvent(  std::shared_ptr<eudaq::Event>  & ev )
 	return false;
 }
 
-eudaq::eventqueue_t& SyncBase::getQueuefromId( unsigned producerID )
+SyncBase::eventqueue_t& SyncBase::getQueuefromId( unsigned producerID )
 {
 	if(m_ProducerId2Eventqueue.find(producerID)==m_ProducerId2Eventqueue.end()){
  		m_ProducerId2Eventqueue[producerID]=m_registertProducer++;
@@ -117,7 +117,7 @@ bool SyncBase::AddNextEventToQueue()
 				for(size_t i=0;i< detEvent->NumEvents();++i){
 				//	cout<<detEvent->GetEventPtr(i)->get_id()<<endl;
 					auto &q=getQueuefromId(i);
-					q.m_queue.push(detEvent->GetEventPtr(i));
+					q.push(detEvent->GetEventPtr(i));
 				}
 			}
 		return m_queueStatus;
@@ -180,7 +180,7 @@ bool SyncBase::SyncFirstEvent()
 	return false;
 }
 
-bool SyncBase::SyncNEvents( int N )
+bool SyncBase::SyncNEvents( size_t N )
 {
 	while (m_DetectorEventQueue.size()<=N)
 	{
@@ -243,7 +243,7 @@ size_t SyncBase::event_queue_size()
 	return returnValue;
 }
 
-bool SyncBase::compareTLUwithEventQueue( std::shared_ptr<eudaq::Event>& tlu_event,eudaq::eventqueue_t& event_queue )
+bool SyncBase::compareTLUwithEventQueue( std::shared_ptr<eudaq::Event>& tlu_event,eudaq::SyncBase::eventqueue_t& event_queue )
 {
 	int ReturnValue=0;
 
