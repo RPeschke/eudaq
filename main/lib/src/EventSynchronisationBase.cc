@@ -12,6 +12,56 @@ using std::endl;
 using std::shared_ptr;
 using namespace std;
 namespace eudaq{
+SyncBase::SyncBase(const eudaq::DetectorEvent& BOREvent):
+	m_registertProducer(0),
+	m_ProducerEventQueue(BOREvent.NumEvents()),
+	m_des(nullptr),m_ver(0),lastAsyncEvent_(0),currentEvent_(0),NumberOfEventsToSync_(1),longTimeDiff_(0)
+{
+	eudaq::Configuration conf(BOREvent.GetTag("CONFIG"));
+	conf.SetSection("EventStruct");
+
+	
+	
+
+	longTimeDiff_=conf.Get("LongBusyTime",longTimeDiff_); //from config file
+	longTimeDiff_=BOREvent.GetTag("longTimeDelay",longTimeDiff_);//from command line
+	
+	NumberOfEventsToSync_=conf.Get("NumberOfEvents",NumberOfEventsToSync_); //from config file
+	NumberOfEventsToSync_=BOREvent.GetTag("NumberOfEvents",NumberOfEventsToSync_);//from command line
+	registerEvent(BOREvent);
+
+	//cout<<numberOfProducer<<endl;
+}
+
+
+
+
+void SyncBase::registerEvent(const eudaq::DetectorEvent &ev )
+{
+	const unsigned int TLU_ID=Event::str2id("_TLU");
+	size_t id=1;
+	int TLUs_found=0;
+	for (unsigned i=0;i<ev.NumEvents();++i)
+	{
+		if (TLU_ID==ev.GetEvent(i)->get_id())
+		{
+			 m_ProducerId2Eventqueue[i]=0;
+			 ++TLUs_found;
+		}else{
+
+			m_ProducerId2Eventqueue[i]=id++;
+		}
+		
+	}
+	if (TLUs_found==0)
+	{
+		EUDAQ_THROW("no TLU events found in the data\n for the resynchronisation it is nessasary to have a TLU in the data stream \n for now the synchrounsation only works with the old TLU (date 12.2013)");
+	}else if (TLUs_found>1)
+	{
+		EUDAQ_THROW("to many TLUs in the data stream.\n the sync mechanism only works with 1 TLU");
+	}
+}
+
 bool SyncBase::SynEvents( FileDeserializer & des, int ver, std::shared_ptr<eudaq::Event>  & ev )
 {
 	if (m_ver==0)
@@ -42,31 +92,6 @@ bool SyncBase::getNextEvent(  std::shared_ptr<eudaq::Event>  & ev )
 		}
 	return false;
 }
-
-SyncBase::SyncBase(const eudaq::DetectorEvent& BOREvent):
-	m_registertProducer(0),
-	m_ProducerEventQueue(BOREvent.GetEventNumber()),
-	m_des(nullptr),m_ver(0),lastAsyncEvent_(0),currentEvent_(0),NumberOfEventsToSync_(1),longTimeDiff_(0)
-{
-	eudaq::Configuration conf(BOREvent.GetTag("CONFIG"));
-	conf.SetSection("EventStruct");
-
-	std::cout<<"NumberOfEvents "<<conf.Get("NumberOfEvents",100)<<std::endl;
-	std::cout<<"LongBusyTime "<<conf.Get("LongBusyTime",0)<<std::endl;
-	
-
-	longTimeDiff_=conf.Get("LongBusyTime",longTimeDiff_); //from config file
-	longTimeDiff_=BOREvent.GetTag("longTimeDelay",longTimeDiff_);//from command line
-	
-	NumberOfEventsToSync_=conf.Get("NumberOfEvents",NumberOfEventsToSync_); //from config file
-	NumberOfEventsToSync_=BOREvent.GetTag("NumberOfEvents",NumberOfEventsToSync_);//from command line
-	
-
-	//cout<<numberOfProducer<<endl;
-}
-
-
-
 
 eudaq::eventqueue_t& SyncBase::getQueuefromId( unsigned producerID )
 {

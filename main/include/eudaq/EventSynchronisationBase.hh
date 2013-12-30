@@ -45,6 +45,7 @@ namespace eudaq{
     protected:
 
 		eventqueue_t& getQueuefromId(unsigned producerID);
+		void registerEvent(const eudaq::DetectorEvent &ev);
 		std::map<unsigned,size_t> m_ProducerId2Eventqueue;
 		size_t m_registertProducer;
 		/* This vector saves for each producer an event queue */
