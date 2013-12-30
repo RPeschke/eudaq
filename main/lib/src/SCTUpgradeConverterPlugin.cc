@@ -11,6 +11,7 @@
 #  include "lcio.h"
 #endif
 #include <iostream>
+#include <string>
 
 #define EVENTHEADERSIZE 14
 #define MODULEHEADERSIZE 3
@@ -65,14 +66,14 @@ namespace eudaq {
 		
 		try{
 
-			longPause_time_from_command_line=TLU_chlocks_per_mirco_secound*stoull(longdelay);
-			longPause_time=TLU_chlocks_per_mirco_secound*stoull(configFile_long_time);
+			longPause_time_from_command_line=TLU_chlocks_per_mirco_secound*std::stoull(longdelay);
+			longPause_time=TLU_chlocks_per_mirco_secound*std::stoull(configFile_long_time);
 
 		}
 		catch(...)
 		{
 
-			std::string errorMsg="error in SCT Upgrade plugin \n unable to convert " + longdelay +"to unsigned long long";
+			std::string errorMsg="error in SCT Upgrade plugin \n unable to convert " + to_string(longdelay) +"to unsigned long long";
 			EUDAQ_THROW(errorMsg);
 		}
 		if (longPause_time_from_command_line>0)
