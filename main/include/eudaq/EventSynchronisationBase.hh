@@ -4,7 +4,6 @@
 
 #include "eudaq/DetectorEvent.hh"
 #include "eudaq/FileSerializer.hh"
-#include "eudaq/EventQueue.hh"
 #include <memory>
 #include <queue>
 // base class for all Synchronization Plugins
