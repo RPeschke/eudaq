@@ -55,7 +55,8 @@ namespace eudaq{
 		int m_ver;
 		//int handleEventSync(int syncFlag, eudaq::eventqueue_t& producer_queue);
 		bool m_queueStatus;
-		long lastAsyncEvent_,currentEvent_;
+		//long lastAsyncEvent_,currentEvent_;
+		bool isAsync_;
 		size_t NumberOfEventsToSync_;
 		unsigned long long longTimeDiff_;
 
