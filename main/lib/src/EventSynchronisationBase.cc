@@ -6,6 +6,7 @@
 
 #include <memory>
 #include "eudaq/PluginManager.hh"
+#include "eudaq/Configuration.hh"
 using std::cout;
 using std::endl;
 using std::shared_ptr;
@@ -42,11 +43,25 @@ bool SyncBase::getNextEvent(  std::shared_ptr<eudaq::Event>  & ev )
 	return false;
 }
 
-SyncBase::SyncBase( size_t numberOfProducer ,size_t NumberOfEventsToSync,unsigned long long longTimeDiff):
+SyncBase::SyncBase(const eudaq::DetectorEvent& BOREvent):
 	m_registertProducer(0),
-	m_ProducerEventQueue(numberOfProducer),
-	m_des(nullptr),m_ver(0),lastAsyncEvent_(0),currentEvent_(0),NumberOfEventsToSync_(NumberOfEventsToSync),longTimeDiff_(longTimeDiff)
+	m_ProducerEventQueue(BOREvent.GetEventNumber()),
+	m_des(nullptr),m_ver(0),lastAsyncEvent_(0),currentEvent_(0),NumberOfEventsToSync_(1),longTimeDiff_(0)
 {
+	eudaq::Configuration conf(BOREvent.GetTag("CONFIG"));
+	conf.SetSection("EventStruct");
+
+	std::cout<<"NumberOfEvents "<<conf.Get("NumberOfEvents",100)<<std::endl;
+	std::cout<<"LongBusyTime "<<conf.Get("LongBusyTime",0)<<std::endl;
+	
+
+	longTimeDiff_=conf.Get("LongBusyTime",longTimeDiff_); //from config file
+	longTimeDiff_=BOREvent.GetTag("longTimeDelay",longTimeDiff_);//from command line
+	
+	NumberOfEventsToSync_=conf.Get("NumberOfEvents",NumberOfEventsToSync_); //from config file
+	NumberOfEventsToSync_=BOREvent.GetTag("NumberOfEvents",NumberOfEventsToSync_);//from command line
+	
+
 	//cout<<numberOfProducer<<endl;
 }
 
@@ -75,7 +90,7 @@ bool SyncBase::AddNextEventToQueue()
 	
 				std::shared_ptr<eudaq::DetectorEvent> detEvent=std::dynamic_pointer_cast<eudaq::DetectorEvent>(ev);
 				for(size_t i=0;i< detEvent->NumEvents();++i){
-				//	cout<<detEvent->GetEventPtr(i)->get_id()<<endl;
+					cout<<detEvent->GetEventPtr(i)->get_id()<<endl;
 					auto &q=getQueuefromId(i);
 					q.m_queue.push_back(detEvent->GetEventPtr(i));
 				}

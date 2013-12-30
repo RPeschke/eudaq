@@ -40,8 +40,8 @@ namespace eudaq{
 	 void clearDetectorQueue();
       /** The empty destructor. Need to add it to make it virtual.
        */
-      virtual ~SyncBase() {}
-	  SyncBase(size_t numberOfProducer,size_t NumberOfEventsToSync,unsigned long long longTimeDiff);
+	 virtual ~SyncBase() {}
+	 SyncBase(const eudaq::DetectorEvent& BOREvent);
     protected:
 
 		eventqueue_t& getQueuefromId(unsigned producerID);
