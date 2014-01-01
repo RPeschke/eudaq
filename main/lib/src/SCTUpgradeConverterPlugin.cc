@@ -23,11 +23,14 @@
 #define STARTSTREAM1 (TOTALHEADERSIZE+STREAMHEADERSIZE+STREAMESIZE)
 #define ENDSTREAM1 (STARTSTREAM1+STREAMESIZE)
 #define TOTALMODULSIZE (MODULEHEADERSIZE+2*STREAMHEADERSIZE+2*STREAMESIZE)
-
+#define STREAMSTART(streamNr) (TOTALHEADERSIZE+streamNr*(STREAMHEADERSIZE+STREAMESIZE))
+#define STREAMEND(streamNr) (STREAMSTART(streamNr)+STREAMESIZE)
 
 
 #define TLU_chlocks_per_mirco_secound 384066
-void uchar2bool(std::vector<unsigned char>& in,int lOffset,int hOffset, std::vector<bool>& out){
+
+
+void uchar2bool(const std::vector<unsigned char>& in,int lOffset,int hOffset, std::vector<bool>& out){
 	for (auto i=in.begin()+lOffset;i!=in.begin()+hOffset;++i)
 	{
 		for(int j=0;j<8;++j){
@@ -38,7 +41,39 @@ void uchar2bool(std::vector<unsigned char>& in,int lOffset,int hOffset, std::vec
 
 }
 
+
+
 namespace eudaq {
+
+	void puschDataInStandartPlane(const std::vector<unsigned char>& inputVector,int moduleNr, StandardPlane& plane){
+		int y_pos=(moduleNr-1)*2+1;
+
+		for (int streamNr=0;streamNr<2;++streamNr)
+		{
+		
+		std::vector<bool> outputStream0;
+
+
+
+
+		uchar2bool(inputVector,
+			STREAMSTART(streamNr) +(moduleNr-1)*TOTALMODULSIZE,
+			STREAMEND(streamNr)   +(moduleNr-1)*TOTALMODULSIZE,
+			outputStream0);
+
+		for (size_t i=0; i<outputStream0.size();++i)
+		{
+
+			if (outputStream0.at(i))
+			{
+				plane.PushPixel(i,y_pos+streamNr,1);
+			}
+
+
+		}
+		
+		}
+	}
 
   // The event type for which this converter plugin will be registered
   // Modify this to match your actual event type (from the Producer)
@@ -109,8 +144,7 @@ namespace eudaq {
 		   
 
 		   unsigned long long sctTime=TLU_chlocks_per_mirco_secound*ev.GetTimestamp();
-// 		   std::cout<<"tluTime-last_TLU_time: "<<tluTime-last_TLU_time<<std::endl;
-// 		    std::cout<<"sctTime-Last_DUT_Time: "<<sctTime-Last_DUT_Time<<std::endl;
+
 		   if (tluTime-last_TLU_time<longPause_time&&sctTime-Last_DUT_Time<longPause_time)
 		   {
 			   returnValue=Event_IS_Sync;
@@ -143,7 +177,7 @@ namespace eudaq {
 		  
 
 
-		   return returnValue;//hasTimeOVerlaping(sctBegin,sctEnd,tluBegin,tluEnd);
+		   return returnValue;
 	   
 	   
 	   }
@@ -155,7 +189,7 @@ namespace eudaq {
         // If the event type is used for different sensors
         // they can be differentiated here
 			
-        std::string sensortype = "example";
+        std::string sensortype = "SCT";
         // Create a StandardPlane representing one sensor plane
         int id = 0;
        
@@ -164,78 +198,26 @@ namespace eudaq {
 		 
 		 sev.SetTag("DUT_time",rawev.GetTimestamp());
 		 int noModules=(rawev.GetBlock(0).size()-EVENTHEADERSIZE)/TOTALMODULSIZE;
-	//	 std::cout<<"rawev.GetBlock(0).size(): "<<rawev.GetBlock(0).size()<<" EVENTHEADERSIZE: "<< EVENTHEADERSIZE<<" TOTALMODULSIZE: "<<TOTALMODULSIZE<<std::endl;
-	//	 std::cout<<"noModules: "<<noModules<<std::endl;
-		// std::cout<<"rawev.GetBlock(0).size(): "<<rawev.GetBlock(0).size()<<"   noModules: "<<noModules<<std::endl;
+		 
 		 std::vector<unsigned char> inputVector=rawev.GetBlock(0);
 		 int y_pos=0;
 		 StandardPlane plane(id, EVENT_TYPE, sensortype);
+		 int width = 1280, height = noModules*2;
+		 plane.SetSizeRaw(width, height);
+
 		 for (size_t k=1;k<=noModules;++k)
 		 {
-		 //Stream 0
-			 y_pos=(k-1)*2+1;
-		
-		 std::vector<bool> outputStream0;
-		//std::vector<unsigned char> dumm=rawev.GetBlock(0);
-			
-			int width = 1280, height = noModules*2;
-			plane.SetSizeRaw(width, height);
-			//std::cout<<"STARTSTREAM0+(k-1)*TOTALMODULSIZE: "<<STARTSTREAM0+(k-1)*TOTALMODULSIZE<<std::endl;
-			uchar2bool(inputVector,STARTSTREAM0
-							+(k-1)*TOTALMODULSIZE,
-							ENDSTREAM0
-							+(k-1)*TOTALMODULSIZE,outputStream0);
-			for (size_t i=0; i<outputStream0.size();++i)
-			{
-			//plane.SetPixel(i,i,1,rawev.GetBlock(0).at(i));
-				if (outputStream0.at(i))
-				{
-					plane.PushPixel(i,y_pos,1);
-				}
-			
-			
-			}
-		
-		
-			// Set the trigger ID
-			
-		 
-
-			//stream 1
-		 
-		++y_pos;
-		 std::vector<bool> outputStream1;
-		// std::cout<<"STARTSTREAM1+(k-1)*TOTALMODULSIZE: "<<STARTSTREAM1+(k-1)*TOTALMODULSIZE<< " ENDSTREAM1+(k-1)*TOTALMODULSIZE: "<<ENDSTREAM1+(k-1)*TOTALMODULSIZE<<std::endl;
-			uchar2bool(inputVector,STARTSTREAM1+(k-1)*TOTALMODULSIZE,ENDSTREAM1+(k-1)*TOTALMODULSIZE,outputStream1);
-		
-			
-			for (size_t i=0; i<outputStream1.size();++i)
-			{
-				//plane.SetPixel(i,i,1,rawev.GetBlock(0).at(i));
-				if (outputStream1.at(i))
-				{
-					plane.PushPixel(i,y_pos,1);
-				}
-
-
-			}
-
-
 	
-
-
-		 
+			 puschDataInStandartPlane(inputVector,k,plane);
+			
 		}
-	//	 auto tlu=plane.TLUEvent();
-	//	 std::cout<<"sev.get_id(): "<<sev.get_id()<<"  GetTriggerID(ev): "<<GetTriggerID(ev) <<std::endl;
-		 
+	 
 		 // Set the trigger ID
 		 plane.SetTLUEvent(GetTriggerID(ev));
-	//	  std::cout<<"sev.get_id(): "<<sev.get_id()<<"  GetTriggerID(ev): "<<GetTriggerID(ev) <<std::endl;
+
 		 // Add the plane to the StandardEvent
 		 sev.AddPlane(plane);
-		
-        // Indicate that data was successfully converted
+       // Indicate that data was successfully converted
         return true;
       }
 
