@@ -220,10 +220,10 @@ void SyncBase::makeDetectorEvent()
 
 void SyncBase::event_queue_pop()
 {
-	for (auto &q:m_ProducerEventQueue)
+	for (auto q=m_ProducerEventQueue.begin();q!=m_ProducerEventQueue.end();++q)
 	{
 		
-			q.pop();
+			q->pop();
 		
 	}
 
@@ -286,9 +286,9 @@ bool SyncBase::compareTLUwithEventQueues( std::shared_ptr<eudaq::Event>& tlu_eve
 bool SyncBase::Event_Queue_Is_Empty()
 {
 	
-	for (auto &q:m_ProducerEventQueue)
+	for (auto q=m_ProducerEventQueue.begin();q!=m_ProducerEventQueue.end();++q)
 	{
-		if (q.empty())
+		if (q->empty())
 		{
 			return true;
 		}
