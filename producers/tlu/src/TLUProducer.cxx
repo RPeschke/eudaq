@@ -3,12 +3,13 @@
 #include "eudaq/Utils.hh"
 #include "eudaq/Logger.hh"
 #include "eudaq/OptionParser.hh"
-#include "eudaq/counted_ptr.hh"
+//#include "eudaq/counted_ptr.hh"
 #include "tlu/TLUController.hh"
 #include "tlu/USBTracer.hh"
 #include <iostream>
 #include <ostream>
 #include <cctype>
+#include <memory>
 
 typedef eudaq::TLUEvent TLUEvent;
 using eudaq::to_string;
@@ -93,7 +94,7 @@ public:
 			if (m_tlu)
 				m_tlu = 0;
 			int errorhandler = param.Get("ErrorHandler", 2);
-			m_tlu = counted_ptr<TLUController>(new TLUController(errorhandler));
+			m_tlu = std::make_shared<TLUController>(errorhandler);
 
 			trigger_interval = param.Get("TriggerInterval", 0);
 			dut_mask = param.Get("DutMask", 2);
@@ -273,7 +274,7 @@ private:
 	bool TLUStarted;
 	bool TLUJustStopped;
 	unsigned long long lasttime;
-	counted_ptr<TLUController> m_tlu;
+	std::shared_ptr<TLUController> m_tlu;
 	std::string pmt_id[TLU_PMTS];
 	double pmt_gain_error[TLU_PMTS], pmt_offset_error[TLU_PMTS];
 };
