@@ -118,7 +118,7 @@ void SCTProducer::OnConfigure(const eudaq::Configuration & config) {
 
 	void SCTProducer::setTimeStamp( unsigned long long TimeStamp )
 	{
-		//ev->setTimeStamp(TimeStamp);//$$ needs to be implemented
+		ev->setTimeStamp(TimeStamp);
 	}
 
 	void SCTProducer::AddPlane2Event( unsigned plane,std::vector<unsigned char>& inputVector )

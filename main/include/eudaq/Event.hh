@@ -79,6 +79,7 @@ namespace eudaq {
       unsigned GetFlags(unsigned f = FLAG_ALL) const { return m_flags & f; }
       void SetFlags(unsigned f) { m_flags |= f; }
 	  void SetTimeStampToNow();
+	  void setTimeStamp(unsigned long long timeStamp){m_timestamp=timeStamp; }
       void ClearFlags(unsigned f = FLAG_ALL) { m_flags &= ~f; }
       virtual unsigned get_id() const = 0;
     protected:
