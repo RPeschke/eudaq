@@ -189,7 +189,7 @@ bool SyncBase::SyncNEvents( size_t N )
 		if (isAsync_)
 		{
 			isAsync_=false;
-			auto last_element=m_DetectorEventQueue.back();
+			auto last_element=m_DetectorEventQueue.back(); //buffering the last event. because this is sync.
 		
 		
 			clearDetectorQueue();
