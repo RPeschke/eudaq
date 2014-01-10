@@ -38,6 +38,3 @@ release/*
 *.orig
 extern/*
 data/*
-*.tlog
-RootInterface/Debug/*
-RootInterface/Release/*
