@@ -38,3 +38,5 @@ release/*
 *.orig
 extern/*
 data/*
+RootInterface/Release/*
+RootInterface/Debug/*
