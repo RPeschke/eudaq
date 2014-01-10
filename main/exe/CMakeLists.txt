@@ -13,6 +13,7 @@ add_executable(TestMonitor.exe        src/TestMonitor.cxx       )
 add_executable(TestProducer.exe       src/TestProducer.cxx      )
 add_executable(TestReader.exe         src/TestReader.cxx        )
 add_executable(TestRunControl.exe     src/TestRunControl.cxx    )
+add_executable(xmlProducer.exe        src/xmlProducer.cxx       )
 
 target_link_libraries(ClusterExtractor.exe   EUDAQ ${EUDAQ_THREADS_LIB})
 target_link_libraries(Converter.exe          EUDAQ ${EUDAQ_THREADS_LIB})
@@ -28,8 +29,9 @@ target_link_libraries(TestMonitor.exe        EUDAQ ${EUDAQ_THREADS_LIB})
 target_link_libraries(TestProducer.exe       EUDAQ ${EUDAQ_THREADS_LIB})
 target_link_libraries(TestReader.exe         EUDAQ ${EUDAQ_THREADS_LIB})
 target_link_libraries(TestRunControl.exe     EUDAQ ${EUDAQ_THREADS_LIB})
+target_link_libraries(xmlProducer.exe        EUDAQ ${EUDAQ_THREADS_LIB})
 
-INSTALL(TARGETS ClusterExtractor.exe Converter.exe ExampleProducer.exe ExampleReader.exe IPHCConverter.exe MagicLogBook.exe OptionExample.exe RunListener.exe TestDataCollector.exe TestLogCollector.exe TestMonitor.exe TestProducer.exe TestReader.exe TestRunControl.exe
+INSTALL(TARGETS ClusterExtractor.exe Converter.exe ExampleProducer.exe ExampleReader.exe IPHCConverter.exe MagicLogBook.exe OptionExample.exe RunListener.exe TestDataCollector.exe TestLogCollector.exe TestMonitor.exe TestProducer.exe TestReader.exe TestRunControl.exe xmlProducer.exe
   RUNTIME DESTINATION bin
   LIBRARY DESTINATION lib
   ARCHIVE DESTINATION lib)

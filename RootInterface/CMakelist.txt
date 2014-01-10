@@ -1,0 +1,24 @@
+
+
+   
+   FIND_PACKAGE( ROOT REQUIRED )
+
+
+
+if (ROOT_FOUND)
+   INCLUDE_DIRECTORIES( . include ${ROOT_INCLUDE_DIR} )
+   SET(CMAKE_SHARED_LINKER_FLAGS ${ROOT_LIBRARIES} )
+   ADD_DEFINITIONS(-DROOT_FOUND)
+endif (ROOT_FOUND)
+
+AUX_SOURCE_DIRECTORY( src library_sources )
+
+ADD_LIBRARY( RootInterface SHARED ${library_sources} )
+
+target_link_libraries( RootInterface ${EUDAQ_THREADS_LIB})
+
+INSTALL(TARGETS RootInterface
+  RUNTIME DESTINATION bin
+  LIBRARY DESTINATION lib
+  ARCHIVE DESTINATION lib
+)
