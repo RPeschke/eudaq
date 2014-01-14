@@ -24,151 +24,455 @@
 #include <time.h>
 #include "../inc/SCTProducer.h"
 
- void * workerthread_thread(void * arg){
-	 SCTProducer* sct=(SCTProducer*)arg;
-	 sct->send_start_run();
-	 return 0;
- }
-// A name to identify the raw data format of the events generated
-// Modify this to something appropriate for your producer.
- 
+#include "eudaq/Event.hh"
+#include "eudaq/Configuration.hh"
+#include "eudaq/Producer.hh"
+#include <string>
+#include <condition_variable>
+#include <memory>
+#include <chrono>
 
 
+void * workerthread_thread(void * arg);
 
 
-	// The constructor must call the eudaq::Producer constructor with the name
-	// and the runcontrol connection string, and initialize any member variables.
-	SCTProducer::SCTProducer(const std::string & name, const std::string & runcontrol)
-		: eudaq::Producer(name, runcontrol),
-		m_run(0), m_ev(0), stopping(false), done(false),started(false),SCT_thread(),m_eventPending(0) {
-			std::cout<< "hallo from sct producer"<<std::endl;
+void * senderthread_thread(void * arg){
+	auto p=(SCTProducer*)arg;
+	p->startSenderThread();
+	return 0;
+}
+//static const std::string EVENT_TYPE = "SCTupgrade";
+
+class SCTProducer::Producer_PImpl : public eudaq::Producer {
+public:
+	Producer_PImpl(const std::string & name, const std::string & runcontrol,SCTProducer* InterfaceBase): eudaq::Producer(name, runcontrol),
+		m_run(0), m_ev(0), isConfigured(false),stopping(false),readoutThread(),sendThread(),m_interface(InterfaceBase),ProducerName(name) {
+			std::cout<< "hallo from "<<name<<" producer"<<std::endl;
+		
 	}
-
 	// This gets called whenever the DAQ is configured
-void SCTProducer::OnConfigure(const eudaq::Configuration & config) {
-		std::cout << "Configuring: " << config.Name() << std::endl;
-		send_onConfigure();
+	virtual void OnConfigure(const eudaq::Configuration & config)  {
+		m_config=config;
+		isConfigured=true;
+		std::cout << "Configuring: " << getConfiguration().Name() << std::endl;
+
+		m_interface->send_onConfigure();
 		// Do any configuration of the hardware here
 		// Configuration file values are accessible as config.Get(name, default)
-		m_exampleparam = config.Get("Parameter", 0);
-		std::cout << "Example Parameter = " << m_exampleparam << std::endl;
-	//	hardware.Setup(m_exampleparam);
+
 
 		// At the end, set the status that will be displayed in the Run Control.
 		SetStatus(eudaq::Status::LVL_OK, "Configured (" + config.Name() + ")");
 	}
-
+	eudaq::Configuration& getConfiguration(){
+		return m_config;
+	}
 	// This gets called whenever a new run is started
 	// It receives the new run number as a parameter
-	void SCTProducer::OnStartRun(unsigned param) {
+virtual	void OnStartRun(unsigned param) {
 		// version 0.1 Susanne from LatencyScan.cpp
 		std::cout<<"virtual void OnStartRun(unsigned param)"<<std::endl;
+
 		m_run =param;
 		m_ev=0;
-	//	send2TST_setEventNo(0);
-		started=true;
-	//	send2TST_setTelStatus(1);
-		
-		//e->tel_status=1;
+
+
+
 		startTime_=clock();
-	
-	SCT_thread.start(workerthread_thread,this);
 
-	// It must send a BORE to the Data Collector
-	eudaq::RawDataEvent bore(eudaq::RawDataEvent::BORE(EVENT_TYPE, m_run));
-	// You can set tags on the BORE that will be saved in the data file
-	// and can be used later to help decoding
-	bore.SetTag("EXAMPLE", eudaq::to_string(m_exampleparam));
-	// Send the event to the Data Collector
-	SendEvent(bore);
+		m_interface->send_onStart();
 
-	// At the end, set the status that will be displayed in the Run Control.
-	SetStatus(eudaq::Status::LVL_OK, "Running");
+
+		readoutThread.start(workerthread_thread,m_interface);
+		sendThread.start(senderthread_thread,m_interface);
+		// It must send a BORE to the Data Collector
+		eudaq::RawDataEvent bore(eudaq::RawDataEvent::BORE(ProducerName, m_run));
+		// You can set tags on the BORE that will be saved in the data file
+		// and can be used later to help decoding
+		bore.SetTag("EXAMPLE", eudaq::to_string(m_exampleparam));
+		// Send the event to the Data Collector
+		SendEvent(bore);
+
+		// At the end, set the status that will be displayed in the Run Control.
+		SetStatus(eudaq::Status::LVL_OK, "Running");
 
 	}
 	// This gets called whenever a run is stopped
-	void SCTProducer::OnStopRun() {
-		std::cerr << "Stopping Run " << std::endl;
-		
+virtual	void OnStopRun() {
+		std::cout << "Stopping Run " << std::endl;
+		m_interface->send_onStop();
 		// Set a flag to signal to the polling loop that the run is over
-		stopping = true;
-
-		// wait until all events have been read out from the hardware
-		while (stopping) {
+		
+		setStopping(true);
+	
+		while (getStopping())
+		{
+				
+				m_queueCondition.notify_all();
 			eudaq::mSleep(20);
 		}
-		std::cerr<<m_ev << " Events Processed" << std::endl;
+
+		std::cout<<m_ev << " Events Processed" << std::endl;
 		// Send an EORE after all the real events have been sent
 		// You can also set tags on it (as with the BORE) if necessary
-		SendEvent(eudaq::RawDataEvent::EORE("Test", m_run, ++m_ev));
+		SendEvent(eudaq::RawDataEvent::EORE(ProducerName, m_run, ++m_ev));
 	}
+	void setStopping(bool newStat){
+		std::unique_lock<std::mutex> lock(m_sendQueue);
+		stopping=newStat;
+		
+	}
+	bool getStopping(){
+		std::unique_lock<std::mutex> lock(m_sendQueue);
+		return stopping;
 
+	}
 	// This gets called when the Run Control is terminating,
 	// we should also exit.
-	void SCTProducer::OnTerminate() {
+	void OnTerminate() {
 		std::cout << "Terminating..." << std::endl;
-		done = true;
+		m_interface->send_OnTerminate();
+	
 	}
 
-
-	void SCTProducer::createNewEvent()
+	void createNewEvent()
 	{
-		ev=new eudaq::RawDataEvent(EVENT_TYPE, m_run, m_ev);
+		ev= std::unique_ptr<eudaq::RawDataEvent>(new eudaq::RawDataEvent(ProducerName, m_run, m_ev));
 	}
 
-	void SCTProducer::setTimeStamp( unsigned long long TimeStamp )
+	void setTimeStamp( unsigned long long TimeStamp )
 	{
+		if (ev==nullptr)
+		{
+			createNewEvent();
+		}
 		ev->setTimeStamp(TimeStamp);
 	}
+	void setTag(const char* tag,const char* Value){
+		if (ev==nullptr)
+		{
+			createNewEvent();
+		}
 
-	void SCTProducer::AddPlane2Event( unsigned plane,std::vector<unsigned char>& inputVector )
-	{
-					ev->AddBlock(plane, inputVector);
+		ev->SetTag(tag,Value);
 	}
 
-	void SCTProducer::sendEvent()
+	void AddPlane2Event( unsigned plane,const std::vector<unsigned char>& inputVector )
 	{
-		// Send the event to the Data Collector      
-		SendEvent(*ev);
+		if (ev==nullptr)
+		{
+			createNewEvent();
+		}
 		
+		ev->AddBlock(plane, inputVector);
+	}
+
+	void sendEvent()
+	{
+		// Send the event to the Data Collector     
+		if (ev==nullptr)
+		{
+			std::cout<< " you have to create the an event before you can send it"<<std::endl;
+			return;		
+		}
+		//SendEvent(*ev);
+		push2sendQueue(std::move(ev));
 		// clean up 
-		delete ev;
 
+		ev=nullptr;
 		// Now increment the event number
+
+		++m_ev;
+	}
+	bool ConfigurationSatus(){
+		return isConfigured;
+	}
+
+	void push2sendQueue(std::unique_ptr<eudaq::RawDataEvent> ev){
+		std::unique_lock<std::mutex> lock(m_queueMutex);
+		ev_queue.push(std::move(ev));
+
+		m_queueCondition.notify_all();
+	}
+
+	void sendQueue(){
+		std::cout<<"starting Send Thread"<<std::endl;
+		std::unique_lock<std::mutex> lock(m_queueMutex);
+		int i=0;
+		clock_t last=clock();
+		clock_t current;
+		while (true)
+		{
 		
-		m_ev++;
+			if (ev_queue.empty())
+			{
+				
+				m_queueCondition.wait(lock);
+
+				if (getStopping())
+				{
+				setStopping(false);
+
+				return;
+				}
+				
+			}
+			
+			SendEvent(*ev_queue.front());
+			
+			ev_queue.pop();
+		
+			if (!(++i%1000))
+			{
+				current=clock();
+
+				std::cout<<"size of queue is: "<<ev_queue.size()<< "  frequency:  "<< 1000.0/(current-last)*CLOCKS_PER_SEC<< std::endl;
+				last=current;
+			}
+			
+		}
+		std::cout<<"end send thread"<<std::endl;
+	}
+	// This is just a dummy class representing the hardware
+	// It here basically that the example code will compile
+	// but it also generates example raw data to help illustrate the decoder
+	clock_t startTime_;
+
+	unsigned m_run, m_ev, m_exampleparam;
+	bool isConfigured,stopping;
+	eudaq::eudaqThread readoutThread,sendThread;
+	std::unique_ptr<eudaq::RawDataEvent> ev;
+	std::queue<std::unique_ptr<eudaq::RawDataEvent>> ev_queue;
+	 std::condition_variable  m_queueCondition,m_sendCondition;
+	 std::mutex m_queueMutex,m_sendQueue;
+	SCTProducer* m_interface;
+	eudaq::Configuration  m_config;
+	const std::string ProducerName;
+};
+
+void * workerthread_thread(void * arg){
+		std::cout<<"workerthread_thread(void * arg) \n";
+	SCTProducer* sct=(SCTProducer*)arg;
+	sct->send_start_run();
+	std::cout<<"workerthread_thread(void * arg): end\n ";
+	return 0;
+}
+
+
+
+
+
+
+// The constructor must call the eudaq::Producer constructor with the name
+// and the runcontrol connection string, and initialize any member variables.
+SCTProducer::SCTProducer(const char* name,const char* runcontrol):m_prod(nullptr) {
+	//		std::cout<< "hallo from sct producer"<<std::endl;
+
+	Connect2RunControl(name,runcontrol);
+}
+
+SCTProducer::SCTProducer():m_prod(nullptr)
+{
+
+}
+
+SCTProducer::~SCTProducer()
+{
+	delete m_prod;
+}
+
+
+
+
+
+
+
+
+
+
+void SCTProducer::Connect2RunControl( const char* name,const char* runcontrol )
+{  try {
+	std::string n="tcp://"+std::string(runcontrol);
+	m_prod=new Producer_PImpl(name,n,this);
+
+	}
+	catch(...){
+
+		std::cout<<"unable to connect to runcontrol: "<<runcontrol<<std::endl;
+	}
+}
+
+void SCTProducer::createNewEvent()
+{
+	try
+	{
+		m_prod->createNewEvent();
+	}
+	catch (...)
+	{
+		std::cout<<"unable to connect create new event"<<std::endl;
+	}
+	
+}
+
+void SCTProducer::setTimeStamp( unsigned long long TimeStamp )
+{
+	try{
+	m_prod->setTimeStamp(TimeStamp);
+	}
+	catch(...){
+		std::cout<<"unable to set time Stamp"<<std::endl;
+	}
+}
+
+void SCTProducer::AddPlane2Event( unsigned plane,const std::vector<unsigned char>& inputVector )
+{
+	try{
+	m_prod->AddPlane2Event(plane, inputVector);
+	}
+	catch(...){
+		std::cout<<"unable to Add plane to Event"<<std::endl;
 	}
 
-	void SCTProducer::send_onConfigure()
+
+}
+
+
+
+
+void SCTProducer::sendEvent()
+{
+	try {
+	m_prod->sendEvent();
+	}catch (...)
 	{
-		Emit("send_onConfigure()");
+		std::cout<<"unable to send Event"<<std::endl;
 	}
 
-	void SCTProducer::send_onStop()
-	{
-		Emit("send_onStop()");
+}
+
+void SCTProducer::send_onConfigure()
+{
+	Emit("send_onConfigure()");
+}
+
+void SCTProducer::send_onStop()
+{
+	Emit("send_onStop()");
+}
+
+void SCTProducer::send_start_run()
+{
+	Emit("send_start_run()");
+}
+
+
+
+
+
+
+
+void SCTProducer::send_onStart()
+{
+	Emit("send_onStart()");
+}
+
+
+void SCTProducer::send_OnTerminate()
+{
+	Emit("send_OnTerminate()");
+}
+
+
+
+bool SCTProducer::getConnectionStatus()
+{
+	return !(m_prod==nullptr);
+}
+
+int SCTProducer::getConfiguration( const char* tag, int DefaultValue )
+{
+	try{
+	return m_prod->getConfiguration().Get(tag,DefaultValue);
+	}catch(...){
+	std::cout<<"unable to getConfiguration"<<std::endl;
+	return 0;
 	}
 
-	void SCTProducer::send_start_run()
+
+}
+
+
+
+int SCTProducer::getConfiguration( const char* tag, const char* defaultValue,char* returnBuffer,Int_t sizeOfReturnBuffer )
+{
+	try{
+	std::string dummy(tag);
+	std::string ret= m_prod->getConfiguration().Get(dummy,defaultValue );
+
+	if (sizeOfReturnBuffer<ret.size()+1)
 	{
-		Emit("send_start_run()");
+		return 0;
 	}
+
+
+	strncpy(returnBuffer, ret.c_str(), ret.size());
+	returnBuffer[ret.size()]=0;
+	return ret.size();
+	}catch(...){
+	std::cout<<"unable to getConfiguration"<<std::endl;
+		return 0;
+	}
+}
+
+// 	TString SCTProducer::getConfiguration_TString( const char* tag, const char* defaultValue )
+// 	{
+// 		TString ReturnValue(m_prod->getConfiguration().Get(tag,defaultValue));
+// 		std::cout<<ReturnValue.Data()<<std::endl;
+// 		return ReturnValue;
+// 	}
+
+bool SCTProducer::ConfigurationSatus()
+{
+	try{
+	return	m_prod->ConfigurationSatus();
+	}catch(...){
+		std::cout<<"unable to get ConfigurationSatus"<<std::endl;
+		return false;
+	}
+}
+
+void SCTProducer::setTag( const char* tag,const char* Value )
+{
+	try{
+	m_prod->setTag(tag,Value);
+	}catch(...){
+
+		std::cout<<"unable setTag( "<<tag<< " , "<<Value<<" )" <<std::endl;
+	}
+
+}
+
+void SCTProducer::startSenderThread()
+{
+	m_prod->sendQueue();
+}
 
 
 // The main function that will create a Producer instance and run it
 bool StartTestbeamProducer(const char* nameIn,const char* IP_AdresseIn) {
-std::string name(nameIn);//"SCTProducer";
-std::string rctrl(IP_AdresseIn);//"tcp://127.0.0.1:44000";
+	std::string name(nameIn);//"SCTProducer";
+	std::string rctrl(IP_AdresseIn);//"tcp://127.0.0.1:44000";
 
 	try {
 		// This will look through the command-line arguments and set the options
-		
+
 		// Set the Log level for displaying messages based on command-line
-//		EUDAQ_LOG_LEVEL(level.Value());
+		//		EUDAQ_LOG_LEVEL(level.Value());
 		// Create a producer
-		SCTProducer producer(name, rctrl);
+		SCTProducer producer(name.c_str(), rctrl.c_str());
 		// And set it running...
-	//	producer.ReadoutLoop();
+		//	producer.ReadoutLoop();
 		// When the readout loop terminates, it is time to go
 		std::cout << "Quitting" << std::endl;
 	} catch (...) {

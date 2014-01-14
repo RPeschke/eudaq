@@ -40,3 +40,6 @@ extern/*
 data/*
 RootInterface/Release/*
 RootInterface/Debug/*
+rootInterfaceTest/*
+RootInterface/src/SCTDict.cxx
+RootInterface/src/SCTDict.h
