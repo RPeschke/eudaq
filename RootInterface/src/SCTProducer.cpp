@@ -36,17 +36,13 @@
 void * workerthread_thread(void * arg);
 
 
-void * senderthread_thread(void * arg){
-	auto p=(SCTProducer*)arg;
-	p->startSenderThread();
-	return 0;
-}
+
 //static const std::string EVENT_TYPE = "SCTupgrade";
 
 class SCTProducer::Producer_PImpl : public eudaq::Producer {
 public:
 	Producer_PImpl(const std::string & name, const std::string & runcontrol,SCTProducer* InterfaceBase): eudaq::Producer(name, runcontrol),
-		m_run(0), m_ev(0), isConfigured(false),stopping(false),readoutThread(),sendThread(),m_interface(InterfaceBase),ProducerName(name) {
+		m_run(0), m_ev(0), isConfigured(false),readoutThread(),m_interface(InterfaceBase),ProducerName(name) {
 			std::cout<< "hallo from "<<name<<" producer"<<std::endl;
 		
 	}
@@ -84,7 +80,7 @@ virtual	void OnStartRun(unsigned param) {
 
 
 		readoutThread.start(workerthread_thread,m_interface);
-		sendThread.start(senderthread_thread,m_interface);
+
 		// It must send a BORE to the Data Collector
 		eudaq::RawDataEvent bore(eudaq::RawDataEvent::BORE(ProducerName, m_run));
 		// You can set tags on the BORE that will be saved in the data file
@@ -103,30 +99,14 @@ virtual	void OnStopRun() {
 		m_interface->send_onStop();
 		// Set a flag to signal to the polling loop that the run is over
 		
-		setStopping(true);
-	
-		while (getStopping())
-		{
-				
-				m_queueCondition.notify_all();
-			eudaq::mSleep(20);
-		}
+
 
 		std::cout<<m_ev << " Events Processed" << std::endl;
 		// Send an EORE after all the real events have been sent
 		// You can also set tags on it (as with the BORE) if necessary
 		SendEvent(eudaq::RawDataEvent::EORE(ProducerName, m_run, ++m_ev));
 	}
-	void setStopping(bool newStat){
-		std::unique_lock<std::mutex> lock(m_sendQueue);
-		stopping=newStat;
-		
-	}
-	bool getStopping(){
-		std::unique_lock<std::mutex> lock(m_sendQueue);
-		return stopping;
 
-	}
 	// This gets called when the Run Control is terminating,
 	// we should also exit.
 	void OnTerminate() {
@@ -175,11 +155,11 @@ virtual	void OnStopRun() {
 			std::cout<< " you have to create the an event before you can send it"<<std::endl;
 			return;		
 		}
-		//SendEvent(*ev);
-		push2sendQueue(std::move(ev));
+		SendEvent(*ev);
+		//push2sendQueue(std::move(ev));
 		// clean up 
-
-		ev=nullptr;
+		ev.reset(nullptr);
+		
 		// Now increment the event number
 
 		++m_ev;
@@ -188,63 +168,19 @@ virtual	void OnStopRun() {
 		return isConfigured;
 	}
 
-	void push2sendQueue(std::unique_ptr<eudaq::RawDataEvent> ev){
-		std::unique_lock<std::mutex> lock(m_queueMutex);
-		ev_queue.push(std::move(ev));
 
-		m_queueCondition.notify_all();
-	}
 
-	void sendQueue(){
-		std::cout<<"starting Send Thread"<<std::endl;
-		std::unique_lock<std::mutex> lock(m_queueMutex);
-		int i=0;
-		clock_t last=clock();
-		clock_t current;
-		while (true)
-		{
-		
-			if (ev_queue.empty())
-			{
-				
-				m_queueCondition.wait(lock);
 
-				if (getStopping())
-				{
-				setStopping(false);
-
-				return;
-				}
-				
-			}
-			
-			SendEvent(*ev_queue.front());
-			
-			ev_queue.pop();
-		
-			if (!(++i%1000))
-			{
-				current=clock();
-
-				std::cout<<"size of queue is: "<<ev_queue.size()<< "  frequency:  "<< 1000.0/(current-last)*CLOCKS_PER_SEC<< std::endl;
-				last=current;
-			}
-			
-		}
-		std::cout<<"end send thread"<<std::endl;
-	}
 	// This is just a dummy class representing the hardware
 	// It here basically that the example code will compile
 	// but it also generates example raw data to help illustrate the decoder
 	clock_t startTime_;
 
 	unsigned m_run, m_ev, m_exampleparam;
-	bool isConfigured,stopping;
-	eudaq::eudaqThread readoutThread,sendThread;
+	bool isConfigured;
+	eudaq::eudaqThread readoutThread;
 	std::unique_ptr<eudaq::RawDataEvent> ev;
-	std::queue<std::unique_ptr<eudaq::RawDataEvent>> ev_queue;
-	 std::condition_variable  m_queueCondition,m_sendCondition;
-	 std::mutex m_queueMutex,m_sendQueue;
+		
 	SCTProducer* m_interface;
 	eudaq::Configuration  m_config;
 	const std::string ProducerName;
@@ -453,10 +389,7 @@ void SCTProducer::setTag( const char* tag,const char* Value )
 
 }
 
-void SCTProducer::startSenderThread()
-{
-	m_prod->sendQueue();
-}
+
 
 
 // The main function that will create a Producer instance and run it

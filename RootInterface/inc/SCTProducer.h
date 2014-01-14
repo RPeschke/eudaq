@@ -34,7 +34,7 @@ public:
 	void Connect2RunControl(const char* name,const char* runcontrol);
 	bool getConnectionStatus();
 
-	void startSenderThread();
+	
 
 
 
