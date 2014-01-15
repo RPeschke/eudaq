@@ -48,6 +48,7 @@ public:
 	void setTimeStamp(unsigned long long TimeStamp);
 	void setTag(const char* tag,const char* Value);
 	void AddPlane2Event(unsigned plane,const std::vector<unsigned char>& inputVector);
+	void AddPlane2Event(unsigned plane,const bool* inputVector,size_t Elements);
 	void sendEvent();
 
 	// signals
@@ -58,7 +59,11 @@ public:
 	void send_OnTerminate();  //sync 
 	
 
+
+
 	//status flags
+	void checkStatus();
+
 	bool getOnStart();
 	void setOnStart(bool newStat);
 

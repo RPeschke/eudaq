@@ -41,8 +41,8 @@ void * workerthread_thread(void * arg);
 
 class SCTProducer::Producer_PImpl : public eudaq::Producer {
 public:
-	Producer_PImpl(const std::string & name, const std::string & runcontrol,SCTProducer* InterfaceBase): eudaq::Producer(name, runcontrol),
-		m_run(0), m_ev(0), isConfigured(false),readoutThread(),m_interface(InterfaceBase),ProducerName(name) {
+	Producer_PImpl(const std::string & name, const std::string & runcontrol): eudaq::Producer(name, runcontrol),
+		m_run(0), m_ev(0), isConfigured(false),readoutThread(),ProducerName(name) {
 			std::cout<< "hallo from "<<name<<" producer"<<std::endl;
 		
 	}
@@ -52,7 +52,15 @@ public:
 		isConfigured=true;
 		std::cout << "Configuring: " << getConfiguration().Name() << std::endl;
 
-		m_interface->send_onConfigure();
+		//m_interface->send_onConfigure();
+
+		setOnconfigure(true);
+		int j=0;
+		while (getOnConfigure()&&++j<500)
+		{
+			eudaq::mSleep(20);
+		}
+		setOnconfigure(false);
 		// Do any configuration of the hardware here
 		// Configuration file values are accessible as config.Get(name, default)
 
@@ -76,10 +84,16 @@ virtual	void OnStartRun(unsigned param) {
 
 		startTime_=clock();
 
-		m_interface->send_onStart();
+	//	m_interface->send_onStart();
 
-
-		readoutThread.start(workerthread_thread,m_interface);
+		setOnStart(true);
+		int j=0;
+		while (getOnStart()&&++j<500)
+		{
+			eudaq::mSleep(20);
+		}
+		setOnStart(false);
+		
 
 		// It must send a BORE to the Data Collector
 		eudaq::RawDataEvent bore(eudaq::RawDataEvent::BORE(ProducerName, m_run));
@@ -95,8 +109,16 @@ virtual	void OnStartRun(unsigned param) {
 	}
 	// This gets called whenever a run is stopped
 virtual	void OnStopRun() {
-		std::cout << "Stopping Run " << std::endl;
-		m_interface->send_onStop();
+		std::cout << "virtual void OnStopRun()" << std::endl;
+	//	m_interface->send_onStop();
+
+		setOnStop(true);
+		int j=0;
+		while (getOnStop()&&++j<500)
+		{
+			eudaq::mSleep(20);
+		}
+		setOnStop(false);
 		// Set a flag to signal to the polling loop that the run is over
 		
 
@@ -109,10 +131,16 @@ virtual	void OnStopRun() {
 
 	// This gets called when the Run Control is terminating,
 	// we should also exit.
-	void OnTerminate() {
-		std::cout << "Terminating..." << std::endl;
-		m_interface->send_OnTerminate();
-	
+virtual	void OnTerminate() {
+		std::cout << "virtual void OnTerminate()" << std::endl;
+		//m_interface->send_OnTerminate();
+		setOnTerminate(true);
+		int j=0;
+		while (getOnTerminate()&&++j<500)
+		{
+			eudaq::mSleep(20);
+		}
+		setOnTerminate(false);
 	}
 
 	void createNewEvent()
@@ -217,7 +245,7 @@ virtual	void OnStopRun() {
 	eudaq::eudaqThread readoutThread;
 	std::unique_ptr<eudaq::RawDataEvent> ev;
 		
-	SCTProducer* m_interface;
+	
 	eudaq::Configuration  m_config;
 	const std::string ProducerName;
 
@@ -234,18 +262,37 @@ virtual	void OnStopRun() {
 
 };
 
-void * workerthread_thread(void * arg){
-		std::cout<<"workerthread_thread(void * arg) \n";
-	SCTProducer* sct=(SCTProducer*)arg;
-	sct->send_start_run();
-	std::cout<<"workerthread_thread(void * arg): end\n ";
-	return 0;
+
+
+
+
+
+
+
+inline	void bool2uchar1(const bool* inBegin,const bool* inEnd,std::vector<unsigned char>& out){
+
+	int j=0;
+	unsigned char dummy=0;
+	//bool* d1=&in[0];
+	size_t size=(inEnd-inBegin);
+	if (size%8)
+	{
+		size+=8;
+	}
+	size/=8;
+	out.reserve(size);
+	for (auto i=inBegin;i<inEnd;++i)
+	{
+		dummy+=(unsigned char)(*i)<<(j%8);
+
+		if ((j%8)==7)
+		{
+			out.push_back(dummy);
+			dummy=0;
+		}
+		++j;
+	}
 }
-
-
-
-
-
 
 // The constructor must call the eudaq::Producer constructor with the name
 // and the runcontrol connection string, and initialize any member variables.
@@ -277,7 +324,7 @@ SCTProducer::~SCTProducer()
 void SCTProducer::Connect2RunControl( const char* name,const char* runcontrol )
 {  try {
 	std::string n="tcp://"+std::string(runcontrol);
-	m_prod=new Producer_PImpl(name,n,this);
+	m_prod=new Producer_PImpl(name,n);
 
 	}
 	catch(...){
@@ -320,6 +367,30 @@ void SCTProducer::AddPlane2Event( unsigned plane,const std::vector<unsigned char
 
 
 }
+
+
+ void SCTProducer::AddPlane2Event(unsigned plane,const bool* inputVector,size_t Elements){
+
+	 try{
+		 std::vector<unsigned char> out;
+		 bool2uchar1(inputVector ,inputVector+Elements,out);
+		 m_prod->AddPlane2Event(plane, out);
+	 }
+	 catch(...){
+		 std::cout<<"unable to Add plane to Event"<<std::endl;
+	 }
+ }
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -477,21 +548,31 @@ void SCTProducer::setOnTerminate( bool newStat )
 	m_prod->setOnTerminate(newStat);
 }
 
+void SCTProducer::checkStatus()
+{
+	if(getOnStart()){
+		
+		send_onStart();
+		setOnStart(false);
+	}
 
+	if(getOnConfigure()){
+		
+		send_onConfigure();
+		setOnconfigure(false);
+	}
 
+	if(getOnStop()){
+		send_onStop();
+		
+		setOnStop(false);
+	}
 
-
-
-
-
-
-
-
-
-
-
-
-
+	if(getOnTerminate()){
+		send_OnTerminate();
+		setOnTerminate(false);
+	}
+}
 
 
 
