@@ -6,6 +6,7 @@
 #include "RQ_OBJECT.h"
 #include "RTypes.h"
 
+
 #ifndef  __CINT__
 #define  DLLEXPORT  __declspec( dllexport ) 
 #else
@@ -22,7 +23,6 @@ class DLLEXPORT SCTProducer
 {
 	RQ_OBJECT("SCTProducer")
 public:
-
 
 	// The constructor must call the eudaq::Producer constructor with the name
 	// and the runcontrol connection string, and initialize any member variables.
@@ -58,8 +58,23 @@ public:
 	void send_OnTerminate();  //sync 
 	
 
+	//status flags
+	bool getOnStart();
+	void setOnStart(bool newStat);
+
+	bool getOnConfigure();
+	void setOnconfigure(bool newStat);
+
+	bool getOnStop();
+	void setOnStop(bool newStat);
+
+	bool getOnTerminate();
+	void setOnTerminate(bool newStat);
+
+private:
 	class Producer_PImpl;
 	Producer_PImpl* m_prod;
+
 	ClassDef(SCTProducer,1)
 };
 

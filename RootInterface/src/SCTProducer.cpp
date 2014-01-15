@@ -168,6 +168,42 @@ virtual	void OnStopRun() {
 		return isConfigured;
 	}
 
+	bool getOnStart(){
+		 std::unique_lock<std::mutex> lck (m_stautus_change);
+		 return onStart_;
+	}
+	void setOnStart(bool newStat){
+		 std::unique_lock<std::mutex> lck (m_stautus_change);
+		 onStart_=newStat;
+	}
+
+	bool getOnConfigure(){
+		 std::unique_lock<std::mutex> lck (m_stautus_change);
+		 return onConfigure_;
+	}
+	void setOnconfigure(bool newStat){
+		 std::unique_lock<std::mutex> lck (m_stautus_change);
+		onConfigure_=newStat;
+	}
+
+	bool getOnStop(){
+		std::unique_lock<std::mutex> lck (m_stautus_change);
+		 return onStop_;
+
+	}
+	void setOnStop(bool newStat){
+		std::unique_lock<std::mutex> lck (m_stautus_change);
+		onStop_=newStat;
+	}
+
+	bool getOnTerminate(){
+		std::unique_lock<std::mutex> lck (m_stautus_change);
+		return OnTerminate_;
+	}
+	void setOnTerminate(bool newStat){
+		std::unique_lock<std::mutex> lck (m_stautus_change);
+		OnTerminate_=newStat;
+	}
 
 
 
@@ -184,6 +220,18 @@ virtual	void OnStopRun() {
 	SCTProducer* m_interface;
 	eudaq::Configuration  m_config;
 	const std::string ProducerName;
+
+	
+	
+	std::mutex m_stautus_change;
+
+
+
+	bool onStart_,
+		onConfigure_,
+		onStop_,
+		OnTerminate_;
+
 };
 
 void * workerthread_thread(void * arg){
@@ -388,6 +436,62 @@ void SCTProducer::setTag( const char* tag,const char* Value )
 	}
 
 }
+
+bool SCTProducer::getOnStart()
+{
+	return m_prod->getOnStart();
+}
+
+void SCTProducer::setOnStart( bool newStat )
+{
+	m_prod->setOnStart(newStat);
+}
+
+bool SCTProducer::getOnConfigure()
+{
+	return m_prod->getOnConfigure();
+}
+
+void SCTProducer::setOnconfigure( bool newStat )
+{
+		m_prod->setOnconfigure(newStat);
+}
+
+bool SCTProducer::getOnStop()
+{
+	return m_prod->getOnStop();
+}
+
+void SCTProducer::setOnStop( bool newStat )
+{
+	m_prod->setOnStop(newStat);
+}
+
+bool SCTProducer::getOnTerminate()
+{
+	return m_prod->getOnTerminate();
+}
+
+void SCTProducer::setOnTerminate( bool newStat )
+{
+	m_prod->setOnTerminate(newStat);
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
