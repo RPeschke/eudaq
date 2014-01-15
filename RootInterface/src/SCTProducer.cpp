@@ -156,6 +156,14 @@ virtual	void OnTerminate() {
 		}
 		ev->setTimeStamp(TimeStamp);
 	}
+
+	void setTimeStamp2Now(){
+		if (ev==nullptr)
+		{
+			createNewEvent();
+		}
+		ev->SetTimeStampToNow();
+	}
 	void setTag(const char* tag,const char* Value){
 		if (ev==nullptr)
 		{
@@ -356,6 +364,15 @@ void SCTProducer::setTimeStamp( unsigned long long TimeStamp )
 	}
 }
 
+void SCTProducer::setTimeStamp2Now()
+{
+	m_prod->setTimeStamp2Now();
+}
+
+
+
+
+
 void SCTProducer::AddPlane2Event( unsigned plane,const std::vector<unsigned char>& inputVector )
 {
 	try{
@@ -382,19 +399,7 @@ void SCTProducer::AddPlane2Event( unsigned plane,const std::vector<unsigned char
  }
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
+ 
 void SCTProducer::sendEvent()
 {
 	try {
@@ -420,11 +425,6 @@ void SCTProducer::send_start_run()
 {
 	Emit("send_start_run()");
 }
-
-
-
-
-
 
 
 void SCTProducer::send_onStart()
@@ -554,28 +554,28 @@ void SCTProducer::checkStatus()
 		
 		send_onStart();
 		setOnStart(false);
+		eudaq::mSleep(20);
 	}
 
 	if(getOnConfigure()){
 		
 		send_onConfigure();
 		setOnconfigure(false);
+		eudaq::mSleep(20);
 	}
 
 	if(getOnStop()){
 		send_onStop();
-		
 		setOnStop(false);
+		eudaq::mSleep(20);
 	}
 
 	if(getOnTerminate()){
 		send_OnTerminate();
 		setOnTerminate(false);
+		eudaq::mSleep(20);
 	}
 }
-
-
-
 
 // The main function that will create a Producer instance and run it
 bool StartTestbeamProducer(const char* nameIn,const char* IP_AdresseIn) {
