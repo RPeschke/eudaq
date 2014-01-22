@@ -43,3 +43,5 @@ RootInterface/Debug/*
 rootInterfaceTest/*
 RootInterface/src/SCTDict.cxx
 RootInterface/src/SCTDict.h
+OfflineMonitor/Debug/*
+OfflineMonitor/Release/*

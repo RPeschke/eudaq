@@ -191,7 +191,7 @@ namespace eudaq {
 			
         std::string sensortype = "SCT";
         // Create a StandardPlane representing one sensor plane
-        int id = 0;
+        int id = 8;
        
         // Set the number of pixels
 		 const RawDataEvent & rawev = dynamic_cast<const RawDataEvent &>(ev);
@@ -214,7 +214,7 @@ namespace eudaq {
 	 
 		 // Set the trigger ID
 		 plane.SetTLUEvent(GetTriggerID(ev));
-
+		 
 		 // Add the plane to the StandardEvent
 		 sev.AddPlane(plane);
        // Indicate that data was successfully converted
