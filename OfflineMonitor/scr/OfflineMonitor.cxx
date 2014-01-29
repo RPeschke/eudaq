@@ -36,6 +36,7 @@ int main(int, char ** argv) {
 	  writer.open_confFile(confFile.Value().c_str());//"C:\\Users\\Argg\\Documents\\GitHub\\eudaqCmake\\Debug\\configuration.xml");
 	  writer.open_outFile("test.root");
 	  writer.createHistograms();
+	  
 //      writer->SetFilePattern(opat.Value());
  //     writer->StartRun(reader.RunNumber());
 	  int event_nr=0;

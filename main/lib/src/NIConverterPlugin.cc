@@ -76,14 +76,15 @@ namespace eudaq {
 		 auto triggerID=ev.GetEventNumber();//GetTriggerID(ev);
 		 auto tlu_triggerID=tlu.GetEventNumber();
 	//	 std::cout<< "triggerID "<<triggerID<<"  tlu_triggerID: "<<tlu_triggerID<<std::endl;
-		 if (triggerID==tlu_triggerID)
-		 {
-			return Event_IS_Sync;	
-		 }else if (triggerID>tlu_triggerID)
-		 {
-			 return Event_IS_EARLY;
-		 }
-		 return Event_IS_LATE;
+		 return compareTLU2DUT(tlu_triggerID,triggerID);
+// 		 if (triggerID==tlu_triggerID)
+// 		 {
+// 			return Event_IS_Sync;	
+// 		 }else if (triggerID>tlu_triggerID)
+// 		 {
+// 			 return Event_IS_EARLY;
+// 		 }
+// 		 return Event_IS_LATE;
 		 
    }
 
