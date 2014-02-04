@@ -32,10 +32,10 @@ int main(int, char ** argv) {
 
     for (size_t i = 0; i < op.NumArgs(); ++i) {
       eudaq::FileReader reader(op.GetArg(i), ipat.Value(), sync.IsSet(),syncEvents.Value(),syncDelay.Value());
-      mCorrelations writer;
-	  writer.open_confFile(confFile.Value().c_str());//"C:\\Users\\Argg\\Documents\\GitHub\\eudaqCmake\\Debug\\configuration.xml");
-	  writer.open_outFile("test.root");
-	  writer.createHistograms();
+      mCorrelations correlator;
+	  correlator.open_confFile(confFile.Value().c_str());
+	  correlator.open_outFile("test.root");
+	  correlator.createHistograms();
 	  
 //      writer->SetFilePattern(opat.Value());
  //     writer->StartRun(reader.RunNumber());
@@ -43,7 +43,7 @@ int main(int, char ** argv) {
       do {
   
 
-          if (!writer.ProcessDetectorEvent(reader.GetDetectorEvent()))
+          if (!correlator.ProcessDetectorEvent(reader.GetDetectorEvent()))
           {
 			  break;
           }

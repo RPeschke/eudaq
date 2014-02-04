@@ -74,7 +74,16 @@ namespace eudaq {
 		
 		}
 	}
+	void pushHeaderInStundartplane(const std::vector<unsigned char>& inputVector, StandardPlane& plane){
 
+		int trigger_id=eudaq::getlittleendian<int>(&inputVector[0]);
+		short scan_type=eudaq::getlittleendian<short>(&inputVector[4]);
+		float scan_current=static_cast<float>(eudaq::getlittleendian<int>(&inputVector[6]))/1000;
+	}
+	int GetTriggerCounter(const eudaq::RawDataEvent &ev){
+			int trigger_id=eudaq::getlittleendian<int>(&(ev.GetBlock(0).at(0)));
+			return trigger_id;
+	}
   // The event type for which this converter plugin will be registered
   // Modify this to match your actual event type (from the Producer)
   static const char* EVENT_TYPE = "SCTupgrade";
@@ -141,7 +150,9 @@ namespace eudaq {
 	   virtual int IsSyncWithTLU(eudaq::Event const & ev,eudaq::TLUEvent const & tlu) const {
 		   int returnValue=Event_IS_Sync;
 		   unsigned long long tluTime=tlu.GetTimestamp();
-		   
+	
+		   	 const RawDataEvent & rawev = dynamic_cast<const RawDataEvent &>(ev);
+			 int trigger_id=GetTriggerCounter(rawev );
 
 		   unsigned long long sctTime=TLU_chlocks_per_mirco_secound*ev.GetTimestamp();
 
@@ -214,7 +225,7 @@ namespace eudaq {
 	 
 		 // Set the trigger ID
 		 plane.SetTLUEvent(GetTriggerID(ev));
-		 
+		 pushHeaderInStundartplane(inputVector,plane);
 		 // Add the plane to the StandardEvent
 		 sev.AddPlane(plane);
        // Indicate that data was successfully converted
