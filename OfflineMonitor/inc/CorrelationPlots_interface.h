@@ -7,7 +7,7 @@
 class CorrelationPlots_interface{
 public:
 	CorrelationPlots_interface(rapidxml::xml_node<> *node);
-	virtual ~CorrelationPlots_interface(){}
+	virtual ~CorrelationPlots_interface();
 	bool registerPlanes(std::vector<plane>& planes);
 
 	virtual void processEntry()=0;

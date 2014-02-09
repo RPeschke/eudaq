@@ -2,6 +2,7 @@
 #include "Planes.h"
 #include "TH2.h"
 #include <string>
+#include <iostream>
 #include "XMLextractorHelpers.h"
 using namespace std;
 
@@ -121,6 +122,11 @@ void CorrelationPlots_interface::extractCutOffCondition( rapidxml::xml_node<> *c
 			node=node->next_sibling("condition");
 		}
 	}
+}
+
+CorrelationPlots_interface::~CorrelationPlots_interface()
+{
+	std::cout<<"CorrelationPlots_interface::~CorrelationPlots_interface()"<<std::endl;
 }
 
 

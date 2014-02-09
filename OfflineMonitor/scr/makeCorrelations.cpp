@@ -67,7 +67,7 @@ void mCorrelations::open_confFile( const char * InFileName )
 	node = doc.first_node("configuration")->first_node("Correlations");
 	register_CorrelationsVsTime(node);
 
-
+	register_planes2Correlation();
 }
 
 void mCorrelations::open_outFile( const char * outFileName )
@@ -190,13 +190,10 @@ void mCorrelations::fillCorrelations()
 
 		for (auto &c:m_corr)
 		{
-			c.processEvent();
+			c->processEvent();
 		}
 
-		for (auto &cT:m_corrVStime)
-		{
-			cT.processEvent();
-		}
+
 
 }
 
@@ -278,6 +275,11 @@ mCorrelations::~mCorrelations()
 	delete OutPutFile;
 	}
 
+	while (!m_corr.empty())
+	{
+		delete m_corr.back();
+		m_corr.pop_back();
+	}
 }
 
 void mCorrelations::createHistograms()
@@ -289,12 +291,9 @@ void mCorrelations::createHistograms()
 
 	for (auto& c:m_corr)
 	{
-		c.createHistogram();
+		c->createHistogram();
 	}
-	for(auto& cT:m_corrVStime){
-		cT.createHistogram();
 
-	}
 }
 
 void mCorrelations::CalibrateIgnore()
@@ -330,36 +329,34 @@ void mCorrelations::register_Correlations( rapidxml::xml_node<> *correlationsNod
 	
 	for (	auto	node = correlationsNode->first_node("Correlation");node;node=node->next_sibling("Correlation"))
 	{
-		m_corr.emplace_back(node);
+		m_corr.push_back(new CorrelationPlot(node));
 	}
-	for(auto &corr:m_corr){
 
-		if (!corr.registerPlanes(m_planes))
-		{
-			std::cout <<"unable to register Plane: "<< corr.m_planeID0 << " or " << corr.m_planeID1 <<std::endl;
-			throw("unable to register Plane");
-		}
 
-	}
 }
 
 void mCorrelations::register_CorrelationsVsTime( rapidxml::xml_node<> *correlationsTimeNode )
 {
 	for (	auto	node = correlationsTimeNode->first_node("CorrelationVSTime");node;node=node->next_sibling("CorrelationVSTime"))
 	{
-		m_corrVStime.emplace_back(node);
+		m_corr.push_back(new CorrelationVSTimePlots(node));
 	}
-	for(auto &corr:m_corrVStime){
 
-		if (!corr.registerPlanes(m_planes))
+
+
+}
+
+void mCorrelations::register_planes2Correlation()
+{
+	for(auto &corr:m_corr){
+
+		if (!corr->registerPlanes(m_planes))
 		{
-			std::cout <<"unable to register Plane: "<< corr.m_planeID0 << " or " << corr.m_planeID1 <<std::endl;
+			std::cout <<"unable to register Plane: "<< corr->m_planeID0 << " or " << corr->m_planeID1 <<std::endl;
 			throw("unable to register Plane");
 		}
 
 	}
-
-
 }
 
 bool ignorRegin( double Value,const std::vector<double> & beginVec,const std::vector<double> & endVec )

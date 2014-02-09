@@ -8,7 +8,7 @@
 class CorrelationVSTimePlots: public CorrelationPlots_interface{
 public:
 	CorrelationVSTimePlots(rapidxml::xml_node<> *node);
-	~CorrelationVSTimePlots(){}
+	~CorrelationVSTimePlots();
 
 	virtual void createHistogram();
 	virtual void processEntry();

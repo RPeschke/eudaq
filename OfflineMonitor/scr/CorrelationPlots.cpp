@@ -2,6 +2,7 @@
 #include "Planes.h"
 #include "TH2.h"
 #include <string>
+#include <iostream>
 #include "XMLextractorHelpers.h"
 using namespace std;
 
@@ -80,6 +81,11 @@ void CorrelationPlot::processEntry()
 		m_corr->Fill(x,y);
 	}
 
+}
+
+CorrelationPlot::~CorrelationPlot()
+{
+	std::cout<<"CorrelationPlot::~CorrelationPlot()"<<std::endl;
 }
 
 

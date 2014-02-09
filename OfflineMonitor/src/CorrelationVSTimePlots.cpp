@@ -2,6 +2,7 @@
 #include "CorrelationPlots_interface.h"
 #include "TH2D.h"
 #include <string>
+#include <iostream>
 
 using namespace std;
 
@@ -65,4 +66,9 @@ void CorrelationVSTimePlots::processEntry()
 CorrelationVSTimePlots::CorrelationVSTimePlots( rapidxml::xml_node<> *node ) :CorrelationPlots_interface(node),m_corr(nullptr)
 {
 
+}
+
+CorrelationVSTimePlots::~CorrelationVSTimePlots()
+{
+	std::cout<<"CorrelationVSTimePlots::~CorrelationVSTimePlots()"<<endl;
 }

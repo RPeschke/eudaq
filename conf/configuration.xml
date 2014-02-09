@@ -1,7 +1,7 @@
 <configuration>
   <events>
     <CalibrationEvents No="1000"/>
-    <numberOfEvents No="20000"/>
+    <numberOfEvents No="2000"/>
   </events>
   
   <planes>

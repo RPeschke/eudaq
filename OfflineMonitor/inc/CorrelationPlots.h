@@ -13,7 +13,7 @@ class TH2D;
 class CorrelationPlot:public CorrelationPlots_interface{
 public:
 	CorrelationPlot(rapidxml::xml_node<> *node);
-	~CorrelationPlot(){}
+	~CorrelationPlot();
 	virtual void createHistogram();
 	virtual void processEntry();
 private:
