@@ -12,6 +12,7 @@
 #include <sstream>
 #include "Planes.h"
 #include "CorrelationPlots.h"
+#include "CorrelationVSTimePlots.h"
 #include "..\..\main\include\eudaq\PluginManager.hh"
 #include "..\..\main\include\eudaq\StandardEvent.hh"
 
@@ -55,28 +56,17 @@ void mCorrelations::open_confFile( const char * InFileName )
 	doc.parse<0>(f.data());
 	NumberOfEvents=stoi(doc.first_node("configuration")->first_node("events")->first_node("numberOfEvents")->first_attribute("No")->value());
 	m_CalibrationEvents=stoi(doc.first_node("configuration")->first_node("events")->first_node("CalibrationEvents")->first_attribute("No")->value());
-	auto node = doc.first_node("configuration")->first_node("planes")->first_node("plane");
 	
-	m_planes.emplace_back(node);
-	for (node = node->next_sibling("plane");node;node=node->next_sibling("plane"))
-	{
-		m_planes.emplace_back(node);
-	}
-	node = doc.first_node("configuration")->first_node("Correlations")->first_node("Correlation");
-	m_corr.emplace_back(node);
-	for (node = node->next_sibling("Correlation");node;node=node->next_sibling("Correlation"))
-	{
-		m_corr.emplace_back(node);
-	}
-	for(auto &corr:m_corr){
+	auto node = doc.first_node("configuration")->first_node("planes");
+	register_planes(node);
+	
+	node = doc.first_node("configuration")->first_node("Correlations");
+	register_Correlations(node);
 
-		if (!corr.registerPlanes(m_planes))
-		{
-			std::cout <<"unable to register Plane: "<< corr.m_planeID0 << " or " << corr.m_planeID1 <<std::endl;
-			throw("unable to register Plane");
-		}
-		
-	}
+
+	node = doc.first_node("configuration")->first_node("Correlations");
+	register_CorrelationsVsTime(node);
+
 
 }
 
@@ -128,11 +118,13 @@ bool mCorrelations::ProcessDetectorEvent( const eudaq::DetectorEvent & ev)
 {
 	if (ev.IsBORE()) {
 		eudaq::PluginManager::Initialize(ev);
+		m_event_id=0;
 		return true;
 	} else if (ev.IsEORE()) {
 
 		return false;
 	}
+	++m_event_id;
 	clear();
 	StandardEvent sev = eudaq::PluginManager::ConvertToStandard(ev);
 	for (size_t iplane = 0; iplane < sev.NumPlanes(); ++iplane) {
@@ -149,7 +141,7 @@ bool mCorrelations::ProcessDetectorEvent( const eudaq::DetectorEvent & ev)
 			m_hit_x = plane.GetX(ipix);
 			m_hit_y= plane.GetY(ipix);
 			
-			m_event_id = sev.GetEventNumber();                  
+			//m_event_id = sev.GetEventNumber();                  
 			if (m_event_id>NumberOfEvents)
 			{
 				return false;
@@ -162,7 +154,11 @@ bool mCorrelations::ProcessDetectorEvent( const eudaq::DetectorEvent & ev)
 	{
 		CalibrateIgnore();
 	}
-	fillCorrelations();
+	if (m_event_id>m_CalibrationEvents)
+	{
+		fillCorrelations();
+	}
+	
 	return true;
 }
 
@@ -191,13 +187,16 @@ void mCorrelations::ProcessCurrentEntry()
 
 void mCorrelations::fillCorrelations()
 {
-	if (m_event_id>m_CalibrationEvents)
-	{
+
 		for (auto &c:m_corr)
 		{
 			c.processEvent();
 		}
-	}
+
+		for (auto &cT:m_corrVStime)
+		{
+			cT.processEvent();
+		}
 
 }
 
@@ -292,6 +291,10 @@ void mCorrelations::createHistograms()
 	{
 		c.createHistogram();
 	}
+	for(auto& cT:m_corrVStime){
+		cT.createHistogram();
+
+	}
 }
 
 void mCorrelations::CalibrateIgnore()
@@ -308,6 +311,55 @@ void mCorrelations::clear()
 	{
 		p.clear();
 	}
+}
+
+void mCorrelations::register_planes( rapidxml::xml_node<> *planesNode )
+{
+	
+
+	
+	for (auto node =planesNode->first_node("plane");node;node=node->next_sibling("plane"))
+	{
+		m_planes.emplace_back(node);
+	}
+}
+
+void mCorrelations::register_Correlations( rapidxml::xml_node<> *correlationsNode )
+{
+
+	
+	for (	auto	node = correlationsNode->first_node("Correlation");node;node=node->next_sibling("Correlation"))
+	{
+		m_corr.emplace_back(node);
+	}
+	for(auto &corr:m_corr){
+
+		if (!corr.registerPlanes(m_planes))
+		{
+			std::cout <<"unable to register Plane: "<< corr.m_planeID0 << " or " << corr.m_planeID1 <<std::endl;
+			throw("unable to register Plane");
+		}
+
+	}
+}
+
+void mCorrelations::register_CorrelationsVsTime( rapidxml::xml_node<> *correlationsTimeNode )
+{
+	for (	auto	node = correlationsTimeNode->first_node("CorrelationVSTime");node;node=node->next_sibling("CorrelationVSTime"))
+	{
+		m_corrVStime.emplace_back(node);
+	}
+	for(auto &corr:m_corrVStime){
+
+		if (!corr.registerPlanes(m_planes))
+		{
+			std::cout <<"unable to register Plane: "<< corr.m_planeID0 << " or " << corr.m_planeID1 <<std::endl;
+			throw("unable to register Plane");
+		}
+
+	}
+
+
 }
 
 bool ignorRegin( double Value,const std::vector<double> & beginVec,const std::vector<double> & endVec )

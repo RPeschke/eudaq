@@ -23,9 +23,11 @@ int main(int, char ** argv) {
   eudaq::OptionFlag sync(op, "s", "synctlu", "Resynchronize subevents based on TLU event number");
   eudaq::Option<size_t> syncEvents(op, "n" ,"syncevents",1000,"size_t","Number of events that need to be synchronous before they are used");
   eudaq::Option<unsigned long long> syncDelay(op, "d" ,"longDelay",20,"unsigned long long","us time long time delay");
+  eudaq::Option<size_t> skipEvents(op, "k" ,"skipEvents",0,"size_t","Number of events to skip");
   eudaq::Option<std::string> level(op, "l", "log-level", "INFO", "level",
       "The minimum level for displaying log messages locally");
   op.ExtraHelpText("Available output types are: " + to_string(eudaq::FileWriterFactory::GetTypes(), ", "));
+
   try {
     op.Parse(argv);
     EUDAQ_LOG_LEVEL(level.Value());
@@ -55,7 +57,7 @@ int main(int, char ** argv) {
 			  std::cout<<"Processing event "<< event_nr<<std::endl;
 		  }
         
-      } while (reader.NextEvent());
+      } while (reader.NextEvent(skipEvents.Value()));
      
     }
   } catch (...) {

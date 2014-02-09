@@ -93,6 +93,16 @@
     <ClCompile Include="scr\makeCorrelations.cpp" />
     <ClCompile Include="scr\OfflineMonitor.cxx" />
     <ClCompile Include="scr\Planes.cpp" />
+    <ClCompile Include="src\CorrelationVSTimePlots.cpp" />
+    <ClCompile Include="src\CorrelationPlots_interface.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="inc\CorrelationPlots.h" />
+    <ClInclude Include="inc\CorrelationPlots_interface.h" />
+    <ClInclude Include="inc\CorrelationVSTimePlots.h" />
+    <ClInclude Include="inc\makeCorrelations.h" />
+    <ClInclude Include="inc\Planes.h" />
+    <ClInclude Include="inc\XMLextractorHelpers.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
