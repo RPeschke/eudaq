@@ -86,6 +86,7 @@ void CorrelationPlot::processEntry()
 CorrelationPlot::~CorrelationPlot()
 {
 	std::cout<<"CorrelationPlot::~CorrelationPlot()"<<std::endl;
+	
 }
 
 
