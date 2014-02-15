@@ -21,7 +21,7 @@ int main(int, char ** argv) {
   eudaq::Option<std::string> opat(op, "o", "outpattern", "test$6R$X", "string", "Output filename pattern");
   eudaq::Option<std::string> confFile(op, "c", "confFile", "..\\conf\\configuration.xml", "string", "load the file that contains all the information about the correlations plots");
   eudaq::OptionFlag sync(op, "s", "synctlu", "Resynchronize subevents based on TLU event number");
-  eudaq::Option<size_t> syncEvents(op, "n" ,"syncevents",1000,"size_t","Number of events that need to be synchronous before they are used");
+  eudaq::Option<size_t> syncEvents(op, "n" ,"syncevents",0,"size_t","Number of events that need to be synchronous before they are used");
   eudaq::Option<unsigned long long> syncDelay(op, "d" ,"longDelay",20,"unsigned long long","us time long time delay");
   eudaq::Option<size_t> skipEvents(op, "k" ,"skipEvents",0,"size_t","Number of events to skip");
   eudaq::Option<std::string> level(op, "l", "log-level", "INFO", "level",
@@ -31,7 +31,7 @@ int main(int, char ** argv) {
   try {
     op.Parse(argv);
     EUDAQ_LOG_LEVEL(level.Value());
-
+	std::cout<<"syncEvents"<<syncEvents.Value()<<std::endl;
     for (size_t i = 0; i < op.NumArgs(); ++i) {
       eudaq::FileReader reader(op.GetArg(i), ipat.Value(), sync.IsSet(),syncEvents.Value(),syncDelay.Value());
       mCorrelations correlator;

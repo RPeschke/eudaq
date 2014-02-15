@@ -1,12 +1,12 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
-    <LocalDebuggerCommandArguments>..\data\tlu_hsio_telescope\run000081.raw</LocalDebuggerCommandArguments>
+    <LocalDebuggerCommandArguments>-d 1 -s -n 1 ..\data\HSIO_Telescope_beam.raw</LocalDebuggerCommandArguments>
     <LocalDebuggerWorkingDirectory>C:\Users\Argg\Documents\GitHub\eudaqCmake\release</LocalDebuggerWorkingDirectory>
     <DebuggerFlavor>WindowsLocalDebugger</DebuggerFlavor>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-    <LocalDebuggerCommandArguments>..\data\tlu_hsio_telescope\run000081.raw</LocalDebuggerCommandArguments>
+    <LocalDebuggerCommandArguments>-s -n 1 ..\data\HSIO_Telescope_beam.raw</LocalDebuggerCommandArguments>
     <DebuggerFlavor>WindowsLocalDebugger</DebuggerFlavor>
     <LocalDebuggerWorkingDirectory>C:\Users\Argg\Documents\GitHub\eudaqCmake\Debug</LocalDebuggerWorkingDirectory>
   </PropertyGroup>

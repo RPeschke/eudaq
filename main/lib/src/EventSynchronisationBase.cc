@@ -78,7 +78,7 @@ bool SyncBase::getNextEvent(  std::shared_ptr<eudaq::Event>  & ev )
 	//SyncFirstEvent();
 	if (m_DetectorEventQueue.size()<NumberOfEventsToSync_)
 	{
-		if(!SyncNEvents(NumberOfEventsToSync_*2)){
+		if(!SyncNEvents(NumberOfEventsToSync_)){
 			return false;
 		}
 	}
@@ -186,16 +186,16 @@ bool SyncBase::SyncNEvents( size_t N )
 		{
 			return false;
 		}
-		if (isAsync_)
-		{
-			isAsync_=false;
-			auto last_element=m_DetectorEventQueue.back(); //buffering the last event. because this is sync.
-		
-		
-			clearDetectorQueue();
-		
-			m_DetectorEventQueue.push(last_element);
-		}
+// 		if (isAsync_)
+// 		{
+// 			isAsync_=false;
+// 			auto last_element=m_DetectorEventQueue.back(); //buffering the last event. because this is sync.
+// 		
+// 		
+// 			clearDetectorQueue();
+// 		
+// 			m_DetectorEventQueue.push(last_element);
+// 		}
 	}
 	return true;
 }

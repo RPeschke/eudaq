@@ -1,7 +1,7 @@
 <configuration>
   <events>
     <CalibrationEvents No="1000"/>
-    <numberOfEvents No="20000"/>
+    <numberOfEvents No="2000"/>
   </events>
   
   <planes>
@@ -33,8 +33,6 @@
     </plane>
     <plane id="2">
       <ignorHotPixel>
-      <ignorReginX Begin="0" End="100"/>
-      <ignorReginY Begin="0" End="100"/>
         <ignorePercentage percentage="0.5"/>
       </ignorHotPixel>
       <Binning>
@@ -62,13 +60,11 @@
     </plane>
     <plane id="8">
       <ignorHotPixel>
-        <ignorePercentage percentage="50"/>
-         <ignorReginX Begin="800" End="1280"/>
-         <ignorReginX Begin="0" End="650"/>
+        <ignorePercentage percentage="5"/>
       </ignorHotPixel>
       <Binning>
-        <PixelX LowerBin="600" upperBin="850" binSize="1"/>
-        <PixelY LowerBin="1" upperBin="4" binSize="1"/>
+        <PixelX LowerBin="1" upperBin="1000" binSize="10"/>
+        <PixelY LowerBin="1" upperBin="3" binSize="1"/>
       </Binning>
     </plane>
   </planes>
@@ -84,14 +80,14 @@
       </cutOffCondition>
     </Correlation>
     <Correlation>
-      <CorrX planeId="2" plane_axis="x"/>
+      <CorrX planeId="5" plane_axis="x"/>
       <CorrY planeId="8" plane_axis="x"/>
       <cutOffCondition>
         <!--x*A+y*B+C < D-->
       </cutOffCondition>
     </Correlation>
     <Correlation>
-      <CorrX planeId="2" plane_axis="y"/>
+      <CorrX planeId="5" plane_axis="y"/>
       <CorrY planeId="8" plane_axis="x"/>
       <cutOffCondition>
         <!--x*A+y*B+C < D-->
@@ -107,11 +103,7 @@
     </Correlation>
      <CorrelationVSTime>
       <CorrX planeId="2" plane_axis="y"/>
-      <CorrY planeId="8" plane_axis="x"/>
-    </CorrelationVSTime>
-    <CorrelationVSTime>
-      <CorrX planeId="2" plane_axis="x"/>
-      <CorrY planeId="8" plane_axis="x"/>
+      <CorrY planeId="3" plane_axis="y"/>
     </CorrelationVSTime>
   </Correlations>
   

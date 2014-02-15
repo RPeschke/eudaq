@@ -131,6 +131,20 @@ namespace eudaq{
 
 
   }
+  template <typename T>
+  inline int compareTLU2DUT(T TLU_Trigger_Number, T DUT_Trigger_number){
+	  if (DUT_Trigger_number==TLU_Trigger_Number)
+	  {
+		  return Event_IS_Sync;	
+	  }else if (DUT_Trigger_number>TLU_Trigger_Number)
+	  {
+		  return Event_IS_EARLY;
+	  }
+	  return Event_IS_LATE;
+
+
+
+  }
 
   template <typename T>
   inline int hasTimeOVerlaping(T eventBegin, T EventEnd, T TLUStart,T TLUEnd){

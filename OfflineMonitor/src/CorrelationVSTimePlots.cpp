@@ -33,8 +33,8 @@ void CorrelationVSTimePlots::createHistogram()
 	std::string name="correlation_"+to_string(m_planeID0)+"_"+x_axis_name+"_"+to_string(m_planeID1)+"_"+y_axis_name+"_time";
 	std::string title="correlation "+to_string(m_planeID0)+" axis "+x_axis_name+" - "+to_string(m_planeID1)+" axis"+y_axis_name +" VS Time";
 	m_corr=new TH2D(name.c_str(),title.c_str(),
-		1000,0,20000,
-		max(m_y_axis.bins,m_x_axis.bins),-500,500);
+		100,0,20000,
+		max(m_y_axis.bins,m_x_axis.bins),-1000,1000);
 }
 
 void CorrelationVSTimePlots::processEntry()
@@ -58,7 +58,7 @@ void CorrelationVSTimePlots::processEntry()
 
 	if (cutOffCondition(x,y))
 	{
-		m_corr->Fill(event_nr,x-y);
+		m_corr->Fill(event_nr,0.256*x-y);
 	}
 
 }
@@ -70,5 +70,5 @@ CorrelationVSTimePlots::CorrelationVSTimePlots( rapidxml::xml_node<> *node ) :Co
 
 CorrelationVSTimePlots::~CorrelationVSTimePlots()
 {
-	std::cout<<"CorrelationVSTimePlots::~CorrelationVSTimePlots()"<<endl;
+	//std::cout<<"CorrelationVSTimePlots::~CorrelationVSTimePlots()"<<endl;
 }

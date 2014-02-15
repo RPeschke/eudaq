@@ -76,7 +76,17 @@ namespace eudaq {
 		 auto triggerID=ev.GetEventNumber();//GetTriggerID(ev);
 		 auto tlu_triggerID=tlu.GetEventNumber();
 	//	 std::cout<< "triggerID "<<triggerID<<"  tlu_triggerID: "<<tlu_triggerID<<std::endl;
-		 return compareTLU2DUT(tlu_triggerID,triggerID);
+		int ret= compareTLU2DUT(tlu_triggerID,triggerID);
+
+		if (ret==Event_IS_EARLY)
+		{
+			std::cout<<"Ni event is Early Event ID= "<<triggerID<<std::endl;
+		}else if (ret==Event_IS_LATE)
+		{
+			std::cout<<"Ni event is Late Event ID= "<<triggerID<<std::endl;
+		}
+		
+		return ret;
 // 		 if (triggerID==tlu_triggerID)
 // 		 {
 // 			return Event_IS_Sync;	

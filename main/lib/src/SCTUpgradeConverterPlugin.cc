@@ -110,8 +110,8 @@ namespace eudaq {
 		
 		try{
 
-			longPause_time_from_command_line=TLU_chlocks_per_mirco_secound*std::stoull(longdelay);
-			longPause_time=TLU_chlocks_per_mirco_secound*std::stoull(configFile_long_time);
+			longPause_time_from_command_line=std::stoull(longdelay);
+			longPause_time=std::stoull(configFile_long_time);
 
 		}
 		catch(...)
@@ -124,6 +124,7 @@ namespace eudaq {
 		{
 			longPause_time=longPause_time_from_command_line;
 		}
+		std::cout <<"longPause_time: "<<longPause_time<<std::endl;
 #ifndef WIN32  //some linux Stuff //$$change
 		(void)cnf; // just to suppress a warning about unused parameter cnf
 #endif
@@ -149,44 +150,25 @@ namespace eudaq {
 
 	   virtual int IsSyncWithTLU(eudaq::Event const & ev,eudaq::TLUEvent const & tlu) const {
 		   int returnValue=Event_IS_Sync;
+
 		   unsigned long long tluTime=tlu.GetTimestamp();
-	
+	         long int tluEv=(long int)tlu.GetEventNumber();
 		   	 const RawDataEvent & rawev = dynamic_cast<const RawDataEvent &>(ev);
-			 int trigger_id=GetTriggerCounter(rawev );
+			 long int trigger_id=(long int)GetTriggerCounter(rawev );
+			 
+			 if (oldDUTid>trigger_id)
+			 {
+				 std::cout<<" if (oldDUTid>trigger_id)"<<std::endl;
+			 }
+		  returnValue=compareTLU2DUT(tluEv+(long)longPause_time,trigger_id);
 
-		   unsigned long long sctTime=TLU_chlocks_per_mirco_secound*ev.GetTimestamp();
-
-		   if (tluTime-last_TLU_time<longPause_time&&sctTime-Last_DUT_Time<longPause_time)
-		   {
-			   returnValue=Event_IS_Sync;
-			   last_TLU_time=tluTime;
-			   Last_DUT_Time=sctTime;
-		   }else if (tluTime-last_TLU_time>=longPause_time
-			          &&
-					 sctTime-Last_DUT_Time<longPause_time)
-		   {
-			    Last_DUT_Time=sctTime;
-			   returnValue=Event_IS_LATE;
-			//   std::cout<<"Event_IS_LATE "<<std::endl;
-		   }else if (tluTime-last_TLU_time<longPause_time
-			   &&
-			   sctTime-Last_DUT_Time>=longPause_time)
-		   {
-			    last_TLU_time=tluTime;
-			   returnValue=Event_IS_EARLY;
-		//	   std::cout<<"Event_IS_EARLY "<<std::endl;
-		   }else if (tluTime-last_TLU_time>=longPause_time
-			   &&
-			   sctTime-Last_DUT_Time>=longPause_time)
-		   {
-			   returnValue=Event_IS_Sync;
-			   last_TLU_time=tluTime;
-			   Last_DUT_Time=sctTime;
-		   }
-		   
-		 
-		  
-
+		  if (returnValue==Event_IS_EARLY)
+		  {
+			  std::cout<<"SCT event is Early Event ID= "<<trigger_id<<std::endl;
+		  }else if (returnValue==Event_IS_LATE)
+		  {
+			  std::cout<<"SCT event is Late Event ID= "<<trigger_id<<std::endl;
+		  }
 
 		   return returnValue;
 	   
@@ -247,10 +229,11 @@ namespace eudaq {
       // Member variables should also be initialized to default values here.
       SCTupgradeConverterPlugin()
         : DataConverterPlugin(EVENT_TYPE), m_exampleparam(0),last_TLU_time(0),Last_DUT_Time(0),longPause_time(0)
-      {}
+      {oldDUTid=0;}
 
       // Information extracted in Initialize() can be stored here:
       unsigned m_exampleparam;
+	  long int oldDUTid;
 	 mutable  unsigned long long last_TLU_time,Last_DUT_Time,longPause_time;
       // The single instance of this converter plugin
       static SCTupgradeConverterPlugin m_instance;

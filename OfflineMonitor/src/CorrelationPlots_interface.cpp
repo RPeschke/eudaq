@@ -126,7 +126,7 @@ void CorrelationPlots_interface::extractCutOffCondition( rapidxml::xml_node<> *c
 
 CorrelationPlots_interface::~CorrelationPlots_interface()
 {
-	std::cout<<"CorrelationPlots_interface::~CorrelationPlots_interface()"<<std::endl;
+	//std::cout<<"CorrelationPlots_interface::~CorrelationPlots_interface()"<<std::endl;
 }
 
 
