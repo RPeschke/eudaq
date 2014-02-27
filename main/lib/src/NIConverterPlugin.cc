@@ -167,12 +167,12 @@ namespace eudaq {
         //        for(unsigned i=0;i<len0;i++) std::cout << "0:i="<<i << hexdec(GET(it0, i)) << std::endl;
         //        for(unsigned i=0;i<len1;i++) std::cout << "1:i="<<i << hexdec(GET(it1, i)) << std::endl;
 
-
-        if (it0 + len0*4 + 12 > data0.end()) {
+	
+        if ( len0*4 + 12 > data0.end()-it0) {
           EUDAQ_WARN("Bad length in first frame");
           break;
         }
-        if (it1 + len1*4 + 12 > data1.end()) {
+        if ( len1*4 + 12 > data1.end()-it1) {
           EUDAQ_WARN("Bad length in second frame");
           break;
         }
