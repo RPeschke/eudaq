@@ -9,7 +9,7 @@ class CorrelationVSTimePlots: public CorrelationPlots_interface{
 public:
 	CorrelationVSTimePlots(rapidxml::xml_node<> *node);
 	~CorrelationVSTimePlots();
-
+	virtual void Draw(const char* DrawOptions="");
 	virtual void createHistogram();
 	virtual void processEntry();
 private:

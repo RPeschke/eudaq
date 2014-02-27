@@ -12,11 +12,13 @@ public:
 
 	virtual void processEntry()=0;
 	void processEvent();
+	void setExpectedEventNumber(int ExpectedEvents){m_expected_events=ExpectedEvents;}
 	virtual void createHistogram()=0;
+	virtual void Draw(const char* DrawOptions="")=0;
 	bool cutOffCondition(const double& x, const double& y) const;
 	void extractCutOffCondition(rapidxml::xml_node<> *cutOffCon);
 	int m_planeID0,m_planeID1;
-	int event_nr;
+	int event_nr,m_expected_events;
 	axis m_axis0,m_axis1;
 	axisProberties m_x_axis,m_y_axis;
 //	TH2D* CorrHist;
