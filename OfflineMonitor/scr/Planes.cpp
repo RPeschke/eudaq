@@ -263,6 +263,11 @@ void plane::createHistograms()
 	Hitmap=new TH2D(name.c_str(),title.c_str(),m_x_axis.bins,m_x_axis.low,m_x_axis.high,m_y_axis.bins,m_y_axis.low,m_y_axis.high);
 }
 
+void plane::Draw( const char* DrawOptions/*=""*/ )
+{
+	Hitmap->Draw(DrawOptions);
+}
+
 
 hit createHitFromString( const std::string& commaSeparatedString )
 {

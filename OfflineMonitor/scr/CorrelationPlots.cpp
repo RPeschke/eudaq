@@ -85,8 +85,13 @@ void CorrelationPlot::processEntry()
 
 CorrelationPlot::~CorrelationPlot()
 {
-	std::cout<<"CorrelationPlot::~CorrelationPlot()"<<std::endl;
+	//std::cout<<"CorrelationPlot::~CorrelationPlot()"<<std::endl;
 	
+}
+
+void CorrelationPlot::Draw( const char* DrawOptions )
+{
+	m_corr->Draw("colz");
 }
 
 

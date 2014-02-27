@@ -42,6 +42,7 @@ public:
 	void add2Y_IgnorRegin(double beginIgnor,double endIgnor);
 	void setIgnorePercentage(int Percentage);
 	void createHistograms();
+	void Draw(const char* DrawOptions="");
 	bool ignor( hit x );
 
 	double getX() const;
