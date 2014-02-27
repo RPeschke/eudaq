@@ -36,6 +36,7 @@ namespace eudaq{
 
 	 bool Event_Queue_Is_Empty();
 	 void event_queue_pop();
+	 void event_queue_pop_TLU_event();
 	 void makeDetectorEvent();
 	 void clearDetectorQueue();
       /** The empty destructor. Need to add it to make it virtual.

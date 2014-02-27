@@ -215,6 +215,7 @@ void SyncBase::makeDetectorEvent()
 
 	
 	m_DetectorEventQueue.push(det);
+	//event_queue_pop_TLU_event();
 	event_queue_pop();
 	
 }
@@ -231,6 +232,11 @@ void SyncBase::event_queue_pop()
 }
 
 
+
+void SyncBase::event_queue_pop_TLU_event()
+{
+	m_ProducerEventQueue.begin()->pop();
+}
 
 bool SyncBase::compareTLUwithEventQueue( std::shared_ptr<eudaq::Event>& tlu_event,eudaq::SyncBase::eventqueue_t& event_queue )
 {
