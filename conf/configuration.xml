@@ -62,12 +62,11 @@
     </plane>
     <plane id="8">
       <ignorHotPixel>
-        <ignorePercentage percentage="50"/>
-         <ignorReginX Begin="800" End="1280"/>
-         <ignorReginX Begin="0" End="650"/>
+        
+ <ignorReginY Begin="3" End="24"/>
       </ignorHotPixel>
       <Binning>
-        <PixelX LowerBin="600" upperBin="850" binSize="1"/>
+        <PixelX LowerBin="0" upperBin="1280" binSize="1"/>
         <PixelY LowerBin="1" upperBin="4" binSize="1"/>
       </Binning>
     </plane>
@@ -92,6 +91,14 @@
     </Correlation>
     <Correlation>
       <CorrX planeId="2" plane_axis="y"/>
+      <CorrY planeId="8" plane_axis="x"/>
+      <cutOffCondition>
+     
+        <!--x*A+y*B+C < D-->
+      </cutOffCondition>
+    </Correlation>
+        <Correlation>
+      <CorrX planeId="1" plane_axis="y"/>
       <CorrY planeId="8" plane_axis="x"/>
       <cutOffCondition>
         <!--x*A+y*B+C < D-->

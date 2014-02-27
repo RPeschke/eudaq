@@ -7,7 +7,7 @@
 using namespace std;
 
 
-CorrelationPlots_interface::CorrelationPlots_interface( rapidxml::xml_node<> *Correlation ):event_nr(0)
+CorrelationPlots_interface::CorrelationPlots_interface( rapidxml::xml_node<> *Correlation ):event_nr(0),m_expected_events(0)
 {
 	//auto Correlation=node->first_node("Correlation");
 	m_planeID0=std::stoi(Correlation->first_node("CorrX")->first_attribute("planeId")->value());

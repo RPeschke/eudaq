@@ -12,6 +12,7 @@
 #endif
 #include <iostream>
 #include <string>
+#include <queue>
 
 #define EVENTHEADERSIZE 14
 #define MODULEHEADERSIZE 3
@@ -29,6 +30,7 @@
 
 #define TLU_chlocks_per_mirco_secound 384066
 
+std::vector<std::vector<bool>> m_event_q;
 
 void uchar2bool(const std::vector<unsigned char>& in,int lOffset,int hOffset, std::vector<bool>& out){
 	for (auto i=in.begin()+lOffset;i!=in.begin()+hOffset;++i)
@@ -41,7 +43,7 @@ void uchar2bool(const std::vector<unsigned char>& in,int lOffset,int hOffset, st
 
 }
 
-
+int numberOfEvents_inplane;
 
 namespace eudaq {
 
@@ -61,15 +63,26 @@ namespace eudaq {
 			STREAMEND(streamNr)   +(moduleNr-1)*TOTALMODULSIZE,
 			outputStream0);
 
+// 		m_event_q.push_back(outputStream0);
+// 		while (m_event_q.size()>5)
+// 		{
+// 			m_event_q.erase(m_event_q.begin());
+// 		}
+
 		for (size_t i=0; i<outputStream0.size();++i)
 		{
-
-			if (outputStream0.at(i))
-			{
-				plane.PushPixel(i,y_pos+streamNr,1);
-			}
-
-
+			
+// 			for (int j=0;j<m_event_q.size();++j)
+// 			{
+			
+				if (outputStream0.at(i))
+				{
+					plane.PushPixel(i,y_pos+streamNr,1);
+					++numberOfEvents_inplane;
+					break;
+				}
+//			}
+				
 		}
 		
 		}
@@ -83,6 +96,21 @@ namespace eudaq {
 	int GetTriggerCounter(const eudaq::RawDataEvent &ev){
 			int trigger_id=eudaq::getlittleendian<int>(&(ev.GetBlock(0).at(0)));
 			return trigger_id;
+	}
+	void processImputVector(const std::vector<unsigned char>& inputVector, StandardPlane& plane){
+
+		int noModules=(inputVector.size()-EVENTHEADERSIZE)/TOTALMODULSIZE;
+		int y_pos=0;
+
+		int width = 1280, height = noModules*2;
+		plane.SetSizeRaw(width, height);
+
+		for (size_t k=1;k<=noModules;++k)
+		{
+
+			puschDataInStandartPlane(inputVector,k,plane);
+
+		}
 	}
   // The event type for which this converter plugin will be registered
   // Modify this to match your actual event type (from the Producer)
@@ -106,12 +134,12 @@ namespace eudaq {
 
 		auto configFile_long_time=cnf.Get("LongBusyTime","0");
 	//	std::cout<<" longdelay "<< longdelay<<std::endl;
-		unsigned long long longPause_time_from_command_line=0;
+		long int longPause_time_from_command_line=0;
 		
 		try{
 
-			longPause_time_from_command_line=std::stoull(longdelay);
-			longPause_time=std::stoull(configFile_long_time);
+			longPause_time_from_command_line=std::stol(longdelay);
+			longPause_time=std::stol(configFile_long_time);
 
 		}
 		catch(...)
@@ -122,8 +150,9 @@ namespace eudaq {
 		}
 		if (longPause_time_from_command_line>0)
 		{
-			longPause_time=longPause_time_from_command_line;
+			
 		}
+		longPause_time=longPause_time_from_command_line;
 		std::cout <<"longPause_time: "<<longPause_time<<std::endl;
 #ifndef WIN32  //some linux Stuff //$$change
 		(void)cnf; // just to suppress a warning about unused parameter cnf
@@ -141,7 +170,7 @@ namespace eudaq {
           // This is just an example, modified it to suit your raw data format
           // Make sure we have at least one block of data, and it is large enough
 
-            return rev->GetEventNumber();
+            return GetTriggerCounter(*rev);
           
         }
         // If we are unable to extract the Trigger ID, signal with (unsigned)-1
@@ -160,7 +189,7 @@ namespace eudaq {
 			 {
 				 std::cout<<" if (oldDUTid>trigger_id)"<<std::endl;
 			 }
-		  returnValue=compareTLU2DUT(tluEv+(long)longPause_time,trigger_id);
+		  returnValue=compareTLU2DUT(tluEv,trigger_id+longPause_time);
 
 		  if (returnValue==Event_IS_EARLY)
 		  {
@@ -182,33 +211,32 @@ namespace eudaq {
         // If the event type is used for different sensors
         // they can be differentiated here
 			
-        std::string sensortype = "SCT";
+        numberOfEvents_inplane=0;
         // Create a StandardPlane representing one sensor plane
-        int id = 8;
+ 
        
         // Set the number of pixels
 		 const RawDataEvent & rawev = dynamic_cast<const RawDataEvent &>(ev);
 		 
 		 sev.SetTag("DUT_time",rawev.GetTimestamp());
-		 int noModules=(rawev.GetBlock(0).size()-EVENTHEADERSIZE)/TOTALMODULSIZE;
+		 int id = 8;
+		 std::string sensortype = "SCT";
+		 StandardPlane plane(id, EVENT_TYPE, sensortype);
+
 		 
 		 std::vector<unsigned char> inputVector=rawev.GetBlock(0);
-		 int y_pos=0;
-		 StandardPlane plane(id, EVENT_TYPE, sensortype);
-		 int width = 1280, height = noModules*2;
-		 plane.SetSizeRaw(width, height);
+		 
 
-		 for (size_t k=1;k<=noModules;++k)
-		 {
-	
-			 puschDataInStandartPlane(inputVector,k,plane);
-			
-		}
-	 
+		 processImputVector(inputVector,plane);
+
 		 // Set the trigger ID
-		 plane.SetTLUEvent(GetTriggerID(ev));
+		
 		 pushHeaderInStundartplane(inputVector,plane);
-		 // Add the plane to the StandardEvent
+
+		  plane.SetTLUEvent(GetTriggerID(ev));
+		  
+		//  std::cout<<"length of plane " <<numberOfEvents_inplane<<std::endl;
+		 // Add the plane to the StandardEvent	
 		 sev.AddPlane(plane);
        // Indicate that data was successfully converted
         return true;
@@ -234,7 +262,9 @@ namespace eudaq {
       // Information extracted in Initialize() can be stored here:
       unsigned m_exampleparam;
 	  long int oldDUTid;
-	 mutable  unsigned long long last_TLU_time,Last_DUT_Time,longPause_time;
+	 mutable  unsigned long long last_TLU_time,Last_DUT_Time;
+		long int longPause_time;
+		mutable std::vector<std::vector<unsigned char>> m_event_queue;
       // The single instance of this converter plugin
       static SCTupgradeConverterPlugin m_instance;
   }; // class ExampleConverterPlugin

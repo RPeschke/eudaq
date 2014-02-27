@@ -13,7 +13,7 @@ namespace eudaq {
 
 
 
-  FileReader::FileReader(const std::string & file, const std::string & filepattern, bool synctriggerid,size_t syncEvents,unsigned long long longTimeDelay)
+  FileReader::FileReader(const std::string & file, const std::string & filepattern, bool synctriggerid,size_t syncEvents,long long longTimeDelay)
     : m_filename(FileNamer(filepattern).Set('X', ".raw").SetReplace('R', file)),
     m_des(m_filename),
     m_ev(EventFactory::Create(m_des)),

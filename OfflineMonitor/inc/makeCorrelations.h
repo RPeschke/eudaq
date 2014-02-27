@@ -31,6 +31,9 @@ void register_CorrelationsVsTime(rapidxml::xml_node<> *correlationsTimeNode);
 void register_planes2Correlation();
 void createHistograms();
 void open_outFile(const char * outFileName);
+void open_outFile();
+ void SetFilePattern(const std::string & p) { m_filepattern = p; }
+ void setRunNumber(unsigned int RunNum){m_runNumber=RunNum;}
 //void Process();
 void clear();
 bool ProcessDetectorEvent(const eudaq::DetectorEvent &);
@@ -43,12 +46,14 @@ void fillCorrelations();
 //void compare( plane& planeA, plane& planeB);
 //bool getNextEvent();
 
-
+void savePlotsAsPicture();
 
 private:
 
 //TFile* inputFile;
 TFile* OutPutFile;
+std::string m_filepattern;
+unsigned int m_runNumber;
 //TH2D *h2,*h3;
 //TTree* tree;
 std::vector<plane> m_planes;

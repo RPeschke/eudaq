@@ -117,6 +117,7 @@ bool SyncBase::AddNextEventToQueue()
 				for(size_t i=0;i< detEvent->NumEvents();++i){
 				//	cout<<detEvent->GetEventPtr(i)->get_id()<<endl;
 					auto &q=getQueuefromId(i);
+				eudaq::PluginManager::setCurrentTLUEvent(*detEvent->GetEventPtr(i),*dynamic_pointer_cast<TLUEvent>(detEvent->GetEventPtr(0)));
 					q.push(detEvent->GetEventPtr(i));
 				}
 			}

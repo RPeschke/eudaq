@@ -6,6 +6,7 @@
 #include "TSystem.h"
 #include <fstream>
 #include "TH1.h"
+#include "TCanvas.h"
 #include <string>
 #include "rapidxml.hpp"
 #include "rapidxml_utils.hpp"
@@ -15,6 +16,7 @@
 #include "CorrelationVSTimePlots.h"
 #include "..\..\main\include\eudaq\PluginManager.hh"
 #include "..\..\main\include\eudaq\StandardEvent.hh"
+#include "eudaq\FileNamer.hh"
 
 using namespace std;
 using namespace eudaq;
@@ -77,6 +79,7 @@ void mCorrelations::open_outFile( const char * outFileName )
 		cout<<"file already open \n";
 		return;
 	}
+	std::cout<<" creating output file: "<<outFileName<<std::endl;
 	OutPutFile=new TFile(outFileName,"RECREATE");
 // 	h2=new TH2D("X_Cor","correlations x vs x",2000,0,2000,2000,0,2000);
 // 	h3=new TH2D("Y_Cor","correlations y vs y",1000,0,1000,1000,0,1000);
@@ -87,6 +90,12 @@ void mCorrelations::open_outFile( const char * outFileName )
 // 	{
 // 		p.createHistograms();
 // 	}
+}
+
+void mCorrelations::open_outFile()
+{
+	std::string foutput(FileNamer(m_filepattern).Set('X', ".root").Set('R', m_runNumber));
+	open_outFile(foutput.c_str());
 }
 
 // void mCorrelations::Process()
@@ -146,7 +155,11 @@ bool mCorrelations::ProcessDetectorEvent( const eudaq::DetectorEvent & ev)
 			{
 				return false;
 			}
-			ProcessCurrentEntry();
+			if (m_hit_x>0)
+			{
+				ProcessCurrentEntry();
+			}
+			
 
 		}               
 	}
@@ -291,6 +304,7 @@ void mCorrelations::createHistograms()
 
 	for (auto& c:m_corr)
 	{
+		c->setExpectedEventNumber(NumberOfEvents-m_CalibrationEvents);
 		c->createHistogram();
 	}
 
@@ -357,6 +371,30 @@ void mCorrelations::register_planes2Correlation()
 		}
 
 	}
+}
+
+void mCorrelations::savePlotsAsPicture()
+{
+	TCanvas c1;
+	int DrawRows=static_cast<int>(m_planes.size()/2)+1+static_cast<int>(m_corr.size()/2)+1;
+	std::cout<<DrawRows<<std::endl;
+	c1.Divide(2,DrawRows);
+	int j=1;
+	for (size_t i=0;i<m_planes.size();++i)
+	{
+		c1.cd(j++);
+		m_planes.at(i).Draw();
+
+	}
+	for (size_t i=0;i<m_planes.size();++i)
+	{
+		c1.cd(j++);
+		m_corr.at(i)->Draw();
+
+	}
+	c1.cd(0);
+	std::string foutput(FileNamer(m_filepattern).Set('X', ".pdf").Set('R', m_runNumber));
+	c1.SaveAs(foutput.c_str());
 }
 
 bool ignorRegin( double Value,const std::vector<double> & beginVec,const std::vector<double> & endVec )
