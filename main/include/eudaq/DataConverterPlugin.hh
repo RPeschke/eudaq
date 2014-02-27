@@ -63,7 +63,8 @@ namespace eudaq{
 	  virtual int IsSyncWithTLU(eudaq::Event const & ev,eudaq::TLUEvent const & tlu) const {
 		  // dummy comparator. it is just checking if the event numbers are the same.
 		  
-		  auto triggerID=ev.GetEventNumber();
+		  //auto triggerID=ev.GetEventNumber();
+		  unsigned triggerID=ev.GetTag<unsigned>("tlu_trigger_id",0);
 	  auto tlu_triggerID=tlu.GetEventNumber();
 	  if (triggerID==tlu_triggerID)
 	  {
@@ -73,6 +74,9 @@ namespace eudaq{
 		  return Event_IS_EARLY;
 	  }
 	  return Event_IS_LATE;
+	  }
+	  virtual void setCurrentTLUEvent(eudaq::Event & ev,eudaq::TLUEvent const & tlu){
+		  ev.SetTag("tlu_trigger_id",tlu.GetEventNumber());
 	  }
 	  virtual void GetLCIORunHeader(lcio::LCRunHeader &, eudaq::Event const &, eudaq::Configuration const &) const {}
 	  
@@ -99,6 +103,7 @@ namespace eudaq{
        *  of the plugin.
        */
       t_eventid m_eventtype;
+	  
 
       /** The protected constructor which automatically registeres the plugin
        *  at the pluginManager.
