@@ -27,10 +27,11 @@
 #define STREAMSTART(streamNr) (TOTALHEADERSIZE+streamNr*(STREAMHEADERSIZE+STREAMESIZE))
 #define STREAMEND(streamNr) (STREAMSTART(streamNr)+STREAMESIZE)
 
+#define STRIPSPERCHIP 128
 
 #define TLU_chlocks_per_mirco_secound 384066
 
-std::vector<std::vector<bool>> m_event_q;
+
 
 void uchar2bool(const std::vector<unsigned char>& in,int lOffset,int hOffset, std::vector<bool>& out){
 	for (auto i=in.begin()+lOffset;i!=in.begin()+hOffset;++i)
@@ -63,29 +64,33 @@ namespace eudaq {
 			STREAMEND(streamNr)   +(moduleNr-1)*TOTALMODULSIZE,
 			outputStream0);
 
-// 		m_event_q.push_back(outputStream0);
-// 		while (m_event_q.size()>5)
-// 		{
-// 			m_event_q.erase(m_event_q.begin());
-// 		}
 
+
+	size_t x_pos=0;
 		for (size_t i=0; i<outputStream0.size();++i)
 		{
 			
-// 			for (int j=0;j<m_event_q.size();++j)
-// 			{
+
 			
 				if (outputStream0.at(i))
 				{
+					if (streamNr==1)
+					{
+						x_pos=i/STRIPSPERCHIP;
+
+						plane.PushPixel(2*x_pos*STRIPSPERCHIP-i+STRIPSPERCHIP,y_pos+streamNr,1);
+					}else{
 					plane.PushPixel(i,y_pos+streamNr,1);
+					}
 					++numberOfEvents_inplane;
 					break;
 				}
-//			}
+
 				
 		}
-		
-		}
+}
+	
+
 	}
 	void pushHeaderInStundartplane(const std::vector<unsigned char>& inputVector, StandardPlane& plane){
 
@@ -191,13 +196,13 @@ namespace eudaq {
 			 }
 		  returnValue=compareTLU2DUT(tluEv,trigger_id+longPause_time);
 
-		  if (returnValue==Event_IS_EARLY)
-		  {
-			  std::cout<<"SCT event is Early Event ID= "<<trigger_id<<std::endl;
-		  }else if (returnValue==Event_IS_LATE)
-		  {
-			  std::cout<<"SCT event is Late Event ID= "<<trigger_id<<std::endl;
-		  }
+// 		  if (returnValue==Event_IS_EARLY)
+// 		  {
+// 			  std::cout<<"SCT event is Early Event ID= "<<trigger_id<<std::endl;
+// 		  }else if (returnValue==Event_IS_LATE)
+// 		  {
+// 			  std::cout<<"SCT event is Late Event ID= "<<trigger_id<<std::endl;
+// 		  }
 
 		   return returnValue;
 	   
