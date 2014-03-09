@@ -4,6 +4,8 @@
 
 #include <vector>
 #include <string>
+#include <sstream>
+#include <iostream>
 template <typename T>
 std::vector<T> extractCutOffCondition1( rapidxml::xml_node<> * cutOffCon ){
 std::vector<T> ret;
@@ -22,6 +24,18 @@ std::vector<T> ret;
 			ret.emplace_back(A,B,C,D);
 			node=node->next_sibling("condition");
 		}
+	}
+	return ret;
+}
+template <typename XMLOBJECT,typename T>
+T getValue(XMLOBJECT* xmlnode,T defaultValue){
+	T ret=defaultValue;
+	
+	if (xmlnode)
+	{
+	  std::stringstream ss(xmlnode->value());
+	  ss>>ret;
+		
 	}
 	return ret;
 }
