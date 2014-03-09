@@ -14,6 +14,7 @@ public:
 	virtual void processEntry();
 private:
 	TH2D* m_corr;
+	double CorrectionFactorX,CorrectionFactorY,ConstantTerm;
 	
 };
 

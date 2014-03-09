@@ -3,6 +3,7 @@
 #include "TH2D.h"
 #include <string>
 #include <iostream>
+#include "XMLextractorHelpers.h"
 
 using namespace std;
 
@@ -25,7 +26,7 @@ void CorrelationVSTimePlots::createHistogram()
 	{
 		m_y_axis=m_plane1->m_x_axis;
 		y_axis_name="x";
-	}else if(m_axis0==y_axis)
+	}else if(m_axis1==y_axis)
 	{
 		m_y_axis=m_plane1->m_y_axis;
 		y_axis_name="y";
@@ -52,20 +53,27 @@ void CorrelationVSTimePlots::processEntry()
 	if (m_axis1==x_axis)
 	{
 		y=m_plane1->getX();
-	}else if(m_axis0==y_axis)
+	}else if(m_axis1==y_axis)
 	{
 		y=m_plane1->getY();
 	}
 
 	if (cutOffCondition(x,y))
 	{
-		m_corr->Fill(event_nr,0.256*x-y);
+		m_corr->Fill(event_nr,CorrectionFactorX*x-CorrectionFactorY*y-ConstantTerm);
 	}
 
 }
 
-CorrelationVSTimePlots::CorrelationVSTimePlots( rapidxml::xml_node<> *node ) :CorrelationPlots_interface(node),m_corr(nullptr)
+CorrelationVSTimePlots::CorrelationVSTimePlots( rapidxml::xml_node<> *node ) :CorrelationPlots_interface(node),m_corr(nullptr),CorrectionFactorX(1),CorrectionFactorY(1),ConstantTerm(0)
 {
+	if (node->first_node("CorrectionFactors"))
+	{
+		CorrectionFactorX=getValue(node->first_node("CorrectionFactors")->first_attribute("x"),(double)1);
+		
+		CorrectionFactorY=getValue(node->first_node("CorrectionFactors")->first_attribute("y"),(double)1);
+		ConstantTerm=getValue(node->first_node("CorrectionFactors")->first_attribute("const"),(double)0);
+	}
 
 }
 

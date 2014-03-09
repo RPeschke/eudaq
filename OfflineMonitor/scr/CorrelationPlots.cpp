@@ -45,7 +45,7 @@ void CorrelationPlot::createHistogram()
 	{
 		m_y_axis=m_plane1->m_x_axis;
 		y_axis_name="x";
-	}else if(m_axis0==y_axis)
+	}else if(m_axis1==y_axis)
 	{
 		m_y_axis=m_plane1->m_y_axis;
 		y_axis_name="y";
@@ -71,7 +71,7 @@ void CorrelationPlot::processEntry()
 	if (m_axis1==x_axis)
 	{
 		y=m_plane1->getX();
-	}else if(m_axis0==y_axis)
+	}else if(m_axis1==y_axis)
 	{
 		y=m_plane1->getY();
 	}
