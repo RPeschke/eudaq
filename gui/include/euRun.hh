@@ -126,8 +126,13 @@ class RunControlGUI : public QMainWindow, public Ui::wndRun, public eudaq::RunCo
         i->second->setText(value);
       }
     }
+	void btnLogSetStatusSlot(bool status){
+
+		 btnLog->setEnabled(status);
+	}
 signals:
     void StatusChanged(const QString &, const QString &);
+	void btnLogSetStatus(bool status);
   private:
     RunControlModel m_run;
     RunConnectionDelegate m_delegate;
