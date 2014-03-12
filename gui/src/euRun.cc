@@ -140,6 +140,7 @@ RunControlGUI::RunControlGUI(const std::string & listenaddress,
   connect(this, SIGNAL(StatusChanged(const QString &, const QString &)), this, SLOT(ChangeStatus(const QString &, const QString &)));
   connect(&m_statustimer, SIGNAL(timeout()), this, SLOT(timer()));
   connect(this,SIGNAL(btnLogSetStatus(bool)),this, SLOT(btnLogSetStatusSlot(bool)));
+  connect(this, SIGNAL(SetState(int)),this,SLOT(SetStateSlot(int)));
   m_statustimer.start(500);
   txtGeoID->setText(QString::number(eudaq::ReadFromFile(GEOID_FILE, 0U)));
   txtGeoID->installEventFilter(this);
