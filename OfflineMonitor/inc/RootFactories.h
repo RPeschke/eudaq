@@ -3,7 +3,7 @@
 
 #include "TH2D.h"
 #include "TH1D.h"
-
+namespace rootFacories{
 template <typename T>
 TH2D* createTH2DfromAxis(const char* name,const char* title,const T& xAxis,const T& yAxis ){
 
@@ -21,5 +21,5 @@ TH1D* createTH1DfromAxis(const char* name,const char* title,const T& xAxis){
 	h1->GetXaxis()->SetTitle(xAxis.axis_title.c_str());
 	return h1;
 }
-
+}
 #endif // RootFactories_h__

@@ -34,7 +34,7 @@ void CorrelationPlot::createHistogram()
 	setAxisProberties();
 	std::string name="correlation_"+to_string(m_planeID0)+"_"+m_x_axis.axis_title+"_"+to_string(m_planeID1)+"_"+m_y_axis.axis_title;
 	std::string title="correlation "+to_string(m_planeID0)+" axis "+m_x_axis.axis_title+" VS "+to_string(m_planeID1)+" axis "+m_y_axis.axis_title;
-	m_corr=createTH2DfromAxis(name.c_str(),title.c_str(),m_x_axis,m_y_axis);
+	m_corr=rootFacories::createTH2DfromAxis(name.c_str(),title.c_str(),m_x_axis,m_y_axis);
 		
 		
 }
