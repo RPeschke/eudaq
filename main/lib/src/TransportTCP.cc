@@ -489,7 +489,12 @@ namespace eudaq {
     }
 
     std::string TCPServer::ConnectionString() const {
-      const char * host = getenv("HOSTNAME");
+#ifdef WIN32
+	const char * host = getenv("computername");
+#else
+	const char * host = getenv("HOSTNAME");
+#endif
+
       if (!host) host = "localhost";
       //gethostname(buf, sizeof buf);
       return name + "://" + host + ":" + to_string(m_port);
