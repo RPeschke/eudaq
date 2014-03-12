@@ -4,6 +4,8 @@
 #include <string>
 #include <iostream>
 #include "XMLextractorHelpers.h"
+#include <algorithm>
+#include "RootFactories.h"
 
 using namespace std;
 
@@ -11,52 +13,46 @@ using namespace std;
 
 void CorrelationVSTimePlots::createHistogram()
 {
-	std::string x_axis_name,y_axis_name;
-	if (m_axis0==x_axis)
-	{
-		m_x_axis=m_plane0->m_x_axis;
-		x_axis_name="x";
-	}else if(m_axis0==y_axis)
-	{
-		m_x_axis=m_plane0->m_y_axis;
-		x_axis_name="y";
-	}
+	setAxisProberties();
+	std::string name="correlation_"+to_string(m_planeID0)+"_"+m_x_axis.axis_title+"_"+to_string(m_planeID1)+"_"+m_y_axis.axis_title+"_time";
+	std::string title="correlation "+to_string(m_planeID0)+" axis "+m_x_axis.axis_title+" - "+to_string(m_planeID1)+" axis "+m_y_axis.axis_title +" VS Time";
 
-	if (m_axis1==x_axis)
-	{
-		m_y_axis=m_plane1->m_x_axis;
-		y_axis_name="x";
-	}else if(m_axis1==y_axis)
-	{
-		m_y_axis=m_plane1->m_y_axis;
-		y_axis_name="y";
-	}
-	std::string name="correlation_"+to_string(m_planeID0)+"_"+x_axis_name+"_"+to_string(m_planeID1)+"_"+y_axis_name+"_time";
-	std::string title="correlation "+to_string(m_planeID0)+" axis "+x_axis_name+" - "+to_string(m_planeID1)+" axis"+y_axis_name +" VS Time";
-	int bins=m_expected_events/100;
-	m_corr=new TH2D(name.c_str(),title.c_str(),
-		bins,0,m_expected_events,
-		max(m_y_axis.bins,m_x_axis.bins),-1000,1000);
+	setTimeAxis();
+	setCorrelationAxis();
+	m_corr=createTH2DfromAxis(name.c_str(),title.c_str(),
+		m_time_axis,
+		m_axis0_minus_axis1);
+	
+}
+
+void CorrelationVSTimePlots::setTimeAxis()
+{
+	m_time_axis.axis_title="event no";
+	m_time_axis.bins=m_expected_events/100;
+	m_time_axis.low=0;
+	m_time_axis.high=m_expected_events;
+}
+
+void CorrelationVSTimePlots::setCorrelationAxis()
+{
+	m_axis0_minus_axis1.axis_title="Correlation";
+	m_axis0_minus_axis1.bins=max(m_y_axis.bins,m_x_axis.bins);
+	
+	// to take all combinations into account without writing to many if statements they get calculated.
+	vector<double> combinations;
+	combinations.push_back(m_x_axis.low*CorrectionFactorX-m_x_axis.low*CorrectionFactorY-ConstantTerm);
+	combinations.push_back(m_x_axis.low*CorrectionFactorX-m_x_axis.high*CorrectionFactorY-ConstantTerm);
+	combinations.push_back(m_x_axis.high*CorrectionFactorX-m_x_axis.high*CorrectionFactorY-ConstantTerm);
+	combinations.push_back(m_x_axis.high*CorrectionFactorX-m_x_axis.low*CorrectionFactorY-ConstantTerm);
+	m_axis0_minus_axis1.low=*min_element(combinations.begin(),combinations.end());
+	m_axis0_minus_axis1.high=*max_element(combinations.begin(),combinations.end());
+
+	
 }
 
 void CorrelationVSTimePlots::processEntry()
 {
-	double x,y;
-	if (m_axis0==x_axis)
-	{
-		x=m_plane0->getX();
-	}else if(m_axis0==y_axis)
-	{
-		x=m_plane0->getY();
-	}
-
-	if (m_axis1==x_axis)
-	{
-		y=m_plane1->getX();
-	}else if(m_axis1==y_axis)
-	{
-		y=m_plane1->getY();
-	}
+	double x=get0(),y=get1();
 
 	if (cutOffCondition(x,y))
 	{
@@ -69,10 +65,10 @@ CorrelationVSTimePlots::CorrelationVSTimePlots( rapidxml::xml_node<> *node ) :Co
 {
 	if (node->first_node("CorrectionFactors"))
 	{
-		CorrectionFactorX=getValue(node->first_node("CorrectionFactors")->first_attribute("x"),(double)1);
+		CorrectionFactorX=XMLhelper::getValue(node->first_node("CorrectionFactors")->first_attribute("x"),(double)1);
 		
-		CorrectionFactorY=getValue(node->first_node("CorrectionFactors")->first_attribute("y"),(double)1);
-		ConstantTerm=getValue(node->first_node("CorrectionFactors")->first_attribute("const"),(double)0);
+		CorrectionFactorY=XMLhelper::getValue(node->first_node("CorrectionFactors")->first_attribute("y"),(double)1);
+		ConstantTerm=XMLhelper::getValue(node->first_node("CorrectionFactors")->first_attribute("const"),(double)0);
 	}
 
 }

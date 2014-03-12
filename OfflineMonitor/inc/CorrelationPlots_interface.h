@@ -23,6 +23,10 @@ public:
 	axisProberties m_x_axis,m_y_axis;
 //	TH2D* CorrHist;
 	plane *m_plane0,*m_plane1;
+	double get0();
+	double get1();
+	void setAxisProberties();
+
 
 	class condition{
 	public:

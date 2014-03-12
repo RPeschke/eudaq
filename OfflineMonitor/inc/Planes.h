@@ -24,6 +24,7 @@ struct axisProberties
 {
 	double low,high;
 	int bins;
+	std::string axis_title;
 };
 
 class plane{

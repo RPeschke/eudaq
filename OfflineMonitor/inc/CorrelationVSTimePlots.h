@@ -15,7 +15,10 @@ public:
 private:
 	TH2D* m_corr;
 	double CorrectionFactorX,CorrectionFactorY,ConstantTerm;
-	
+	axisProberties m_time_axis,m_axis0_minus_axis1;
+
+	void setTimeAxis();
+	void setCorrelationAxis();
 };
 
 #endif // CorrelationVSTimePlots_h__

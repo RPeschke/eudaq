@@ -105,7 +105,7 @@ bool CorrelationPlots_interface::cutOffCondition( const double& x,const  double&
 void CorrelationPlots_interface::extractCutOffCondition( rapidxml::xml_node<> *cutOffCon )
 {
 
-	m_con=extractCutOffCondition1<condition>(cutOffCon);
+	m_con=XMLhelper::extractCutOffCondition1<condition>(cutOffCon);
 	if (cutOffCon)
 	{
 		double A,B,C,D;
@@ -128,5 +128,55 @@ CorrelationPlots_interface::~CorrelationPlots_interface()
 {
 	//std::cout<<"CorrelationPlots_interface::~CorrelationPlots_interface()"<<std::endl;
 }
+
+double CorrelationPlots_interface::get0()
+{
+	
+	if (m_axis0==x_axis)
+	{
+		return m_plane0->getX();
+	}else if(m_axis0==y_axis)
+	{
+		return m_plane0->getY();
+	}
+	return -1;
+}
+
+double CorrelationPlots_interface::get1()
+{
+	if (m_axis1==x_axis)
+	{
+		return m_plane1->getX();
+	}else if(m_axis1==y_axis)
+	{
+		return m_plane1->getY();
+	}
+	return -1;
+}
+
+void CorrelationPlots_interface::setAxisProberties()
+{
+
+	if (m_axis0==x_axis)
+	{
+		m_x_axis=m_plane0->m_x_axis;
+
+	}else if(m_axis0==y_axis)
+	{
+		m_x_axis=m_plane0->m_y_axis;
+	
+	}
+
+	if (m_axis1==x_axis)
+	{
+		m_y_axis=m_plane1->m_x_axis;
+	
+	}else if(m_axis1==y_axis)
+	{
+		m_y_axis=m_plane1->m_y_axis;
+
+	}
+}
+
 
 

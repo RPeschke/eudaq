@@ -6,6 +6,7 @@
 #include <string>
 #include <sstream>
 #include <iostream>
+namespace XMLhelper{
 template <typename T>
 std::vector<T> extractCutOffCondition1( rapidxml::xml_node<> * cutOffCon ){
 std::vector<T> ret;
@@ -40,5 +41,6 @@ T getValue(XMLOBJECT* xmlnode,T defaultValue){
 	return ret;
 }
 
+}
 
 #endif // XMLextractorHelpers_h__
