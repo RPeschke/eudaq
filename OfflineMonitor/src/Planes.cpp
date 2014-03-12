@@ -3,6 +3,7 @@
 #include <string>
 #include <iostream>
 #include <sstream>
+#include "XMLextractorHelpers.h"
 using namespace std;
 
 std::vector<std::string> &split(const std::string &s, char delim, std::vector<std::string> &elems) {
@@ -56,10 +57,11 @@ plane::plane(rapidxml::xml_node<> *node):m_Ignore_percentage(1){
 	//////////////////////////////////////////////////////////////////////////
 	// binning
 	auto binning=node->first_node("Binning");
-	m_x_axis.low=stod(binning->first_node("PixelX")->first_attribute("LowerBin")->value());
-	m_x_axis.high=stod(binning->first_node("PixelX")->first_attribute("upperBin")->value());
+	m_x_axis.low=XMLhelper::getValue(binning->first_node("PixelX")->first_attribute("LowerBin"),(double)0);
+	m_x_axis.high=XMLhelper::getValue(binning->first_node("PixelX")->first_attribute("upperBin"),(double)1000);
+	m_x_axis.axis_title=XMLhelper::getValue(binning->first_node("PixelX")->first_attribute("title"),string("x"));
 
-	auto pixelSize=stod(binning->first_node("PixelX")->first_attribute("binSize")->value());
+	double pixelSize=XMLhelper::getValue(binning->first_node("PixelX")->first_attribute("binSize"),(double)1);
 
 	m_x_axis.bins=(m_x_axis.high-m_x_axis.low+1)/pixelSize;
 
