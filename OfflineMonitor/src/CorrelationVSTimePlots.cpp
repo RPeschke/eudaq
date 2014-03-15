@@ -19,7 +19,7 @@ void CorrelationVSTimePlots::createHistogram()
 
 	setTimeAxis();
 	setCorrelationAxis();
-	m_corr=createTH2DfromAxis(name.c_str(),title.c_str(),
+	m_corr=rootFacories::createTH2DfromAxis(name.c_str(),title.c_str(),
 		m_time_axis,
 		m_axis0_minus_axis1);
 	
