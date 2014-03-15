@@ -84,17 +84,12 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ProjectReference Include="..\build\main\lib\EUDAQ.vcxproj">
-      <Project>{d6693921-7688-4809-826f-6bda3ef5aa3c}</Project>
-    </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
-    <ClCompile Include="scr\CorrelationPlots.cpp" />
-    <ClCompile Include="scr\makeCorrelations.cpp" />
-    <ClCompile Include="scr\OfflineMonitor.cxx" />
-    <ClCompile Include="scr\Planes.cpp" />
+    <ClCompile Include="src\CorrelationPlots.cpp" />
     <ClCompile Include="src\CorrelationVSTimePlots.cpp" />
     <ClCompile Include="src\CorrelationPlots_interface.cpp" />
+    <ClCompile Include="src\makeCorrelations.cpp" />
+    <ClCompile Include="src\OfflineMonitor.cxx" />
+    <ClCompile Include="src\Planes.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="inc\CorrelationPlots.h" />
@@ -103,6 +98,11 @@
     <ClInclude Include="inc\makeCorrelations.h" />
     <ClInclude Include="inc\Planes.h" />
     <ClInclude Include="inc\XMLextractorHelpers.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\build\main\lib\EUDAQ.vcxproj">
+      <Project>{cdb87df4-16b7-4ff7-a1ce-8df1e9d9a458}</Project>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
