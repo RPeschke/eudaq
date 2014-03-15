@@ -97,6 +97,7 @@
     <ClInclude Include="inc\CorrelationVSTimePlots.h" />
     <ClInclude Include="inc\makeCorrelations.h" />
     <ClInclude Include="inc\Planes.h" />
+    <ClInclude Include="inc\RootFactories.h" />
     <ClInclude Include="inc\XMLextractorHelpers.h" />
   </ItemGroup>
   <ItemGroup>
