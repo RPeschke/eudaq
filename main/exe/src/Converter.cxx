@@ -30,6 +30,7 @@ int main(int, char ** argv) {
     op.Parse(argv);
     EUDAQ_LOG_LEVEL(level.Value());
     std::vector<unsigned> numbers = parsenumbers(events.Value());
+	std::sort(numbers.begin(),numbers.end());
     for (size_t i = 0; i < op.NumArgs(); ++i) {
       eudaq::FileReader reader(op.GetArg(i), ipat.Value(), sync.IsSet(),syncEvents.Value(),syncDelay.Value());
       std::shared_ptr<eudaq::FileWriter> writer(FileWriterFactory::Create(type.Value()));
@@ -37,16 +38,19 @@ int main(int, char ** argv) {
       writer->StartRun(reader.RunNumber());
 	  int event_nr=0;
       do {
-        if (reader.GetDetectorEvent().IsBORE() || reader.GetDetectorEvent().IsEORE() || numbers.empty() ||
-            std::find(numbers.begin(), numbers.end(), reader.GetDetectorEvent().GetEventNumber()) != numbers.end()) {
-          writer->WriteEvent(reader.GetDetectorEvent());
-          if(dbg>0)std::cout<< "writing one more event" << std::endl;
-		  ++event_nr;
-		  if (event_nr%1000==0)
+		  if (!numbers.empty()&&reader.GetDetectorEvent().GetEventNumber()>numbers.back())
 		  {
-			  std::cout<<"Processing event "<< event_nr<<std::endl;
-		  }
-        }
+			break;
+		  }else if (reader.GetDetectorEvent().IsBORE() || reader.GetDetectorEvent().IsEORE() || numbers.empty() ||
+				std::find(numbers.begin(), numbers.end(), reader.GetDetectorEvent().GetEventNumber()) != numbers.end()) {
+			  writer->WriteEvent(reader.GetDetectorEvent());
+			  if(dbg>0)std::cout<< "writing one more event" << std::endl;
+			  ++event_nr;
+			  if (event_nr%1000==0)
+			  {
+				  std::cout<<"Processing event "<< event_nr<<std::endl;
+			  }
+			}
       } while (reader.NextEvent());
       if(dbg>0)std::cout<< "no more events to read" << std::endl;
     }
