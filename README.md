@@ -1,24 +1,44 @@
 eudaq
 =====
 
-eudaq Data Acquisition Framework main repository
+A Multi-platform Data Acquisition Framework
 
-1. Prerequisites
-----------------
+### First steps
+
+Please check out the online documentation at http://eudaq.github.io/
+
+### Other sources of documentation
+
+The user's manual is provided as LaTeX source files in the repository; to generate the pdf, follow these steps:
+```
+cd build
+cmake -DBUILD_manual=ON ..
+make pdf
+```
+The manual can then be found in ```./doc/manual/EUDAQUserManual.pdf```.
+
+To generate the doxygen documentation, make sure that you have installed doxygen and run
+```
+make doxygen
+```
+in the ```build``` directory after CMake. The resulting HTML files are stored in ```../doc/doxygen/html```.
+
+1. Prerequisites for installation
+---------------------------------
 
 1.1. Main Library, Executables and GUI
 --------------------------------------
 
-1.1.1 Linux
+### Linux
 ------------------
 - Install Qt4 or later, e.g. by using the package manager of your distribution: ```apt-get install qt4-devel```
 
-1.1.2 OS X
+### OS X
 ------------------
 - Install Qt4 or later, e.g. by using MacPorts (http://www.macports.org/): ```sudo port install qt4-mac-devel```
 
 
-1.1.3 Windows
+### Windows
 ------------------
 - Download and install Qt4 or later
 - Download and install the pthreads library for Windows
@@ -28,12 +48,17 @@ For full description on how to set up the development environment for Windows, s
 1.2. Specific Producers and Components
 --------------------------------------
 
-1.2.1 TLU producer
+### TLU producer
 ------------------
 - (Windows) install libusb (download from http://sourceforge.net/projects/libusb-win32/files/libusb-win32-releases/, for documentation see http://sourceforge.net/apps/trac/libusb-win32/wiki) into ./extern/libusb-w32
 - (Linux) install libusb development package, e.g. ```apt-get install libusb-dev```
 - install ZestSC1 driver package (if AFS is accessible on the machine, this will be installed automatically when running CMake; otherwise, manually copy full folder with sub-directories from /afs/desy.de/group/telescopes/tlu/ZestSC1 to into ./extern subfolder in EUDAQ sources)
 - install firmware bitfiles (if AFS is accessible on the machine, this will be installed automatically when runnig CMake; otherwise, manually copy /afs/desy.de/group/telescopes/tlu/tlufirmware into ./extern)
+
+### Online Monitor
+--------------------
+- requires ROOT (download from http://root.cern.ch/drupal/content/downloading-root)
+- (Windows) Make sure that you have installed the corresponding version of MSVC with which your downloaded ROOT binaries have been compiled!
 
 
 2. Compiling and Installing:
@@ -69,9 +94,10 @@ Variables thus set are cached in CMakeCache.txt and will again be taken into acc
 
 2.1. Setting up Windows Development Environment to build main library and GUI
 -----------------------------------------------------------------------------
-- Download Qt4 or Qt5:
 - Download and install the pthreads library (pre-build binary from ftp://sources.redhat.com/pub/pthreads-win32) into either c:\pthreads-w32 or ./extern/pthreads-w32
 - Download Visual Studio Express Desktop (e.g. 2013 Version): http://www.microsoft.com/en-us/download/details.aspx?id=40787
+  If you are using MSVC 2010, please make sure that you also install Service Pack 1 (SP1)
+- Download Qt4 or Qt5 (use the binaries compatible with your version of MSVC)
 
 Install both packages.
 
@@ -130,9 +156,17 @@ git remote rename origin upstream
 git remote add origin https://github.com/hperrey/eudaq
 git remote -v show
 ```
-* optional: edit away on your local clone!
+* now edit away on your local clone! But keep in sync with the development in the upstream repository by running
+```
+git pull upstream master
+```
+on a regular basis. Replace ```master``` by the appropriate branch if you work on a separate one.
+Don't forget that you can refer to issues in the main repository anytime by using the string ```eudaq/eudaq#XX``` in your commit messages, where 'XX' stands for the issue number, e.g.
+```
+[...]. this addresses issue eudaq/eudaq#1
+```
 
-* push the edits to origin (our fork)
+* push the edits to origin (your fork)
 ```
 git push origin
 ```
