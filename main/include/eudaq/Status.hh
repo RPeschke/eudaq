@@ -35,6 +35,7 @@ namespace eudaq {
       virtual ~Status() {}
       virtual void print(std::ostream &) const;
       int GetLevel() const { return m_level; }
+	  std::string getMsg() const {return m_msg;}
     protected:
       typedef std::map<std::string, std::string> map_t;
       int m_level;

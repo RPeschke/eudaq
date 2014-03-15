@@ -1,13 +1,25 @@
 #include "eudaq/Status.hh"
 #include "eudaq/Exception.hh"
 #include "eudaq/Utils.hh"
+#include <iostream>
+#include "eudaq/debugOutput.hh"
 
 namespace eudaq {
 
   Status::Status(Deserializer & ds) {
+  
+	  DEBUGBEGIN("Status::Status(Deserializer & ds)");
+
+
     ds.read(m_level);
+	__DEBUG_VARIABLE__(m_level);
+	// std::cout<<"m_level "<<m_level<<std::endl;
+	//  std::cout<<"m_msg "<<m_msg<<std::endl;
     ds.read(m_msg);
+	__DEBUG_VARIABLE__(m_msg);
+//	 std::cout<<"m_msg "<<m_msg<<std::endl;
     ds.read(m_tags);
+	//__DEBUG_VARIABLE__(m_tags);
   }
 
   void Status::Serialize(Serializer & ser) const {

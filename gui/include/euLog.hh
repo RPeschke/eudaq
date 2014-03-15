@@ -9,6 +9,8 @@
 #include <QPainter>
 
 #include <iostream>
+#include <string>
+#include "eudaq/debugOutput.hh"
 
 // To make Qt behave on OSX (to be checked on other OSes)
 #define MAGIC_NUMBER 22
@@ -95,6 +97,21 @@ class LogCollectorGUI : public QMainWindow,
       }
       virtual void OnConnect(const eudaq::ConnectionInfo & id) {
         CheckRegistered();
+	
+		 DEBUGBEGIN("OnConnect") ;
+	
+		 std::string __id=to_string(id);
+		 __DEBUG_VARIABLE__(__id);
+		auto size_of_id=__id.size();		
+		 __DEBUG_VARIABLE__(size_of_id);
+				
+				     
+			if (__id.size()<25)
+			{
+				__DEBUG_PRINT("broken");
+			}
+			
+			DEBUGEND;
         EUDAQ_INFO("Connection from " + to_string(id));
         AddSender(id.GetType(), id.GetName());
       }

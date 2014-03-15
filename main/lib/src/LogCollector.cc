@@ -6,6 +6,7 @@
 #include <iostream>
 #include <ostream>
 #include <sstream>
+#include "eudaq/debugOutput.hh"
 
 namespace eudaq {
 
@@ -65,11 +66,15 @@ namespace eudaq {
 
   void LogCollector::LogHandler(TransportEvent & ev) {
     //std::cout << "LogHandler()" << std::endl;
+	  DEBUGBEGIN("LogCollector::LogHandler");
+	  __DEBUG_VARIABLE__(ev.etype);
+	  __DEBUG_VARIABLE__(ev.packet);
     switch (ev.etype) {
       case (TransportEvent::CONNECT):
         //std::cout << "Connect:    " << ev.id << std::endl;
         if (m_listening) {
           m_logserver->SendPacket("OK EUDAQ LOG LogCollector", ev.id, true);
+		  __DEBUG_PRINT("m_logserver->SendPacket(\"OK EUDAQ LOG LogCollector\", ev.id, true);");
         } else {
           m_logserver->SendPacket("ERROR EUDAQ LOG Not accepting new connections", ev.id, true);
           m_logserver->Close(ev.id);
@@ -108,14 +113,18 @@ namespace eudaq {
           } while(false);
           //std::cout << "client replied, sending OK" << std::endl;
           m_logserver->SendPacket("OK", ev.id, true);
+		  __DEBUG_PRINT("m_logserver->SendPacket(\"OK\", ev.id, true);");
           ev.id.SetState(1); // successfully identified
           OnConnect(ev.id);
         } else {
-          //std::cout << "Receive:    " << ev.id << " " << ev.packet << std::endl;
-          //for (size_t i = 0; i < 8 && i < ev.packet.size(); ++i) {
-          //    std::cout << to_hex(ev.packet[i], 2) << ' ';
-          //}
-          //std::cout << ")" << std::endl;
+
+			//////////////////////////////////////////////////////////////////////////
+          std::cout << "Receive:    " << ev.id << " " << ev.packet << std::endl;
+          for (size_t i = 0; i < 8 && i < ev.packet.size(); ++i) {
+              std::cout << to_hex(ev.packet[i], 2) << ' ';
+          }
+          std::cout << ")" << std::endl;
+		  //////////////////////////////////////////////////////////////////////////
           BufferSerializer ser(ev.packet.begin(), ev.packet.end());
           std::string src = ev.id.GetType();
           if (ev.id.GetName() != "") src += "." + ev.id.GetName();

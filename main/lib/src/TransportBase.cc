@@ -1,6 +1,7 @@
 #include "eudaq/TransportBase.hh"
 #include <ostream>
 #include <iostream>
+#include "eudaq/debugOutput.hh"
 
 namespace eudaq {
 
@@ -32,17 +33,20 @@ namespace eudaq {
   }
 
   void TransportBase::Process(int timeout) {
+	  DEBUGBEGIN("TransportBase::Process");
     if (timeout == -1) timeout = DEFAULT_TIMEOUT;
     MutexLock m(m_mutex);
+	__DEBUG_PRINT("processEvent");
     ProcessEvents(timeout);
     m.Release();
     for (;;) {
-      MutexLock m(m_mutex);
+      m.Lock();
       if (m_events.empty()) break;
       //std::cout << "Got packet" << std::endl;
       TransportEvent evt(m_events.front());
       m_events.pop();
       m.Release();
+	  __DEBUG_PRINT("m_callback(evt);");
       m_callback(evt);
     }
   }
@@ -78,15 +82,20 @@ namespace eudaq {
       const ConnectionInfo & connection,
       int timeout)
   {
+	  DEBUGBEGIN("TransportBase::SendReceivePacket");
     // acquire mutex...
     if (timeout == -1) timeout = DEFAULT_TIMEOUT;
     //std::cout << "DEBUG: SendReceive: Acquiring mutex" << std::endl;
     MutexLock m(m_mutex, false);
     try {
+		__DEBUG_PRINT("try lock mutex");
       m.Lock();
     } catch (const eudaq::Exception &) {
       // swallow it
+		__DEBUG_PRINT("faild locking mutex");
+		
     }
+	DEBUGEND;
     //std::cout << "DEBUG: SendReceive: got mutex" << std::endl;
     SendPacket(sendpacket, connection);
     //std::cout << "DEBUG: SendReceive sent packet " << sendpacket << std::endl;

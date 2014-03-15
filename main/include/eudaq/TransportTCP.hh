@@ -29,6 +29,7 @@ namespace eudaq {
       virtual void Print(std::ostream &) const;
       virtual std::string GetRemote() const { return m_host; }
       virtual ConnectionInfo * Clone() const { return new ConnectionInfoTCP(*this); }
+	  std::string get_buf(){return m_buf;}
     private:
       void update_length(bool = false);
       SOCKET m_fd;
