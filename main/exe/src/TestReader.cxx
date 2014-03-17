@@ -147,7 +147,7 @@ int main(int /*argc*/, char ** argv) {
 
     for (size_t i = 0; i < op.NumArgs(); ++i) {
 
-      eudaq::FileReader reader(op.GetArg(i), ipat.Value(), sync.IsSet());
+      eudaq::FileReader reader(op.GetArg(i), ipat.Value());
       EUDAQ_INFO("Reading: " + reader.Filename());
 
       //    cout << i << " " << reader.Filename()  << endl;

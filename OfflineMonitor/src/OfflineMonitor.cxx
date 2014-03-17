@@ -8,6 +8,7 @@
 #include <iostream>
 #include "../inc/makeCorrelations.h"
 #include "eudaq/PluginManager.hh"
+#include "eudaq/MuliFileReader.h"
 
 using namespace eudaq;
 unsigned dbg = 0; 
@@ -33,8 +34,11 @@ int main(int, char ** argv) {
     op.Parse(argv);
     EUDAQ_LOG_LEVEL(level.Value());
 	std::cout<<"syncEvents"<<syncEvents.Value()<<std::endl;
-    for (size_t i = 0; i < op.NumArgs(); ++i) {
-      eudaq::FileReader reader(op.GetArg(i), ipat.Value(), sync.IsSet(),syncEvents.Value(),syncDelay.Value());
+	eudaq::multiFileReader reader;
+	for (size_t i = 0; i < op.NumArgs(); ++i) {
+
+		reader.addFileReader(op.GetArg(i), ipat.Value());
+	}
       mCorrelations correlator;
 	  correlator.open_confFile(confFile.Value().c_str());
 	  correlator.SetFilePattern(opat.Value());
@@ -72,7 +76,7 @@ int main(int, char ** argv) {
         
       } while (reader.NextEvent(skipEvents.Value()));
      correlator.savePlotsAsPicture();
-    }
+    
   } catch (...) {
 	    std::cout << "Time: " << (std::clock() - start) / (double)(CLOCKS_PER_SEC / 1000) << " ms" << std::endl;
     return op.HandleMainException();

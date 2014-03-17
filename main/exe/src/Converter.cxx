@@ -6,6 +6,7 @@
 #include "eudaq/Logger.hh"
 
 #include <iostream>
+#include "eudaq/MuliFileReader.h"
 
 using namespace eudaq;
 unsigned dbg = 0; 
@@ -31,8 +32,11 @@ int main(int, char ** argv) {
     EUDAQ_LOG_LEVEL(level.Value());
     std::vector<unsigned> numbers = parsenumbers(events.Value());
 	std::sort(numbers.begin(),numbers.end());
+		eudaq::multiFileReader reader;
     for (size_t i = 0; i < op.NumArgs(); ++i) {
-      eudaq::FileReader reader(op.GetArg(i), ipat.Value(), sync.IsSet(),syncEvents.Value(),syncDelay.Value());
+	
+      reader.addFileReader(op.GetArg(i), ipat.Value());
+	}
       std::shared_ptr<eudaq::FileWriter> writer(FileWriterFactory::Create(type.Value()));
       writer->SetFilePattern(opat.Value());
       writer->StartRun(reader.RunNumber());
@@ -53,7 +57,7 @@ int main(int, char ** argv) {
 			}
       } while (reader.NextEvent());
       if(dbg>0)std::cout<< "no more events to read" << std::endl;
-    }
+    
   } catch (...) {
 	    std::cout << "Time: " << (std::clock() - start) / (double)(CLOCKS_PER_SEC / 1000) << " ms" << std::endl;
     return op.HandleMainException();

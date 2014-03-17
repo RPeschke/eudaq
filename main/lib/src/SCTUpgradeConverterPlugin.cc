@@ -175,7 +175,7 @@ namespace eudaq {
           // This is just an example, modified it to suit your raw data format
           // Make sure we have at least one block of data, and it is large enough
 
-            return GetTriggerCounter(*rev);
+            return GetTriggerCounter(*rev);   
           
         }
         // If we are unable to extract the Trigger ID, signal with (unsigned)-1
@@ -188,13 +188,13 @@ namespace eudaq {
 		   unsigned long long tluTime=tlu.GetTimestamp();
 	         long int tluEv=(long int)tlu.GetEventNumber();
 		   	 const RawDataEvent & rawev = dynamic_cast<const RawDataEvent &>(ev);
-			 long int trigger_id=(long int)GetTriggerCounter(rawev );
-			 
+			// long int trigger_id=(long int)GetTriggerCounter(rawev );
+			 long int trigger_id=ev.GetEventNumber();
 			 if (oldDUTid>trigger_id)
 			 {
 				 std::cout<<" if (oldDUTid>trigger_id)"<<std::endl;
 			 }
-		  returnValue=compareTLU2DUT(tluEv,trigger_id+longPause_time);
+		  returnValue=compareTLU2DUT(tluEv,trigger_id);
 
 // 		  if (returnValue==Event_IS_EARLY)
 // 		  {

@@ -14,7 +14,8 @@ namespace eudaq {
 
   class DLLEXPORT FileReader {
     public:
-      FileReader(const std::string & filename, const std::string & filepattern = "", bool synctriggerid = false,size_t syncEvents=1,long long longTimeDelay=0);
+      FileReader(const std::string & filename, const std::string & filepattern = "");
+	//  FileReader(FileReader&& fileR);
       ~FileReader();
       bool NextEvent(size_t skip = 0);
       std::string Filename() const { return m_filename; }
@@ -23,6 +24,7 @@ namespace eudaq {
       const DetectorEvent & Event() const { return GetDetectorEvent(); } // for backward compatibility
       const DetectorEvent & GetDetectorEvent() const;
       const StandardEvent & GetStandardEvent() const;
+	  std::shared_ptr<eudaq::DetectorEvent> GetDetectorEvent_ptr(){return std::dynamic_pointer_cast<eudaq::DetectorEvent>(m_ev);};
       void Interrupt() { m_des.Interrupt(); }
       
     private:
@@ -30,9 +32,13 @@ namespace eudaq {
       FileDeserializer m_des;
      std::shared_ptr<eudaq::Event> m_ev;
       unsigned m_ver;
-	  std::shared_ptr<eudaq::SyncBase> m_sync;
-      
+	//  std::shared_ptr<eudaq::SyncBase> m_sync;
+       
+	  //delete copy constructor;
+	//  FileReader(const FileReader&);
   };
+ 
+
 
 }
 

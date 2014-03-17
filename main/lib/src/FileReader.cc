@@ -13,15 +13,15 @@ namespace eudaq {
 
 
 
-  FileReader::FileReader(const std::string & file, const std::string & filepattern, bool synctriggerid,size_t syncEvents,long long longTimeDelay)
+  FileReader::FileReader(const std::string & file, const std::string & filepattern)
     : m_filename(FileNamer(filepattern).Set('X', ".raw").SetReplace('R', file)),
     m_des(m_filename),
     m_ev(EventFactory::Create(m_des)),
     m_ver(1)
     {
 
-		m_ev->SetTag("longTimeDelay",longTimeDelay);
-		m_ev->SetTag("NumberOfEvents",syncEvents);
+// 		m_ev->SetTag("longTimeDelay",longTimeDelay);
+// 		m_ev->SetTag("NumberOfEvents",syncEvents);
 
 		eudaq::Configuration conf(GetDetectorEvent().GetTag("CONFIG"));
 		conf.SetSection("EventStruct");
@@ -29,33 +29,27 @@ namespace eudaq {
 
 
 		
-      if (synctriggerid) {
-
-	// saves this information in the BOR event. the DataConverterPlugins can extract this information during initializing.
-		m_sync =std::make_shared<eudaq::SyncBase>(GetDetectorEvent());
-
-
-      }
+//       if (synctriggerid) {
+// 
+// 	// saves this information in the BOR event. the DataConverterPlugins can extract this information during initializing.
+// 		m_sync =std::make_shared<eudaq::SyncBase>(GetDetectorEvent());
+// 
+// 
+//       }
     }
-
+//   FileReader::FileReader(FileReader&& fileR):m_filename(fileR.Filename()),
+// 	  m_des(m_filename){
+// 
+// 
+//   }
   FileReader::~FileReader() {
     
   }
 
   bool FileReader::NextEvent(size_t skip) {
-    std::shared_ptr<eudaq::Event> ev = 0;
-    if (m_sync) {
-      bool result = false;
-      for (size_t i = 0; i <= skip; ++i) {
-        if (!m_sync->SynEvents(m_des, m_ver, ev)) break;
-        result = true;
-      }
-      if (ev) {
-        m_ev =(ev);
-      }
-      return result;
-    }
-	// !m_sync  
+    std::shared_ptr<eudaq::Event> ev = nullptr;
+
+
     bool result = m_des.ReadEvent(m_ver, ev, skip);
     if (ev) m_ev =  ev;
     return result;
