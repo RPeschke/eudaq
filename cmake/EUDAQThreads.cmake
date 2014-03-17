@@ -15,7 +15,7 @@ if (USE_CXX11 AND CXX11_COMPILER)
 elseif(WIN32) # Windows specific checks
   message(STATUS "Looking for pthreads-w32 library")
   Find_Package(W32Pthread REQUIRED)
-  set(EUDAQ_THREADS_LIB ${W32PTHREADS_LIBRARIES})
+    set(EUDAQ_THREADS_LIB ${W32PTHREADS_LIBRARIES})
   INCLUDE_DIRECTORIES( ${W32PTHREADS_INCLUDE_DIRS} )
   # also install the pthread library into the bin directory so it's found by the .exe
   STRING(REGEX REPLACE "/lib/" "/dll/" 

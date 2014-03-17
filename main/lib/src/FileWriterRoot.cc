@@ -30,7 +30,7 @@ namespace eudaq {
       unsigned i_tlu; // a trigger id
       unsigned i_run; // a run  number 
       unsigned i_event; // an event number 
-      unsigned long long int i_time_stamp; // the time stamp
+      unsigned long long int i_time_stamp,DUT_time; // the time stamp
   };
 
   namespace {
@@ -62,6 +62,7 @@ namespace eudaq {
     m_ttree->Branch("id_x", &id_x, "id_x/D");
     m_ttree->Branch("id_y", &id_y, "id_y/D");
     m_ttree->Branch("i_time_stamp", &i_time_stamp, "i_time_stamp/LLU");
+	m_ttree->Branch("DUT_time", &DUT_time, "DUT_time/LLU");
     m_ttree->Branch("i_tlu", &i_tlu, "i_tlu/I");
     m_ttree->Branch("i_run", &i_run, "i_run/I");
     m_ttree->Branch("i_event", &i_event, "i_event/I");
@@ -72,13 +73,15 @@ namespace eudaq {
       eudaq::PluginManager::Initialize(ev);
       return;
     } else if (ev.IsEORE()) {
-      m_ttree->Write();
+     // m_ttree->Write();
     }
     StandardEvent sev = eudaq::PluginManager::ConvertToStandard(ev);
     for (size_t iplane = 0; iplane < sev.NumPlanes(); ++iplane) {
 
       const eudaq::StandardPlane & plane = sev.GetPlane(iplane);
       std::vector<double> cds = plane.GetPixels<double>();
+	  
+	 DUT_time= std::stoull(sev.GetTag("DUT_time"));
 
       for (size_t ipix = 0; ipix < cds.size(); ++ipix) {
 
@@ -89,8 +92,13 @@ namespace eudaq {
         id_x = plane.GetX(ipix);
         id_y = plane.GetY(ipix);
         i_time_stamp =  sev.GetTimestamp();
+		try{ 
+		i_tlu= std::stoull(sev.GetTag("TLU_trigger","15"));
+		}catch(...){
+			std::cout<<" error during converting "<<sev.GetTag("TLU_trigger","15") << " to ull"<<std::endl;
+		}
         //          printf("%#x \n", i_time_stamp);  
-        i_tlu = plane.TLUEvent();   
+       // i_tlu = plane.TLUEvent();   
         i_run = sev.GetRunNumber();
         i_event = sev.GetEventNumber();                  
         m_ttree->Fill(); 
@@ -99,6 +107,9 @@ namespace eudaq {
   }
 
   FileWriterRoot::~FileWriterRoot() {
+	//  m_tfile->Write();
+	  m_tfile->Close();
+	  delete m_tfile;
   }
 
   unsigned long long FileWriterRoot::FileBytes() const { return 0; }

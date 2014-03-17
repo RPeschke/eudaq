@@ -62,7 +62,17 @@ if (WIN32)
   endif()
 endmacro()
 
-find_zestsc1_in_extern("")
+IF(WIN32)
+	find_zestsc1_in_extern("windows_7")# this macro does not work. the string is set long before here but it is no where to find
+	SET(ZESTSC1_INCLUDE_DIR ${PROJECT_SOURCE_DIR}/extern/ZestSC1/windows_7/Inc)
+		if (${EX_PLATFORM} EQUAL 64)
+			SET(ZESTSC1_LIBRARY ${PROJECT_SOURCE_DIR}/extern/ZestSC1/windows_7/Lib/amd64/ZestSC1.lib)
+		else() #32bit
+            set(ZESTSC1_LIBRARY  ${PROJECT_SOURCE_DIR}/extern/ZestSC1/windows_7/Lib/x86/ZestSC1.lib)
+		endif(${EX_PLATFORM} EQUAL 64)
+ELSE()
+	find_zestsc1_in_extern("")
+ENDIF()
 
 # could not find the package at the usual locations -- try to copy from AFS if accessible
 if (NOT ZESTSC1_LIBRARY)

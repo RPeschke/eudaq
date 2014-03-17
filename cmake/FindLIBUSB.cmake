@@ -40,6 +40,7 @@ IF(MSVC)
   FIND_PATH(LIBUSB_INCLUDE_DIRS 
     NAMES usb.h lusb0_usb.h 
     PATHS "$ENV{ProgramFiles}/LibUSB-Win32/include" "${extern_lib_path}/include")
+
   if (${EX_PLATFORM} EQUAL 64)
     # on x64 (win64)
     FIND_LIBRARY(LIBUSB_LIBRARIES NAMES libusb PATHS "$ENV{ProgramFiles}/LibUSB-Win32/lib/msvc_x64" "${extern_lib_path}/lib/msvc_x64")

@@ -257,6 +257,7 @@ namespace eudaq {
       WriteStringToFile(fname, to_string(val));
     }
 
+
 }
 
 #endif // EUDAQ_INCLUDED_Utils

@@ -26,9 +26,28 @@ data/runnumber.dat
 extern/ZestSC1
 extern/tlufirmware
 
+build/
+buildqt/*
+extern/pthreads*
+bin/*
+extern/libusb*
+data/r*
 # Ignore paths to windows libraries installed by user:
 extern/pthreads*
 extern/libusb*
 
 # ignore python byte code
 *.pyc
+debug/*
+logs/2*
+release/*
+*.orig
+extern/*
+data/*
+RootInterface/Release/*
+RootInterface/Debug/*
+rootInterfaceTest/*
+RootInterface/src/SCTDict.cxx
+RootInterface/src/SCTDict.h
+OfflineMonitor/Debug/*
+OfflineMonitor/Release/*

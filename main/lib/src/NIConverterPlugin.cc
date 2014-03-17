@@ -53,6 +53,8 @@ namespace eudaq {
 
     virtual void Initialize(const Event & bore, const Configuration & /*c*/) {
 
+		
+
       m_boards = from_string(bore.GetTag("BOARDS"), 0);
       if( m_boards == 255 ) { m_boards = 6; }
 
@@ -68,6 +70,33 @@ namespace eudaq {
       if (rawev.NumBlocks() < 1 || rawev.GetBlock(0).size() < 8) return (unsigned)-1;
       return GET(rawev.GetBlock(0), 1) >> 16;
     }
+
+// 	 virtual int IsSyncWithTLU(eudaq::Event const & ev,eudaq::TLUEvent const & tlu) const {
+// 
+// 		 auto triggerID=ev.GetEventNumber();//GetTriggerID(ev);
+// 		 auto tlu_triggerID=tlu.GetEventNumber();
+// 	//	 std::cout<< "triggerID "<<triggerID<<"  tlu_triggerID: "<<tlu_triggerID<<std::endl;
+// 		int ret= compareTLU2DUT(tlu_triggerID,triggerID);
+// 
+// 		if (ret==Event_IS_EARLY)
+// 		{
+// 			std::cout<<"Ni event is Early Event ID= "<<triggerID<<std::endl;
+// 		}else if (ret==Event_IS_LATE)
+// 		{
+// 			std::cout<<"Ni event is Late Event ID= "<<triggerID<<std::endl;
+// 		}
+// 		
+// 		return ret;
+// // 		 if (triggerID==tlu_triggerID)
+// // 		 {
+// // 			return Event_IS_Sync;	
+// // 		 }else if (triggerID>tlu_triggerID)
+// // 		 {
+// // 			 return Event_IS_EARLY;
+// // 		 }
+// // 		 return Event_IS_LATE;
+// 		 
+//    }
 
     virtual bool GetStandardSubEvent(StandardEvent & result, const Event & source) const {
       if (source.IsBORE()) {
@@ -138,12 +167,12 @@ namespace eudaq {
         //        for(unsigned i=0;i<len0;i++) std::cout << "0:i="<<i << hexdec(GET(it0, i)) << std::endl;
         //        for(unsigned i=0;i<len1;i++) std::cout << "1:i="<<i << hexdec(GET(it1, i)) << std::endl;
 
-
-        if (it0 + len0*4 + 12 > data0.end()) {
+	
+        if ( len0*4 + 12 > data0.end()-it0) {
           EUDAQ_WARN("Bad length in first frame");
           break;
         }
-        if (it1 + len1*4 + 12 > data1.end()) {
+        if ( len1*4 + 12 > data1.end()-it1) {
           EUDAQ_WARN("Bad length in second frame");
           break;
         }
