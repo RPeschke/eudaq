@@ -35,5 +35,10 @@ namespace eudaq {
     return *m_ev;
   }
 
+  std::shared_ptr<eudaq::AidaPacket> AidaFileReader::GetPacket_ptr()
+  {
+	  return m_ev;
+  }
+
 
 }

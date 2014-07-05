@@ -20,6 +20,7 @@ namespace eudaq {
       std::string Filename() const { return m_filename; }
       unsigned RunNumber() const;
       const eudaq::AidaPacket & GetPacket() const;
+	  std::shared_ptr<eudaq::AidaPacket> GetPacket_ptr();
       void Interrupt() { m_des.Interrupt(); }
       
     private:
