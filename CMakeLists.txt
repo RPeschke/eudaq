@@ -150,6 +150,11 @@ IF(BUILD_onlinemon)
   add_subdirectory(monitors/onlinemon)
 ENDIF()
 
+# build OnlineMon executable
+option(BUILD_syncTest "Compile syncTest executable" OFF)
+IF(BUILD_syncTest)
+  add_subdirectory(syncTest)
+ENDIF()
 
 # build Offline Monitor
 option(BUILD_offlinemon "Compile Offline Monitor executable (requires ROOT)?" OFF)
