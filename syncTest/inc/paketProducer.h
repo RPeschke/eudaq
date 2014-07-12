@@ -3,6 +3,7 @@
 #include <thread>
 #include <vector>
 #include <memory>
+#include "dataQueue.h"
 
 namespace eudaq{
   class dataQueue;
@@ -10,7 +11,13 @@ namespace eudaq{
 
   class paketProducer{
   public:
-    paketProducer(const char* name):m_paketName(name){}
+    paketProducer(const char* name):
+      m_paketName(name),
+      m_running(true), 
+      m_dataqueue(nullptr)
+    {
+    }
+
     void addDataQueue(dataQueue* dqueue);
     void addDummyData( uint64_t* meta_data, size_t meta_data_size, uint64_t* data, size_t data_size );
     void startDataTaking(int readoutSpeed);
@@ -23,25 +30,22 @@ namespace eudaq{
     std::unique_ptr<std::thread> m_thread;
     struct data_struc
     {
+      data_struc(uint64_t* meta_data,size_t meta_data_size,uint64_t* data,size_t data_size):
+        m_meta_data(meta_data),
+        m_meta_data_size(meta_data_size),
+        m_data(data),
+        m_data_size(data_size)
+      {
+      }
+
       uint64_t* m_meta_data;
       size_t m_meta_data_size;
       uint64_t* m_data;
       size_t m_data_size;
     };
     std::vector<data_struc> m_data;
+    bool m_running;
   };
-
-  void paketProducer::addDummyData( uint64_t* meta_data, size_t meta_data_size, uint64_t* data, size_t data_size )
-  {
-    m_data.emplace_back(meta_data,meta_data_size,data,data_size);
-  }
-
-  void paketProducer::startDataTaking( int readoutSpeed )
-  {
-    m_readoutSpeed=readoutSpeed;
-    m_thread=std::unique_ptr<std::thread>(new std::thread(&run,this));
-
-  }
 
 }
 #endif // paketProducer_h__
