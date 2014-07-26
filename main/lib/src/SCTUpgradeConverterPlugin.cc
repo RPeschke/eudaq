@@ -10,6 +10,22 @@
 #  include "IMPL/LCCollectionVec.h"
 #  include "lcio.h"
 #endif
+
+#if USE_EUTELESCOPE
+#  include "EUTELESCOPE.h"
+#  include "EUTelMimoTelDetector.h"
+#  include "EUTelMimosa18Detector.h"
+#  include "EUTelMimosa26Detector.h"
+#  include "EUTelSetupDescription.h"
+#  include "EUTelSCTDetector.h"
+#  include "EUTelEventImpl.h"
+#  include "EUTelTrackerDataInterfacerImpl.h"
+#  include "EUTelGenericSparsePixel.h"
+#  include "EUTelRunHeaderImpl.h"
+using eutelescope::EUTELESCOPE;
+#endif
+
+
 #include <iostream>
 #include <string>
 #include <queue>
@@ -32,6 +48,9 @@
 #define TLU_chlocks_per_mirco_secound 384066
 
 
+#define SCTPLANEID 8
+
+
 
 void uchar2bool(const std::vector<unsigned char>& in, int lOffset, int hOffset, std::vector<bool>& out){
   for (auto i = in.begin() + lOffset; i != in.begin() + hOffset; ++i)
@@ -47,6 +66,7 @@ void uchar2bool(const std::vector<unsigned char>& in, int lOffset, int hOffset, 
 int numberOfEvents_inplane;
 
 namespace eudaq {
+  static const int dbg = 0; // 0=off, 1=structure, 2=structure+data
 
   void puschDataInStandartPlane(const std::vector<unsigned char>& inputVector, int moduleNr, StandardPlane& plane){
     int y_pos = (moduleNr - 1) * 2 + 1;
@@ -57,7 +77,7 @@ namespace eudaq {
       std::vector<bool> outputStream0;
 
 
-
+      
 
       uchar2bool(inputVector,
         STREAMSTART(streamNr) + (moduleNr - 1)*TOTALMODULSIZE,
@@ -226,9 +246,9 @@ namespace eudaq {
       const RawDataEvent & rawev = dynamic_cast<const RawDataEvent &>(ev);
 
       sev.SetTag("DUT_time", rawev.GetTimestamp());
-      int id = 8;
+      
       std::string sensortype = "SCT";
-      StandardPlane plane(id, EVENT_TYPE, sensortype);
+      StandardPlane plane(SCTPLANEID, EVENT_TYPE, sensortype);
 
 
       std::vector<unsigned char> inputVector = rawev.GetBlock(0);
@@ -253,6 +273,59 @@ namespace eudaq {
     // This is where the conversion to LCIO is done
     virtual lcio::LCEvent * GetLCIOEvent(const Event * /*ev*/) const {
       return 0;
+    }
+    virtual void GetLCIORunHeader(lcio::LCRunHeader & header, eudaq::Event const & /*bore*/, eudaq::Configuration const & /*conf*/) const{
+      eutelescope::EUTelRunHeaderImpl runHeader(&header);
+      int m_boards=1;
+      std::vector<int> xMin(m_boards, 0), xMax(m_boards, 1151), yMin(m_boards, 0), yMax(m_boards, 575); // $$ values incorect $$TODO change values
+      runHeader.setMinX(xMin);
+      runHeader.setMaxX(xMax);
+      runHeader.setMinY(yMin);
+      runHeader.setMaxY(yMax);
+
+    
+    }
+    virtual bool GetLCIOSubEvent(lcio::LCEvent & result, const Event & source) const{
+      if (source.IsBORE()) {
+        if (dbg>0) std::cout << "SCTConverterPlugin::GetLCIOSubEvent BORE " << std::endl;
+        // shouldn't happen
+        return true;
+      }
+      else if (source.IsEORE()) {
+        if (dbg>0) std::cout << "SCTConverterPlugin::GetLCIOSubEvent EORE " << std::endl;
+        // nothing to do
+        return true;
+      }
+      result.parameters().setValue(eutelescope::EUTELESCOPE::EVENTTYPE, eutelescope::kDE);
+      // pointer to collection which will store data
+      LCCollectionVec * zsDataCollection;
+
+      // it can be already in event or has to be created
+      bool zsDataCollectionExists = false;
+      try {
+        zsDataCollection = static_cast< LCCollectionVec* > (result.getCollection(eutelescope::SCTUPCollectionName));
+        zsDataCollectionExists = true;
+      }
+      catch (lcio::DataNotAvailableException& e) {
+        zsDataCollection = new LCCollectionVec(lcio::LCIO::TRACKERDATA);
+      }
+
+      //	create cell encoders to set sensorID and pixel type
+      CellIDEncoder< TrackerDataImpl > zsDataEncoder(eutelescope::EUTELESCOPE::ZSDATADEFAULTENCODING, zsDataCollection);
+
+
+      // this is an event as we sent from Producer
+      // needs to be converted to concrete type RawDataEvent
+      const RawDataEvent & ev_raw = dynamic_cast <const RawDataEvent &> (source);
+      StandardEvent tmp_evt;
+      GetStandardSubEvent(tmp_evt, ev_raw);
+      StandardPlane plane = static_cast<StandardPlane> (tmp_evt.GetPlane(SCTPLANEID));
+      eutelescope::EUTelPixelDetector * sctDet = new eutelescope::EUTelSCTDetector();
+      std::string readoutmode("RAW2");
+      sctDet->setMode(readoutmode);
+
+      
+
     }
 #endif
 
