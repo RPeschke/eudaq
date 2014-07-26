@@ -56,7 +56,7 @@ namespace eudaq {
   }
 
   void DataCollector::OnDisconnect(const ConnectionInfo & id) {
-    EUDAQ_INFO("Disconnected: " + to_string(id));
+    EUDAQ_INFO("Disconnected: ");// + to_string(id)
     size_t i = GetInfo(id);
     if (i == m_itlu) {
       m_itlu = (size_t) -1;
@@ -296,6 +296,7 @@ namespace eudaq {
     } catch (...) {
       std::cout << "Error: Uncaught unrecognised exception: \n" << "DataThread is dying..." << std::endl;
     }
+
   }
 
 }

@@ -37,6 +37,8 @@ namespace eudaq {
       virtual void OnCompleteEvent();
       virtual void OnStatus();
       virtual ~DataCollector();
+      bool isRunning();
+      void restartDataCollector();
 
       void DataThread();
     private:
