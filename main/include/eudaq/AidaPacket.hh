@@ -17,6 +17,7 @@
 #include "eudaq/SmartEnum.hh"
 #include "eudaq/Platform.hh"
 #include "eudaq/MetaData.hh"
+#include "stdexcept"
 
 #define EUDAQ_DECLARE_PACKET()                  \
   public:                                       \
@@ -48,7 +49,17 @@ class DLLEXPORT AidaPacket : public Serializable {
 		m_header.data.packetSubType = subtype;
 	};
     AidaPacket( Deserializer & ds );
+    AidaPacket(std::string type,std::string subtype):AidaPacket(){
+      if (type.size()>4||subtype.size()>4)
+      {
+        std::string errorMessage="AidaPacket can only handle strings with a length of 4 letters";
+        throw std::invalid_argument(errorMessage);
+      }
 
+    m_header.data.packetType=str2type(type);
+    m_header.data.packetSubType=str2type(subtype);
+
+    }
     //
     // packet header
     //
