@@ -180,7 +180,7 @@ namespace eudaq {
       packet_creator cr = GetCreator(id);
       if ( cr )
     	  return cr( header, ds);
-      return std::shared_ptr<AidaPacket>( new AidaPacket( header, ds ) );
+      return std::make_shared<AidaPacket>(  header, ds ) ;
   };
 
   PacketFactory::map_t & PacketFactory::get_map() {

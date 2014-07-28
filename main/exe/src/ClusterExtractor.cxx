@@ -145,7 +145,7 @@ int main(int /*argc*/, char ** argv) {
               if (it != files.end()) EUDAQ_THROW("ID is repeated: " + to_string(id));
               std::string fname = "run" + to_string(runnum) + "_eutel_" + to_string(id) + ".txt";
               std::cout << "Opening output file: " << fname << std::endl;
-              files[id] = fileptr_t(new std::ofstream(fname.c_str()));
+              files[id] = std::make_shared<std::ofstream>(fname.c_str());
             }
           }
         }
