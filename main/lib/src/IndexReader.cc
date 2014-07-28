@@ -1,6 +1,6 @@
 
 #include "jsoncons/json.hpp"
-
+#include "eudaq/JSON.hh"
 #include "eudaq/IndexReader.hh"
 #include "eudaq/FileNamer.hh"
 #include "eudaq/AidaPacket.hh"
@@ -14,7 +14,7 @@ using jsoncons::json;
 namespace eudaq {
 
   IndexReader::IndexReader(const std::string & file )
-    : m_filename( file ), m_des( 0 ), m_data( 0 ) {
+    : m_filename( file ), m_des( 0 ), m_data( 0 ), m_runNumber( -1 ) {
 	  m_des = new FileDeserializer( m_filename );
 	  m_des->read( m_json_config );
 
@@ -30,8 +30,8 @@ namespace eudaq {
   bool IndexReader::readNext() {
 	  if ( !m_des || !m_des->HasData() )
 		  return false;
-	m_data = new AidaIndexData( *m_des );
-	return true;
+	  m_data = new AidaIndexData( *m_des );
+	  return true;
   }
 
 
@@ -48,11 +48,7 @@ namespace eudaq {
 	  json_header["packetNumber"] = header.data.packetNumber;
 	  data["header"] = json_header;
 
-	  json json_metaData( json::an_array );
-	  for ( auto data : m_data->getMetaData().getArray() ) {
-		  json_metaData.add( data );
-	  }
-	  data["meta"] = json_metaData;
+//	  data["meta"] =  m_data->getMetaData().toJson().get();
 
 	  data["fileNumber"] = m_data->getFileNumber();
 	  data["offset"] = m_data->getOffsetInFile();

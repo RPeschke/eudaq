@@ -22,8 +22,12 @@
 #define EUDAQ_DECLARE_PACKET()                  \
   public:                                       \
   	  static uint64_t eudaq_static_type();      \
+  	  static const std::string & eudaq_static_className(); \
   	  virtual uint64_t get_type() const {       \
   		  return eudaq_static_type();           \
+  	  }											\
+  	  virtual const std::string & getClassName() const { \
+  		  return eudaq_static_className();      \
   	  }
 //  private:                                    \
 //static const int EUDAQ_DUMMY_VAR_DONT_USE = 0
@@ -34,12 +38,18 @@
     static const uint64_t type_(name);       \
     return type_;                            \
   }										     \
+  const std::string & type::eudaq_static_className() {       \
+    static const std::string type_( #type );       \
+    return type_;                            \
+  }										     \
   namespace _eudaq_dummy_ {                  \
   	  static eudaq::RegisterPacketType<type> eudaq_packet_reg;	\
   }
 
 
 namespace eudaq {
+
+class JSON;
 
 class DLLEXPORT AidaPacket : public Serializable {
   public:
@@ -77,6 +87,7 @@ class DLLEXPORT AidaPacket : public Serializable {
 	void SerializeHeader( Serializer & ) const;
 
 	uint64_t GetPacketNumber() const { return m_header.data.packetNumber; };
+    void SetPacketNumber( uint64_t n ) { m_header.data.packetNumber = n; };
     uint64_t GetPacketType() const { return m_header.data.packetType; };
     void SetPacketType( uint64_t type ) { m_header.data.packetType = type; };
     uint64_t GetPacketSubType() const { return m_header.data.packetSubType; };
@@ -119,6 +130,11 @@ class DLLEXPORT AidaPacket : public Serializable {
     static PacketHeader DeserializeHeader( Deserializer & );
 
     virtual void Print(std::ostream & os) const;
+    virtual void toJson( JSON& );
+	virtual const std::string & getClassName() const {
+		static std::string name = "AidaPacket";
+		return name;
+	}
 
     //
     //	static helper methods
@@ -162,6 +178,7 @@ class DLLEXPORT AidaPacket : public Serializable {
     uint64_t* m_data;
 
 };
+
 
 class DLLEXPORT EventPacket : public AidaPacket {
   EUDAQ_DECLARE_PACKET();
