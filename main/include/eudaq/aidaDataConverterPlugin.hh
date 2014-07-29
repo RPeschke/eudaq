@@ -33,7 +33,7 @@ namespace eudaq{
 
     /** Returns the StandardEvent version of the event.
     */
-    virtual bool GetStandardSubEvent(StandardEvent & /*result*/, AidaPacket const & /*source*/) const { return false; };
+    virtual bool GetStandardSubEvent(StandardEvent & /*result*/, AidaPacket const & /*source*/) const;
 
     /** Returns the type of event this plugin can convert to lcio as a pair of Event type id and subtype string.
     */
@@ -63,7 +63,7 @@ namespace eudaq{
     *  at the pluginManager.
     */
     aidaDataConverterPlugin(std::string subtype);
-    aidaDataConverterPlugin(unsigned type, std::string subtype = "");
+    aidaDataConverterPlugin(std::string type, std::string subtype );
 
   private:
     /** The private copy constructor and assignment operator. They are not used anywhere, so there is not
