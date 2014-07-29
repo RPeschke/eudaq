@@ -50,7 +50,7 @@ namespace eudaq {
       uint64_t GetTimestamp() const { return m_timestamp; }
 
       /** Returns the type string of the event implementation.
-       *  Used by the plugin mechanism to identfy the event type.
+       *  Used by the plugin mechanism to identify the event type.
        */
       virtual std::string GetSubType() const { return ""; }
 
