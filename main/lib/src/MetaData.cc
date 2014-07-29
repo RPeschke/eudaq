@@ -89,4 +89,9 @@ void MetaData::toJson( JSON& my, const std::string & objectName ) {
 	}
 }
 
+uint64_t MetaData::getTriggerID( size_t TriggerNo )
+{
+  return GetCounter(m_metaData[TriggerNo]);
+}
+
 }

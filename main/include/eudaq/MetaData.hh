@@ -28,6 +28,7 @@ class DLLEXPORT MetaData : public Serializable {
     static void SetCounter( uint64_t& meta_data, uint64_t data );
 
     void add( bool tlu, int type, uint64_t data );
+    uint64_t getTriggerID(size_t TriggerNo) const;
     std::vector<uint64_t> & getArray() {
     	return m_metaData;
     };
