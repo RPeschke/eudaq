@@ -68,18 +68,7 @@ namespace eudaq {
 
 
 
-    const uint64_t * const AidaPacket::bit_mask() {
-    	static uint64_t* array = NULL;
-    	if ( !array ) {
-    		array = new uint64_t[65];
-    		array[0] = 0;
-    		array[1] = 1;
-    		for ( int i = 2; i <= 64; i++ ) {
-    			array[i] = (array[i - 1] << 1) + 1;
-    		}
-    	}
-    	return array;
-    }
+
 
 
   uint64_t AidaPacket::str2type(const std::string & str) {
