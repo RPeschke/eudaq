@@ -20,6 +20,7 @@ class AidaPacket;
       std::string Filename() const { return m_filename; }
       unsigned RunNumber() const { return m_runNumber; }
       std::string getJsonConfig() { return m_json_config; }
+	  std::shared_ptr<eudaq::AidaPacket> GetPacket_ptr();
       std::string getJsonPacketInfo();
       std::shared_ptr<eudaq::AidaPacket> GetPacket() const { return m_packet; };
       
