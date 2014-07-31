@@ -24,12 +24,12 @@ void aidaDataConverterPlugin::setCurrentTLUEvent( AidaPacket & ev,TLUEvent const
 
 unsigned aidaDataConverterPlugin::GetTriggerID( AidaPacket const & ai) const
 {
-  ai.GetMetaData().getTriggerID(0);
+  return ai.GetMetaData().getTriggerID(0);
 }
 
 unsigned aidaDataConverterPlugin::GetTriggerID(AidaPacket const& ai, unsigned const TriggerNo) const{
 
-  ai.GetMetaData().getTriggerID(TriggerNo);
+  return ai.GetMetaData().getTriggerID(TriggerNo);
 }
 
 bool aidaDataConverterPlugin::GetStandardSubEvent( StandardEvent & /*result*/, AidaPacket const & /*source*/ ) const
