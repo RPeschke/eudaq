@@ -13,6 +13,7 @@ namespace eudaq {
 
 class Deserializer;
 class JSON;
+const uint64_t * const bit_mask();
 
 class DLLEXPORT MetaData : public Serializable {
   public:

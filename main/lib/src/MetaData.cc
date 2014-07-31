@@ -31,6 +31,20 @@ template <int shift, int bits> static void setBitsTemplate( uint64_t& dest, uint
 #define setBits(FIELD,dst, val)	setBitsTemplate<FIELD ## _SHIFT, FIELD ## _BITS>(dst,val)
 
 
+const uint64_t * const bit_mask()
+{
+  static uint64_t* array = nullptr;
+  if (!array) {
+    array = new uint64_t[65];
+    array[0] = 0;
+    array[1] = 1;
+    for (int i = 2; i <= 64; i++) {
+      array[i] = (array[i - 1] << 1) + 1;
+    }
+  }
+  return array;
+}
+
 MetaData::MetaData( Deserializer & ds ) {
 	ds.read( m_metaData );
 };
@@ -88,8 +102,7 @@ void MetaData::toJson( JSON& my, const std::string & objectName ) {
 		}
 	}
 }
-
-uint64_t MetaData::getTriggerID( size_t TriggerNo )
+uint64_t MetaData::getTriggerID(size_t TriggerNo) const
 {
   return GetCounter(m_metaData[TriggerNo]);
 }
