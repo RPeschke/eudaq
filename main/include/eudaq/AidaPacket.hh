@@ -105,13 +105,14 @@ namespace eudaq {
     }
     void SerializeMetaData( Serializer & ) const;
 
-    void SetTag(const std::string & name, const std::string & val); //$$TODO this functionality needs to be implemented
+    void SetTag(const std::string & name, const std::string & val){} //$$TODO this functionality needs to be implemented
 
     template <typename T>
     void SetTag(const std::string & name, const T & val) {
       SetTag(name, eudaq::to_string(val));
     }
 
+    std::string GetTag(const std::string & name, const std::string & def = "") const{ return "not yet implemented"; } // $$TODO this functionality needs to be implemented
     template <typename T>
     T GetTag(const std::string & name, T def) const { //$$TODO this functionality needs to be implemented
       return eudaq::from_string(GetTag(name), def);
@@ -163,7 +164,8 @@ namespace eudaq {
     static std::string type2str(uint64_t id);
 
     static const uint64_t * const bit_mask();
-
+    AidaPacket(const PacketHeader& header, const MetaData& meta);
+    AidaPacket(PacketHeader& header, Deserializer & ds);
   protected:
     friend class PacketFactory;
     friend class AidaIndexData;
@@ -172,8 +174,7 @@ namespace eudaq {
       m_header.data.packetNumber = getNextPacketNumber();
     };
 
-    AidaPacket( const PacketHeader& header, const MetaData& meta );
-    AidaPacket( PacketHeader& header, Deserializer & ds );
+
 
 
     static uint64_t getNextPacketNumber() {
@@ -231,7 +232,7 @@ namespace eudaq {
       PacketFactory::Register(T_Packet::eudaq_static_type(), &factory_func);
     }
     static std::shared_ptr<AidaPacket> factory_func( AidaPacket::PacketHeader& header, Deserializer & ds) {
-      return std::make_shared<AidaPacket>( header, ds );
+      return std::shared_ptr<AidaPacket>(nullptr);// std::make_shared<AidaPacket>(header, ds);
     }
   };
 
