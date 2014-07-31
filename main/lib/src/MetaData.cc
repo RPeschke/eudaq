@@ -20,11 +20,11 @@ namespace eudaq {
 #define COUNTER_SHIFT  0
 
 template <int shift, int bits> static uint64_t getBitsTemplate( uint64_t from ) {
-	return shift > 0 ? (from >> shift) & bit_mask()[bits] : from &bit_mask()[bits];
+	return shift > 0 ? (from >> shift) & AidaPacket::bit_mask()[bits] : from & AidaPacket::bit_mask()[bits];
 };
 
 template <int shift, int bits> static void setBitsTemplate( uint64_t& dest, uint64_t val ) {
-	dest |= shift > 0 ? (val & bit_mask()[bits]) << shift : val & bit_mask()[bits];
+	dest |= shift > 0 ? (val & AidaPacket::bit_mask()[bits]) << shift : val & AidaPacket::bit_mask()[bits];
 };
 
 #define getBits(FIELD,from)	getBitsTemplate<FIELD ## _SHIFT, FIELD ## _BITS>(from)

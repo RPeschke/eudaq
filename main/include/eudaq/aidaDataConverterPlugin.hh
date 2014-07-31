@@ -2,8 +2,6 @@
 #define aidaDataConverterPlugin_h__
 #include <utility>
 
-#include <stdint.h>
-#include <string>
 
 namespace lcio{
   class LCRunHeader;
@@ -26,7 +24,7 @@ namespace eudaq{
     */
     virtual unsigned GetTriggerID(AidaPacket const & ai) const;
     virtual unsigned GetTriggerID(AidaPacket const& ai, unsigned const TriggerNo) const;
-    virtual unsigned GetNumberOfTriggers(AidaPacket const& ai) const{ return static_cast<unsigned>(-1); }; // $$TODO this functionality needs to be implemented
+    virtual unsigned GetNumberOfTriggers(AidaPacket const& ai) const;
     
 
     virtual int IsSyncWithTLU(AidaPacket const & ev,eudaq::TLUEvent const & tlu) const;
