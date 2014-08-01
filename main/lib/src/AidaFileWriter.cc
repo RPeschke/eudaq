@@ -34,7 +34,7 @@ namespace eudaq {
     static RegisterAidaFileWriter<AidaFileWriterNative> reg("native");
   }
 
-  AidaFileWriterNative::AidaFileWriterNative(const std::string & /*param*/) : m_ser(0), m_idx(0) {
+  AidaFileWriterNative::AidaFileWriterNative(const std::string & /*param*/) : m_ser(nullptr), m_idx(nullptr) {
     //EUDAQ_DEBUG("Constructing AidaFileWriterNative(" + to_string(param) + ")");
   }
 
