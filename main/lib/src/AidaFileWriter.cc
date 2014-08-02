@@ -97,8 +97,16 @@ namespace eudaq {
 
   AidaFileWriter * AidaFileWriterFactory::Create(const std::string & name, const std::string & params) {
     map_t::const_iterator it = AidaFileWriterMap().find(name == "" ? "native" : name);
-    if (it == AidaFileWriterMap().end())
-    	EUDAQ_THROW("Unknown file writer: " + name);
+    if (it == AidaFileWriterMap().end()){
+      std::string posibilities;
+        
+      for (auto& e:AidaFileWriterMap())
+      {
+        posibilities += e.first + " ; ";
+      }
+     
+      EUDAQ_THROW("Unknown file writer: " + name + "\n posibilities are : " + posibilities + "\n");
+    }
     return (it->second)(params);
   }
 
