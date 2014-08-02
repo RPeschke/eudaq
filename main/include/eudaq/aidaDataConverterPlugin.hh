@@ -19,7 +19,7 @@ namespace eudaq{
 
   class aidaDataConverterPlugin {
   public:
-    typedef std::pair<uint64_t,uint64_t> t_packetid;
+    typedef AidaPacket::t_id t_packetid;
 
     virtual void Initialize(AidaPacket const &, eudaq::Configuration const &) {}
     /** Returns the first trigger id 
