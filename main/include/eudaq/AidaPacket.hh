@@ -53,6 +53,9 @@ namespace eudaq {
 
   class DLLEXPORT AidaPacket : public Serializable {
   public:
+    typedef std::pair<uint64_t, uint64_t> t_id;
+
+
 
     AidaPacket( uint64_t type, uint64_t subtype ) : AidaPacket() {
       m_header.data.packetType = type;
@@ -92,7 +95,7 @@ namespace eudaq {
     void SetPacketType( uint64_t type ) { m_header.data.packetType = type; };
     uint64_t GetPacketSubType() const { return m_header.data.packetSubType; };
     void SetPacketSubType( uint64_t type ) { m_header.data.packetSubType = type; };
-
+    t_id getID(){ return t_id(GetPacketType(), GetPacketSubType()); }
     //
     // meta data
     //
