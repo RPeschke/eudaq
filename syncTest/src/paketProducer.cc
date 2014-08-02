@@ -31,16 +31,19 @@ namespace eudaq{
         auto t = std::chrono::high_resolution_clock::now();
         microseconds ns = duration_cast<microseconds>(t - starttimer);
        // cout << " time: " << ns.count() << endl;
+        
         packet->GetMetaData().add(1,m_type,static_cast<uint64_t>(ns.count()) );
 
-
+        
 
         packet->SetData( e.m_data, e.m_data_size );
+
+        Sleep(m_readoutSpeed);
         m_dataqueue->pushPacket(packet);
       
       }
 
-      Sleep(m_readoutSpeed);
+    
     }
   }
 
