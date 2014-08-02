@@ -1,6 +1,9 @@
 #include "paketProducer.h"
 #include "eudaq\AidaPacket.hh"
-
+#include <ctime>
+using std::chrono::microseconds;
+using std::chrono::duration_cast;
+using namespace std;
 
 namespace eudaq{
   void paketProducer::startDataTaking( int readoutSpeed )
@@ -16,6 +19,7 @@ namespace eudaq{
 
   void paketProducer::run()
   {
+    auto starttimer = std::chrono::high_resolution_clock::now();
     while (m_running)
     {
 
@@ -23,8 +27,14 @@ namespace eudaq{
       int i=0;
       for(auto &e:m_data){
         auto packet = std::make_shared<AidaPacket>(AidaPacket::str2type( m_paketName ), i++ );
-        for ( int i = 0; i < e.m_meta_data_size; i++ )
-          packet->GetMetaData().v.push_back( e.m_meta_data[i] );
+        
+        auto t = std::chrono::high_resolution_clock::now();
+        microseconds ns = duration_cast<microseconds>(t - starttimer);
+       // cout << " time: " << ns.count() << endl;
+        packet->GetMetaData().add(1,m_type,static_cast<uint64_t>(ns.count()) );
+
+
+
         packet->SetData( e.m_data, e.m_data_size );
         m_dataqueue->pushPacket(packet);
       
@@ -43,6 +53,12 @@ namespace eudaq{
       std::cout<< " data queue already defined " <<std::endl;
     }
 
+  }
+
+  void paketProducer::stopDataTaking()
+  {
+    m_running = false;
+    m_thread->join();
   }
 
 }

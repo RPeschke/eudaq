@@ -11,11 +11,19 @@ namespace eudaq{
 
   class paketProducer{
   public:
-    paketProducer(const char* name):
+    paketProducer(const char* name, int type) :
       m_paketName(name),
       m_running(true), 
-      m_dataqueue(nullptr)
+      m_dataqueue(nullptr),
+      m_type(type)
     {
+    }
+    ~paketProducer(){
+      m_running = false;
+      if (m_thread && m_thread->joinable())
+      {
+        m_thread->join();
+      }
     }
 
     void addDataQueue(dataQueue* dqueue);
@@ -45,6 +53,7 @@ namespace eudaq{
     };
     std::vector<data_struc> m_data;
     bool m_running;
+    int m_type;
   };
 
 }
