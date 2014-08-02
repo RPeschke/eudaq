@@ -57,7 +57,7 @@ namespace eudaq{
 
   class DataConverterPlugin {
     public:
-      typedef std::pair<unsigned, std::string> t_eventid;
+      typedef Event::t_eventid t_eventid;
 
       virtual void Initialize(eudaq::Event const &, eudaq::Configuration const &) {}
 
