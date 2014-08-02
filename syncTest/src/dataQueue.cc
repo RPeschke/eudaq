@@ -1,5 +1,6 @@
 #include "dataQueue.h"
 #include "eudaq\AidaFileWriter.hh"
+using namespace std;
 
 namespace eudaq {
 
@@ -23,12 +24,12 @@ namespace eudaq {
 
   void dataQueue::writeToFile( const char* filename )
   {
-    m_writer =  std::shared_ptr<eudaq::AidaFileWriter>(AidaFileWriterFactory::Create("" ));
+    m_writer = std::shared_ptr<eudaq::AidaFileWriter>(AidaFileWriterFactory::Create("metaData"));
     m_writer->StartRun(1001);
     m_writer->SetFilePattern("");
   }
 
-  void dataQueue::WritePacket( const AidaPacket & packet )
+  void dataQueue::WritePacket(std::shared_ptr<AidaPacket>  packet )
   {
     if (m_writer.get()) {
       try {
@@ -36,6 +37,7 @@ namespace eudaq {
       } catch(const Exception & e) {
         std::string msg = "Exception writing to file: ";
         msg += e.what();
+        cout << msg << endl;
 
       }
 
@@ -45,7 +47,8 @@ namespace eudaq {
 
   void dataQueue::writeNextPacket()
   { auto packet=getPacket();
-    WritePacket(*packet);
+    WritePacket(packet);
+
   }
 
 
