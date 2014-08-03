@@ -101,7 +101,7 @@ namespace eudaq{
     t_eventid m_eventtype;
 
 
-    /** The protected constructor which automatically registeres the plugin
+    /** The protected constructor which automatically registers the plugin
      *  at the pluginManager.
      */
     DataConverterPlugin(subType subtype);
@@ -109,8 +109,8 @@ namespace eudaq{
 
   private:
     /** The private copy constructor and assignment operator. They are not used anywhere, so there is not
-     *  even an implementation. Even if the childs default copy constructor is public
-     *  the code will not compile if it is called, since it cannot acces this cc, which the
+     *  even an implementation. Even if the childes default copy constructor is public
+     *  the code will not compile if it is called, since it cannot access this cc, which the
      *  the default cc does.
      */
     DataConverterPlugin(DataConverterPlugin &);
