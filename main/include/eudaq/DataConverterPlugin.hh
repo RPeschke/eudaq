@@ -2,8 +2,6 @@
 #define EUDAQ_INCLUDED_DataConverterPlugin
 
 #include "eudaq/StandardEvent.hh"
-#include "eudaq/RawDataEvent.hh"
-#include "TLUEvent.hh"
 #include "eudaq/resyncUtilities.hh"
 
 #if USE_LCIO
@@ -62,7 +60,7 @@ template <typename containerT>
       virtual void Initialize(containerT const &, eudaq::Configuration const &) {}
 
       virtual unsigned GetTriggerID(containerT const &) const;
-      virtual int IsSyncWithTLU(containerT const & ev, eudaq::TLUEvent const & tlu) const {
+      virtual int IsSyncWithTLU(containerT const & ev, containerT const & tlu) const {
 		  // dummy comparator. it is just checking if the event numbers are the same.
 		  
 		  //auto triggerID=ev.GetEventNumber();
@@ -71,7 +69,7 @@ template <typename containerT>
 	return compareTLU2DUT(tlu_triggerID,triggerID);
 	  }
 
-     virtual void setCurrentTLUEvent(containerT & ev, eudaq::TLUEvent const & tlu){
+      virtual void setCurrentTLUEvent(containerT & ev, containerT const & tlu){
 		  ev.SetTag("tlu_trigger_id",tlu.GetEventNumber());
 	  }
      virtual void GetLCIORunHeader(lcio::LCRunHeader &, containerT const &, eudaq::Configuration const &) const {}
