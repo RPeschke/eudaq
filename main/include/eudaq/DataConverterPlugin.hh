@@ -1,6 +1,9 @@
 #ifndef EUDAQ_INCLUDED_DataConverterPlugin
 #define EUDAQ_INCLUDED_DataConverterPlugin
 
+#include <string>
+#include <algorithm>
+
 #include "eudaq/StandardEvent.hh"
 #include "eudaq/resyncUtilities.hh"
 
@@ -33,8 +36,7 @@ using namespace UTIL;
 namespace EVENT { class LCEvent; class LCRunHeader; }
 namespace lcio { using namespace EVENT; }
 
-#include <string>
-#include <algorithm>
+
 
 namespace eudaq{
 
