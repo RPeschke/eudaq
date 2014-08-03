@@ -53,20 +53,24 @@ namespace eudaq {
 
   class DLLEXPORT AidaPacket : public Serializable {
   public:
-    typedef std::pair<uint64_t, uint64_t> t_id;
+    typedef uint64_t mainType;
+    typedef uint64_t subType;
+    typedef std::pair<mainType, subType> t_id;
 
 
 
-    AidaPacket( uint64_t type, uint64_t subtype ) : AidaPacket() {
+    AidaPacket( mainType type, subType subtype ) : AidaPacket() {
       m_header.data.packetType = type;
       m_header.data.packetSubType = subtype;
     }
     AidaPacket( Deserializer & ds );
     AidaPacket(std::string type,std::string subtype):AidaPacket(){
-      if (type.size()>4||subtype.size()>4)
+      if (type.size()>sizeof(mainType)||subtype.size()>sizeof(subType))
       {
-        std::string errorMessage="AidaPacket can only handle strings with a length of 4 letters";
-        throw std::invalid_argument(errorMessage);
+        std::string errorMessage = string("AidaPacket can only handle strings with a length of " )
+          + to_string(sizeof(mainType)) + " for the mainType and " + to_string(sizeof(subType)) +  " for the subtype";
+
+        EUDAQ_THROW(errorMessage);
       }
 
       m_header.data.packetType=str2type(type);
@@ -81,8 +85,8 @@ namespace eudaq {
     public:
       struct {
         uint64_t marker; 				// 8 byte string: #PACKET#
-        uint64_t packetType;			// 8 byte string
-        uint64_t packetSubType;		// 8 byte string
+        mainType packetType;			// 8 byte string, packed in uint_64
+        subType packetSubType;		// 8 byte string, packed in uint_64
         uint64_t packetNumber;
       } data;
     };
@@ -163,8 +167,8 @@ namespace eudaq {
 
     static const PacketIdentifier& identifier();
 
-    static uint64_t str2type(const std::string & str);
-    static std::string type2str(uint64_t id);
+    static mainType str2type(const std::string & str);
+    static std::string type2str(mainType id);
 
     static const uint64_t * const bit_mask();
     AidaPacket(const PacketHeader& header, const MetaData& meta);
