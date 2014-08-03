@@ -55,7 +55,9 @@ namespace eudaq{
   template <typename containerT>
   class DataConverterPlugin {
   public:
-    typedef typename containerT::t_id t_eventid;
+    typedef typename containerT::t_id     t_eventid;
+    typedef typename containerT::mainType mainType;
+    typedef typename containerT::subType  subType;
 
     virtual void Initialize(containerT const &, eudaq::Configuration const &) {}
 
@@ -102,8 +104,8 @@ namespace eudaq{
     /** The protected constructor which automatically registeres the plugin
      *  at the pluginManager.
      */
-    DataConverterPlugin(std::string subtype);
-    DataConverterPlugin(unsigned type, std::string subtype = "");
+    DataConverterPlugin(subType subtype);
+    DataConverterPlugin(mainType type, subType subtype );
 
   private:
     /** The private copy constructor and assignment operator. They are not used anywhere, so there is not
