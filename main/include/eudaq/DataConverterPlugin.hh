@@ -54,15 +54,15 @@ namespace eudaq{
    *  accessed via the plugin manager. (See TimepixConverterPlugin as example).
    *  The plugin implementations have to register with the plugin manager.
    */
-
+template <typename containerT>
   class DataConverterPlugin {
     public:
-      typedef Event::t_eventid t_eventid;
+      typedef typename containerT::t_id t_eventid;
 
-      virtual void Initialize(eudaq::Event const &, eudaq::Configuration const &) {}
+      virtual void Initialize(containerT const &, eudaq::Configuration const &) {}
 
-      virtual unsigned GetTriggerID(eudaq::Event const &) const;
-	  virtual int IsSyncWithTLU(eudaq::Event const & ev,eudaq::TLUEvent const & tlu) const {
+      virtual unsigned GetTriggerID(containerT const &) const;
+      virtual int IsSyncWithTLU(containerT const & ev, eudaq::TLUEvent const & tlu) const {
 		  // dummy comparator. it is just checking if the event numbers are the same.
 		  
 		  //auto triggerID=ev.GetEventNumber();
@@ -71,19 +71,19 @@ namespace eudaq{
 	return compareTLU2DUT(tlu_triggerID,triggerID);
 	  }
 
-	  virtual void setCurrentTLUEvent(eudaq::Event & ev,eudaq::TLUEvent const & tlu){
+     virtual void setCurrentTLUEvent(containerT & ev, eudaq::TLUEvent const & tlu){
 		  ev.SetTag("tlu_trigger_id",tlu.GetEventNumber());
 	  }
-	  virtual void GetLCIORunHeader(lcio::LCRunHeader &, eudaq::Event const &, eudaq::Configuration const &) const {}
+     virtual void GetLCIORunHeader(lcio::LCRunHeader &, containerT const &, eudaq::Configuration const &) const {}
 	  
 
       /** Returns the LCIO version of the event.
        */
-      virtual bool GetLCIOSubEvent(lcio::LCEvent & /*result*/, eudaq::Event const & /*source*/) const { return false; }
+     virtual bool GetLCIOSubEvent(lcio::LCEvent & /*result*/, containerT const & /*source*/) const { return false; }
 
       /** Returns the StandardEvent version of the event.
        */
-      virtual bool GetStandardSubEvent(StandardEvent & /*result*/, eudaq::Event const & /*source*/) const { return false; };
+     virtual bool GetStandardSubEvent(StandardEvent & /*result*/, containerT const & /*source*/) const { return false; };
 
       /** Returns the type of event this plugin can convert to lcio as a pair of Event type id and subtype string.
        */
