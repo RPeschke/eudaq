@@ -49,7 +49,7 @@ using eudaq::mupix::Mupix4DataProxy;
 
 namespace eudaq {
 
-class Mupix4ConverterPlugin : public DataConverterPlugin {
+class Mupix4ConverterPlugin : public DataConverterPlugin<Event> {
 public:
 
     virtual void Initialize(const eudaq::Event &, eudaq::Configuration const &) {};

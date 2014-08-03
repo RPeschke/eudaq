@@ -9,9 +9,9 @@
 
 namespace eudaq{
 
-  class TLUConverterPlugin : public DataConverterPlugin {
+  class TLUConverterPlugin : public DataConverterPlugin<Event> {
     public:
-      TLUConverterPlugin() : DataConverterPlugin(Event::str2id("_TLU")) {}
+      TLUConverterPlugin() : DataConverterPlugin(Event::str2id("_TLU"),"") {}
 
       virtual bool GetStandardSubEvent(eudaq::StandardEvent & result, const eudaq::Event & source) const {
         result.SetTimestamp(source.GetTimestamp());

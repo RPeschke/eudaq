@@ -55,7 +55,7 @@ static const char *     MUPIX2_COLLECTION_NAME = "zsdata_mupix2";
 
 namespace eudaq {
 
-class Mupix2ConverterPlugin : public DataConverterPlugin {
+class Mupix2ConverterPlugin : public DataConverterPlugin<Event> {
 public:
     
     virtual void Initialize(const eudaq::Event &, eudaq::Configuration const &) {};

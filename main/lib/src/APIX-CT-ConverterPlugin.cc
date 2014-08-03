@@ -144,7 +144,7 @@ namespace eudaq {
     unsigned int eudetTrigger;
   };
   
-  class APIXCTConverterPlugin : public DataConverterPlugin {
+  class APIXCTConverterPlugin : public DataConverterPlugin<Event> {
   public:
     virtual void Initialize(const Event & e, const Configuration & c);
 #if USE_LCIO && USE_EUTELESCOPE

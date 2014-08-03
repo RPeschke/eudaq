@@ -38,7 +38,7 @@ namespace eudaq {
 
   /********************************************/
 
-  class FORTISConverterPlugin : public DataConverterPlugin {
+  class FORTISConverterPlugin : public DataConverterPlugin<Event> {
     public:
       virtual void Initialize(const Event & e, const Configuration & c);
 

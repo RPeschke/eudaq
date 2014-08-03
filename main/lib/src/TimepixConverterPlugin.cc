@@ -26,6 +26,7 @@
 #  include "EUTelGenericSparsePixel.h"
 using eutelescope::EUTELESCOPE;
 #endif
+#include "eudaq/RawDataEvent.hh"
 #define MATRIX_SIZE 65536
 
 using namespace std;
@@ -51,7 +52,7 @@ namespace eudaq {
 
 
   // Declare a new class that inherits from DataConverterPlugin
-  class TimepixConverterPlugin : public DataConverterPlugin {
+  class TimepixConverterPlugin : public DataConverterPlugin<Event> {
 
   public:
     // This is called once at the beginning of each run.

@@ -1,6 +1,7 @@
 #include "eudaq/DataConverterPlugin.hh"
 #include "eudaq/StandardEvent.hh"
 #include "eudaq/Utils.hh"
+#include "eudaq/RawDataEvent.hh"
 
 #if ((defined WIN32) && (defined __CINT__))
 typedef unsigned long long uint64_t
@@ -26,6 +27,7 @@ typedef int int32_t
 #include <vector>
 #include <algorithm>
 #include <cmath>
+
 using namespace std;
 
 namespace eudaq {
@@ -72,7 +74,7 @@ namespace eudaq {
   static const char* EVENT_TYPE = "EXPLORER1Raw";
 
   //Plugin inheritance
-  class ExplorerConverterPlugin : public DataConverterPlugin {
+  class ExplorerConverterPlugin : public DataConverterPlugin<Event> {
 
   public:
     ////////////////////////////////////////

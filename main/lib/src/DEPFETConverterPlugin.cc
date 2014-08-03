@@ -326,7 +326,7 @@ namespace eudaq {
 
   /********************************************/
 
-  class DEPFETConverterPlugin : public DataConverterPlugin, public DEPFETConverterBase {
+  class DEPFETConverterPlugin : public DataConverterPlugin<Event>, public DEPFETConverterBase {
     public:
       //virtual lcio::LCEvent * GetLCIOEvent( eudaq::Event const * ee ) const;
 
@@ -530,10 +530,10 @@ namespace eudaq {
 
     /********************************************/
 
-    class LegacyDEPFETConverterPlugin : public DataConverterPlugin, public DEPFETConverterBase {
+    class LegacyDEPFETConverterPlugin : public DataConverterPlugin<Event>, public DEPFETConverterBase {
       virtual bool GetStandardSubEvent(StandardEvent &, const Event & source) const;
       private:
-      LegacyDEPFETConverterPlugin() : DataConverterPlugin(Event::str2id("_DEP")){}
+      LegacyDEPFETConverterPlugin() : DataConverterPlugin(Event::str2id("_DEP"),""){}
       static LegacyDEPFETConverterPlugin const m_instance;
     };
 

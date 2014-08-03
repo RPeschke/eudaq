@@ -190,7 +190,7 @@ namespace eudaq {
 
   /********************************************/
 
-  class EUDRBConverterPlugin : public DataConverterPlugin, public EUDRBConverterBase {
+  class EUDRBConverterPlugin : public DataConverterPlugin<Event>, public EUDRBConverterBase {
     public:
       virtual void Initialize(const Event & e, const Configuration & c) {
         FillInfo(e, c);
@@ -226,7 +226,7 @@ namespace eudaq {
 
   /********************************************/
 
-  class LegacyEUDRBConverterPlugin : public DataConverterPlugin, public EUDRBConverterBase {
+  class LegacyEUDRBConverterPlugin : public DataConverterPlugin<Event>, public EUDRBConverterBase {
     virtual void Initialize(const eudaq::Event & e, const eudaq::Configuration & c) {
       FillInfo(e, c);
     }
@@ -253,7 +253,7 @@ namespace eudaq {
 #endif
 
     private:
-    LegacyEUDRBConverterPlugin() : DataConverterPlugin(Event::str2id("_DRB")){}
+    LegacyEUDRBConverterPlugin() : DataConverterPlugin(Event::str2id("_DRB"),""){}
     static LegacyEUDRBConverterPlugin const m_instance;
   };
 

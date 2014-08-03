@@ -13,6 +13,8 @@
 #include <iostream>
 #include <string>
 #include <queue>
+#include "eudaq/RawDataEvent.hh"
+#include "eudaq/TLUEvent.hh"
 
 #define EVENTHEADERSIZE 14
 #define MODULEHEADERSIZE 3
@@ -122,7 +124,7 @@ namespace eudaq {
   static const char* EVENT_TYPE = "SCTupgrade";
 
   // Declare a new class that inherits from DataConverterPlugin
-  class SCTupgradeConverterPlugin : public DataConverterPlugin {
+  class SCTupgradeConverterPlugin : public DataConverterPlugin<Event> {
 
 	 
 

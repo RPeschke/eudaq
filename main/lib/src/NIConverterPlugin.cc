@@ -45,7 +45,7 @@ namespace eudaq {
   static const int dbg = 0; // 0=off, 1=structure, 2=structure+data
   static const int PIVOTPIXELOFFSET = 64;
 
-  class NIConverterPlugin : public DataConverterPlugin {
+  class NIConverterPlugin : public DataConverterPlugin<Event> {
     typedef std::vector<unsigned char> datavect;
     typedef std::vector<unsigned char>::const_iterator datait;
     public:

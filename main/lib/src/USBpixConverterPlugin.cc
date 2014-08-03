@@ -170,7 +170,7 @@ namespace eudaq {
   };
 
   // Declare a new class that inherits from DataConverterPlugin
-  class USBPixConverterPlugin : public DataConverterPlugin , public USBpixConverterBase {
+  class USBPixConverterPlugin : public DataConverterPlugin<Event> , public USBpixConverterBase {
 
     public:
 

@@ -64,7 +64,7 @@ namespace eudaq
    *  inherited constructor of the DataConverterPlugin.
    */
 
-  class AltroUSBConverterPlugin : public DataConverterPlugin
+  class AltroUSBConverterPlugin : public DataConverterPlugin<Event>
   {
 
     public:

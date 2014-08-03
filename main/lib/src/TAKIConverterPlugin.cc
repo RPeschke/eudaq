@@ -34,7 +34,7 @@ namespace eudaq {
 
   /********************************************/
 
-  class TAKIConverterPlugin : public DataConverterPlugin {
+  class TAKIConverterPlugin : public DataConverterPlugin<Event> {
     public:
       virtual void Initialize(const Event & e, const Configuration & c);
 

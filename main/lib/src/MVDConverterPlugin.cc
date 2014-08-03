@@ -6,7 +6,7 @@ namespace eudaq {
 
   // Test Events have nothing to convert
   // This class is only here to prevent a runtime errors
-  class MVDConverterPlugin : public DataConverterPlugin {
+  class MVDConverterPlugin : public DataConverterPlugin<Event> {
     MVDConverterPlugin() : DataConverterPlugin(EVENT_TYPE) {}
     static MVDConverterPlugin m_instance;
   };

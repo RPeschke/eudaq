@@ -1,7 +1,7 @@
 #include "eudaq/DataConverterPlugin.hh"
 #include "eudaq/StandardEvent.hh"
 #include "eudaq/Utils.hh"
-
+#include "eudaq/RawDataEvent.hh"
 // All LCIO-specific parts are put in conditional compilation blocks
 // so that the other parts may still be used if LCIO is not available.
 #if USE_LCIO
@@ -11,6 +11,7 @@
 #  include "lcio.h"
 #endif
 
+
 namespace eudaq {
 
   // The event type for which this converter plugin will be registered
@@ -18,7 +19,7 @@ namespace eudaq {
   static const char* EVENT_TYPE = "Example";
 
   // Declare a new class that inherits from DataConverterPlugin
-  class ExampleConverterPlugin : public DataConverterPlugin {
+  class ExampleConverterPlugin : public DataConverterPlugin<Event> {
 
     public:
 

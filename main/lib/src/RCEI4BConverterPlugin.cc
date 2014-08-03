@@ -223,7 +223,7 @@ namespace eudaq {
   };
 
   // Declare a new class that inherits from DataConverterPlugin
-  class RCEI4BConverterPlugin : public DataConverterPlugin , public RCEI4BConverterBase {
+  class RCEI4BConverterPlugin : public DataConverterPlugin<Event> , public RCEI4BConverterBase {
 
     public:
 
