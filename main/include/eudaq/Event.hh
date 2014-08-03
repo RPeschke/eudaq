@@ -39,7 +39,9 @@ namespace eudaq {
 
   class DLLEXPORT Event : public Serializable {
     public:
-      typedef std::pair<unsigned, std::string> t_id;
+      typedef unsigned mainType;
+      typedef std::string subType;
+      typedef std::pair<mainType, subType> t_id;
       enum Flags { FLAG_BORE=1, FLAG_EORE=2, FLAG_HITS=4, FLAG_FAKE=8, FLAG_SIMU=16, FLAG_ALL=(unsigned)-1 }; // Matches FLAGNAMES in .cc file
       Event(unsigned run, unsigned event, uint64_t timestamp = NOTIMESTAMP, unsigned flags=0)
         : m_flags(flags), m_runnumber(run), m_eventnumber(event), m_timestamp(timestamp) {}
@@ -53,7 +55,7 @@ namespace eudaq {
       /** Returns the type string of the event implementation.
        *  Used by the plugin mechanism to identify the event type.
        */
-      virtual std::string GetSubType() const { return ""; }
+      virtual subType GetSubType() const { return ""; }
 
       t_id getID(){ return t_id(get_id(), GetSubType()); }
 
@@ -77,8 +79,8 @@ namespace eudaq {
       bool IsFake() const { return GetFlags(FLAG_FAKE) != 0; }
       bool IsSimulation() const { return GetFlags(FLAG_SIMU) != 0; }
 
-      static unsigned str2id(const std::string & idstr);
-      static std::string id2str(unsigned id);
+      static mainType str2id(const std::string & idstr);
+      static std::string id2str(mainType id);
       unsigned GetFlags(unsigned f = FLAG_ALL) const { return m_flags & f; }
       void SetFlags(unsigned f) { m_flags |= f; }
 	  void SetTimeStampToNow();
