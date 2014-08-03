@@ -19,11 +19,11 @@ using eutelescope::EUTELESCOPE;
 using namespace std;
 
 namespace eudaq {
-
-  PluginManager & PluginManager::GetInstance() {
+  template <typename containerT>
+  PluginManager<containerT> & PluginManager<containerT>::GetInstance() {
     // the only one static instance of the plugin manager is in the getInstance function
     // like this it is ensured that the instance is created before it is used
-    static PluginManager manager;
+    static PluginManager<containerT> manager;
     return manager;
   }
 

@@ -17,10 +17,11 @@ namespace eudaq {
    *  and the plugin manager can deliver the correct plugin to 
    *  convert it to lcio.
    */
-  class DLLEXPORT PluginManager {
+  template <typename containerT>
+  class DLLEXPORT  PluginManager {
 
     public:
-      typedef DataConverterPlugin::t_eventid t_eventid;
+      typedef typename containerT::t_id t_eventid;
 
       /** Register a new plugin to the plugin manager.
        */
@@ -29,7 +30,7 @@ namespace eudaq {
       /** Get the instance of the plugin manager. As this is a singleton class with
        *  private constructor and copy constructor, this is the only way to access it.
        */
-      static PluginManager & GetInstance();
+      static PluginManager<containerT> & GetInstance();
 
       static unsigned GetTriggerID(const Event &);
 
