@@ -52,71 +52,71 @@ namespace eudaq{
    *  accessed via the plugin manager. (See TimepixConverterPlugin as example).
    *  The plugin implementations have to register with the plugin manager.
    */
-template <typename containerT>
+  template <typename containerT>
   class DataConverterPlugin {
-    public:
-      typedef typename containerT::t_id t_eventid;
+  public:
+    typedef typename containerT::t_id t_eventid;
 
-      virtual void Initialize(containerT const &, eudaq::Configuration const &) {}
+    virtual void Initialize(containerT const &, eudaq::Configuration const &) {}
 
-      virtual unsigned GetTriggerID(containerT const &) const;
-      virtual int IsSyncWithTLU(containerT const & ev, containerT const & tlu) const {
-		  // dummy comparator. it is just checking if the event numbers are the same.
-		  
-		  //auto triggerID=ev.GetEventNumber();
-		  unsigned triggerID=ev.GetTag<unsigned>("tlu_trigger_id",0);
-	  auto tlu_triggerID=tlu.GetEventNumber();
-	return compareTLU2DUT(tlu_triggerID,triggerID);
-	  }
+    virtual unsigned GetTriggerID(containerT const &) const{ return (unsigned) -1; }
+    virtual int IsSyncWithTLU(containerT const & ev, containerT const & tlu) const {
+      // dummy comparator. it is just checking if the event numbers are the same.
 
-      virtual void setCurrentTLUEvent(containerT & ev, containerT const & tlu){
-		  ev.SetTag("tlu_trigger_id",tlu.GetEventNumber());
-	  }
-     virtual void GetLCIORunHeader(lcio::LCRunHeader &, containerT const &, eudaq::Configuration const &) const {}
-	  
+      //auto triggerID=ev.GetEventNumber();
+      unsigned triggerID = ev.GetTag<unsigned>("tlu_trigger_id", 0);
+      auto tlu_triggerID = tlu.GetEventNumber();
+      return compareTLU2DUT(tlu_triggerID, triggerID);
+    }
 
-      /** Returns the LCIO version of the event.
-       */
-     virtual bool GetLCIOSubEvent(lcio::LCEvent & /*result*/, containerT const & /*source*/) const { return false; }
+    virtual void setCurrentTLUEvent(containerT & ev, containerT const & tlu){
+      ev.SetTag("tlu_trigger_id", tlu.GetEventNumber());
+    }
+    virtual void GetLCIORunHeader(lcio::LCRunHeader &, containerT const &, eudaq::Configuration const &) const {}
 
-      /** Returns the StandardEvent version of the event.
-       */
-     virtual bool GetStandardSubEvent(StandardEvent & /*result*/, containerT const & /*source*/) const { return false; };
 
-      /** Returns the type of event this plugin can convert to lcio as a pair of Event type id and subtype string.
-       */
-      virtual t_eventid const & GetEventType() const { return m_eventtype; }
+    /** Returns the LCIO version of the event.
+     */
+    virtual bool GetLCIOSubEvent(lcio::LCEvent & /*result*/, containerT const & /*source*/) const { return false; }
 
-      /** The empty destructor. Need to add it to make it virtual.
-       */
-      virtual ~DataConverterPlugin() {}
+    /** Returns the StandardEvent version of the event.
+     */
+    virtual bool GetStandardSubEvent(StandardEvent & /*result*/, containerT const & /*source*/) const { return false; };
 
-    protected:
-      /** The string storing the event type this plugin can convert to lcio.
-       *  This string has to be set in the constructor of the actual implementations
-       *  of the plugin.
-       */
-      t_eventid m_eventtype;
-	  
+    /** Returns the type of event this plugin can convert to lcio as a pair of Event type id and subtype string.
+     */
+    virtual t_eventid const & GetEventType() const { return m_eventtype; }
 
-      /** The protected constructor which automatically registeres the plugin
-       *  at the pluginManager.
-       */
-      DataConverterPlugin(std::string subtype);
-      DataConverterPlugin(unsigned type, std::string subtype = "");
+    /** The empty destructor. Need to add it to make it virtual.
+     */
+    virtual ~DataConverterPlugin() {}
 
-    private:
-      /** The private copy constructor and assignment operator. They are not used anywhere, so there is not
-       *  even an implementation. Even if the childs default copy constructor is public
-       *  the code will not compile if it is called, since it cannot acces this cc, which the
-       *  the default cc does.
-       */
-      DataConverterPlugin(DataConverterPlugin &);
-      DataConverterPlugin & operator = (const DataConverterPlugin &);
+  protected:
+    /** The string storing the event type this plugin can convert to lcio.
+     *  This string has to be set in the constructor of the actual implementations
+     *  of the plugin.
+     */
+    t_eventid m_eventtype;
+
+
+    /** The protected constructor which automatically registeres the plugin
+     *  at the pluginManager.
+     */
+    DataConverterPlugin(std::string subtype);
+    DataConverterPlugin(unsigned type, std::string subtype = "");
+
+  private:
+    /** The private copy constructor and assignment operator. They are not used anywhere, so there is not
+     *  even an implementation. Even if the childs default copy constructor is public
+     *  the code will not compile if it is called, since it cannot acces this cc, which the
+     *  the default cc does.
+     */
+    DataConverterPlugin(DataConverterPlugin &);
+    DataConverterPlugin & operator = (const DataConverterPlugin &);
   };
 
 
-  
+
 
 
 }//namespace eudaq
