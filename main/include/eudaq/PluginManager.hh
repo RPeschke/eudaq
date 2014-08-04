@@ -27,9 +27,7 @@ namespace eudaq {
       typedef genericDetContainer<containerT>  detContainer;
       /** Register a new plugin to the plugin manager.
        */
-      void RegisterPlugin(DataConverterPlugin<containerT> * plugin) {
-        m_pluginmap[plugin->GetEventType()] = plugin;
-      }
+      void RegisterPlugin(DataConverterPlugin<containerT> * plugin);
 
       /** Get the instance of the plugin manager. As this is a singleton class with
        *  private constructor and copy constructor, this is the only way to access it.
