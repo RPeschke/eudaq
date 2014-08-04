@@ -16,6 +16,11 @@ using eutelescope::EUTELESCOPE;
 
 //#include <iostream>
 #include <string>
+
+#define registerNewPluginManagerType(type) void temp(type& t){\
+                                              TemporaryFunction<type>(t);\
+                                      }
+
 using namespace std;
 
 namespace eudaq {
@@ -26,38 +31,38 @@ namespace eudaq {
     static PluginManager<containerT> manager;
     return manager;
   }
-
-  void PluginManager::RegisterPlugin(DataConverterPlugin * plugin) {
-    m_pluginmap[plugin->GetEventType()] = plugin;
+//   template <typename containerT>
+//   void PluginManager<containerT>::RegisterPlugin(DataConverterPlugin<containerT> * plugin) {
+//     m_pluginmap[plugin->GetEventType()] = plugin;
+//   }
+  template <typename containerT>
+  DataConverterPlugin<containerT> & PluginManager<containerT>::GetPlugin(const containerT & ev) {
+    return GetPlugin(ev.getID());
   }
-
-  DataConverterPlugin & PluginManager::GetPlugin(const Event & event) {
-    return GetPlugin(std::make_pair(event.get_id(), event.GetSubType()));
-  }
-
-  DataConverterPlugin & PluginManager::GetPlugin(PluginManager::t_eventid eventtype) {
-    std::map<t_eventid, DataConverterPlugin *>::iterator pluginiter
-      = m_pluginmap.find(eventtype);
+  template <typename containerT>
+  DataConverterPlugin<containerT> & PluginManager<containerT>::GetPlugin(t_eventid eventtype) {
+    auto pluginiter = m_pluginmap.find(eventtype);
 
     if (pluginiter == m_pluginmap.end()) {
-      EUDAQ_THROW("PluginManager::GetPlugin(): Unkown event type "+Event::id2str(eventtype.first)+":"+eventtype.second);
+      EUDAQ_THROW("PluginManager::GetPlugin(): Unkown event type "+to_string(eventtype));
     }
 
     return *pluginiter->second;
   }
 
-  void PluginManager::Initialize(const DetectorEvent & dev) {
-    eudaq::Configuration conf(dev.GetTag("CONFIG"));
-	conf.Set("timeDelay",dev.GetTag("longTimeDelay","0"));
-    for (size_t i = 0; i < dev.NumEvents(); ++i) {
-      const eudaq::Event & subev = *dev.GetEvent(i);
-      GetInstance().GetPlugin(subev).Initialize(subev, conf);
-    }
-  }
-
-  unsigned PluginManager::GetTriggerID(const Event & ev) {
-    return GetInstance().GetPlugin(ev).GetTriggerID(ev);
-  }
+//   template <typename containerT>
+//   void PluginManager<containerT>::Initialize(const detContainer & dev) {
+//     eudaq::Configuration conf(dev.GetTag("CONFIG"));
+// 	conf.Set("timeDelay",dev.GetTag("longTimeDelay","0"));
+//     for (size_t i = 0; i < dev.NumEvents(); ++i) {
+//       const containerT & subev = *dev.GetEvent(i);
+//       GetInstance().GetPlugin(subev).Initialize(subev, conf);
+//     }
+//   }
+//   template <typename containerT>
+//   unsigned PluginManager<containerT>::GetTriggerID(const containerT & ev) {
+//     return GetInstance().GetPlugin(ev).GetTriggerID(ev);
+//   }
 
 //   uint64_t PluginManager::GetTimeStamp( const Event& ev)
 //   {
@@ -68,19 +73,20 @@ namespace eudaq {
 //   {
 // 	  return GetInstance().GetPlugin(ev).GetTimeDuration(ev);
 //   }
-  int PluginManager::IsSyncWithTLU( eudaq::Event const & ev,eudaq::TLUEvent const & tlu )
-  {
-	  return GetInstance().GetPlugin(ev).IsSyncWithTLU(ev,tlu);
-  }
+//   template <typename containerT>
+//   int PluginManager<containerT>::IsSyncWithTLU(const containerT & ev, const containerT & tlu)
+//   {
+// 	  return GetInstance().GetPlugin(ev).IsSyncWithTLU(ev,tlu);
+//   }
 
-
-  PluginManager::t_eventid PluginManager::getEventId( eudaq::Event const & ev)
-  {
-	  return GetInstance().GetPlugin(ev).GetEventType();
-  }
+//   template <typename containerT>
+//   typename PluginManager<containerT>::t_eventid PluginManager<containerT>::getEventId(containerT const & ev)
+//   {
+// 	  return GetInstance().GetPlugin(ev).GetEventType();
+//   }
 
 #if USE_LCIO && USE_EUTELESCOPE
-  lcio::LCRunHeader * PluginManager::GetLCRunHeader(const DetectorEvent & bore) {
+  lcio::LCRunHeader * PluginManager<Event>::GetLCRunHeader(const DetectorEvent & bore) {
     IMPL::LCRunHeaderImpl * lcHeader = new IMPL::LCRunHeaderImpl;
     lcHeader->setRunNumber(bore.GetRunNumber());
     lcHeader->setDetectorName("EUTelescope");
@@ -99,33 +105,34 @@ namespace eudaq {
     return lcHeader;
   }
 #else
-  lcio::LCRunHeader * PluginManager::GetLCRunHeader(const DetectorEvent &) {
-    return 0;
-  }
+//   template <typename containerT>
+//   lcio::LCRunHeader * PluginManager<containerT>::GetLCRunHeader(const detContainer &) {
+//     return 0;
+//   }
 #endif
-
-  StandardEvent PluginManager::ConvertToStandard(const DetectorEvent & dev) {
-    //StandardEvent event(dev.GetRunNumber(), dev.GetEventNumber(), dev.GetTimestamp());
-    StandardEvent event(dev);
-    for (size_t i = 0; i < dev.NumEvents(); ++i) {
-      const Event * ev = dev.GetEvent(i);
-      if (!ev) EUDAQ_THROW("Null event!");
-      if (ev->GetSubType() == "EUDRB") {
-        ConvertStandardSubEvent(event, *ev);
-      }
-    }
-    for (size_t i = 0; i < dev.NumEvents(); ++i) {
-      const Event * ev = dev.GetEvent(i);
-      if (!ev) EUDAQ_THROW("Null event!");
-      if (ev->GetSubType() != "EUDRB") {
-        ConvertStandardSubEvent(event, *ev);
-      }
-    }
-    return event;
-  }
+//   template <typename containerT>
+//   StandardEvent PluginManager<containerT>::ConvertToStandard(const detContainer & dev) {
+//     //StandardEvent event(dev.GetRunNumber(), dev.GetEventNumber(), dev.GetTimestamp());
+//     StandardEvent event(dev);
+//     for (size_t i = 0; i < dev.NumEvents(); ++i) {
+//       const Event * ev = dev.GetEvent(i);
+//       if (!ev) EUDAQ_THROW("Null event!");
+//       if (ev->GetSubType() == "EUDRB") {
+//         ConvertStandardSubEvent(event, *ev);
+//       }
+//     }
+//     for (size_t i = 0; i < dev.NumEvents(); ++i) {
+//       const Event * ev = dev.GetEvent(i);
+//       if (!ev) EUDAQ_THROW("Null event!");
+//       if (ev->GetSubType() != "EUDRB") {
+//         ConvertStandardSubEvent(event, *ev);
+//       }
+//     }
+//     return event;
+//   }
 
 #if USE_LCIO
-  lcio::LCEvent * PluginManager::ConvertToLCIO(const DetectorEvent & dev) {
+  lcio::LCEvent * PluginManager<Event>::ConvertToLCIO(const DetectorEvent & dev) {
     lcio::LCEventImpl * event = new lcio::LCEventImpl;
     event->setEventNumber(dev.GetEventNumber());
     event->setRunNumber(dev.GetRunNumber());
@@ -138,29 +145,83 @@ namespace eudaq {
     return event;
   }
 #else
-  lcio::LCEvent * PluginManager::ConvertToLCIO(const DetectorEvent &) {
-    return 0;
-  }
+//   template <typename containerT>
+//   lcio::LCEvent * PluginManager<containerT>::ConvertToLCIO(const detContainer &) {
+//     return 0;
+//   }
 #endif
+//   template <typename containerT>
+//   void PluginManager<containerT>::ConvertStandardSubEvent(StandardEvent & dest, const containerT & source) {
+//     try {
+//       GetInstance().GetPlugin(source).GetStandardSubEvent(dest, source);
+//     } catch (const Exception & e) {
+//       std::cerr << "Error during conversion in PluginManager::ConvertStandardSubEvent:\n" << e.what() << std::endl;
+//     }
+//   }
+//   template <typename containerT>
+//   void PluginManager<containerT>::ConvertLCIOSubEvent(lcio::LCEvent & dest, const containerT & source) {
+//     GetInstance().GetPlugin(source).GetLCIOSubEvent(dest, source);
+//   }
+//   template <typename containerT>
+//   void PluginManager<containerT>::setCurrentTLUEvent( containerT & ev, const containerT & tlu )
+//   {
+// 	  GetInstance().GetPlugin(ev).setCurrentTLUEvent(ev,tlu);
+//   }
 
-  void PluginManager::ConvertStandardSubEvent(StandardEvent & dest, const Event & source) {
-    try {
-      GetInstance().GetPlugin(source).GetStandardSubEvent(dest, source);
-    } catch (const Exception & e) {
-      std::cerr << "Error during conversion in PluginManager::ConvertStandardSubEvent:\n" << e.what() << std::endl;
-    }
-  }
 
-  void PluginManager::ConvertLCIOSubEvent(lcio::LCEvent & dest, const Event & source) {
-    GetInstance().GetPlugin(source).GetLCIOSubEvent(dest, source);
-  }
 
-  void PluginManager::setCurrentTLUEvent( eudaq::Event & ev,eudaq::TLUEvent const & tlu )
-  {
-	  GetInstance().GetPlugin(ev).setCurrentTLUEvent(ev,tlu);
+
+
+template <typename containerT>
+unsigned PluginManager<containerT>::GetTriggerID(const containerT &ev)
+{
+  return GetInstance().GetPlugin(ev).GetTriggerID(ev);
+}
+
+
+template <typename containerT>
+int PluginManager<containerT>::IsSyncWithTLU(const containerT & ev, const containerT & tlu)
+{
+  return GetInstance().GetPlugin(ev).IsSyncWithTLU(ev, tlu);
+}
+
+
+
+
+
+template <typename containerT>
+void PluginManager<containerT>::setCurrentTLUEvent(containerT & ev, const containerT & tlu)
+{
+  GetInstance().GetPlugin(ev).setCurrentTLUEvent(ev, tlu);
+}
+
+
+template <typename containerT>
+void PluginManager<containerT>::ConvertStandardSubEvent(StandardEvent &dest, const containerT &source)
+{
+  try {
+    GetInstance().GetPlugin(source).GetStandardSubEvent(dest, source);
   }
+  catch (const Exception & e) {
+    std::cerr << "Error during conversion in PluginManager::ConvertStandardSubEvent:\n" << e.what() << std::endl;
+  }
+}
 
 
 
 
 }//namespace eudaq
+
+
+// No need to call this TemporaryFunction() function,
+// it's just to avoid link error.
+template <typename T>
+void TemporaryFunction(T& t)
+{  
+  eudaq::PluginManager < T >::GetInstance();
+  eudaq::PluginManager < T >::GetInstance().GetPlugin(t);
+  eudaq::PluginManager < T >::GetInstance().GetTriggerID(t);
+  eudaq::PluginManager < T >::GetInstance().IsSyncWithTLU(t, t);
+  eudaq::PluginManager < T >::GetInstance().setCurrentTLUEvent(t, t);
+  eudaq::PluginManager < T >::GetInstance().ConvertStandardSubEvent(eudaq::StandardEvent(), t);
+}
