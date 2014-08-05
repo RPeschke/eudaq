@@ -4,6 +4,7 @@
 
 #include <stdint.h>
 #include <string>
+#include "eudaq/AidaPacket.hh"
 
 namespace lcio{
   class LCRunHeader;

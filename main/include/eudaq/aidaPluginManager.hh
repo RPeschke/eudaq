@@ -25,7 +25,7 @@ namespace eudaq {
   *  and the plugin manager can deliver the correct plugin to
   *  convert it to lcio.
   */
-  class DLLEXPORT AidaPluginManager {
+  class  AidaPluginManager {
 
   public:
     typedef std::pair<uint64_t,uint64_t> t_packetid;
