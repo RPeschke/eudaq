@@ -4,7 +4,7 @@
 #include "eudaq/PluginManager.hh"
 #include "eudaq/Utils.hh"
 #include <vector>
-
+#include "eudaq/RawDataEvent.hh"
 
 #include <stdio.h>
 #include <string.h>
@@ -41,7 +41,7 @@ using eutelescope::EUTELESCOPE;
 namespace eudaq{
 
   // Declare a new class that inherits from DataConverterPlugin
-  class MimosaConverterPlugin : public DataConverterPlugin {
+  class MimosaConverterPlugin : public DataConverterPlugin<Event> {
 
   public:
 

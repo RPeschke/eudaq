@@ -1,8 +1,10 @@
 #include "eudaq/FileWriter.hh"
 #include "eudaq/FileNamer.hh"
 #include "eudaq/PluginManager.hh"
+#include "eudaq/RawDataEvent.hh"
 #include <iostream>
 #include <fstream>
+
 
 
 
@@ -55,7 +57,7 @@ namespace eudaq {
 	  
 
 	  if (devent.IsBORE()) {
-		  eudaq::PluginManager::Initialize(devent);
+		  eudaq::PluginManager<Event>::Initialize(devent);
 		  firstEvent =true;
 		  return;
 	  } else if (devent.IsEORE()) {

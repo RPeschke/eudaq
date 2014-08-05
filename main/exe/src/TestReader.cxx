@@ -65,7 +65,7 @@ bool DoEvent(unsigned /*ndata*/, const eudaq::DetectorEvent & dev, bool do_proce
     if (do_process) {
 
       unsigned boardnum = 0;
-      const StandardEvent & sev = eudaq::PluginManager::ConvertToStandard(dev);
+      const StandardEvent & sev = eudaq::PluginManager<eudaq::Event>::ConvertToStandard(dev);
 
       if (do_display) std::cout << "Standard Event: " << sev << std::endl;
 
@@ -144,7 +144,7 @@ int main(int /*argc*/, char ** argv) {
           }
 
           if (const eudaq::DetectorEvent * dev = dynamic_cast<const eudaq::DetectorEvent *>(&ev)) {
-            eudaq::PluginManager::Initialize(*dev);
+            eudaq::PluginManager<eudaq::Event>::Initialize(*dev);
           }
         } else if (ev.IsEORE()) {
           neore++;

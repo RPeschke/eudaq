@@ -32,8 +32,8 @@ namespace eudaq {
 
   void FileWriterStandard::WriteEvent(const DetectorEvent & ev) {
     if (!m_ser) EUDAQ_THROW("FileWriterStandard: Attempt to write unopened file");
-    if (ev.IsBORE()) PluginManager::Initialize(ev);
-    m_ser->write(PluginManager::ConvertToStandard(ev));
+    if (ev.IsBORE()) PluginManager<Event>::Initialize(ev);
+    m_ser->write(PluginManager<Event>::ConvertToStandard(ev));
     m_ser->Flush();
   }
 

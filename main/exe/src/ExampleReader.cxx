@@ -1,6 +1,7 @@
 #include "eudaq/FileReader.hh"
 #include "eudaq/PluginManager.hh"
 #include "eudaq/OptionParser.hh"
+#include "eudaq/RawDataEvent.hh"
 #include <iostream>
 
 static const std::string EVENT_TYPE = "Example";
@@ -29,7 +30,7 @@ int main(int /*argc*/, const char ** argv) {
       // The BORE is now accessible in reader.GetDetectorEvent()
       if (docon.IsSet()) {
         // The PluginManager should be initialized with the BORE
-        eudaq::PluginManager::Initialize(reader.GetDetectorEvent());
+        eudaq::PluginManager<eudaq::Event>::Initialize(reader.GetDetectorEvent());
       }
 
       // Now loop over all events in the file
@@ -51,7 +52,7 @@ int main(int /*argc*/, const char ** argv) {
             // Display summary of the Example RawDataEvent
             std::cout << rev << std::endl;
           } catch (const eudaq::Exception & e) {
-            std::cout << "No " << EVENT_TYPE << " subevent in event "
+            std::cout << "No " << EVENT_TYPE << " sub event in event "
               << reader.GetDetectorEvent().GetEventNumber()
               << std::endl;
           }
@@ -60,7 +61,7 @@ int main(int /*argc*/, const char ** argv) {
         if (docon.IsSet()) {
           // Convert the RawDataEvent into a StandardEvent
           eudaq::StandardEvent sev =
-            eudaq::PluginManager::ConvertToStandard(reader.GetDetectorEvent());
+            eudaq::PluginManager<eudaq::Event>::ConvertToStandard(reader.GetDetectorEvent());
 
           // Display summary of converted event
           std::cout << sev << std::endl;

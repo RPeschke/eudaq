@@ -55,13 +55,13 @@ namespace eudaq {
 	  
 
 	  if (devent.IsBORE()) {
-		  eudaq::PluginManager::Initialize(devent);
+		  eudaq::PluginManager<Event>::Initialize(devent);
 		  firstEvent =true;
 		  return;
 	  } else if (devent.IsEORE()) {
 		return;
 	  }
-	  StandardEvent sev = eudaq::PluginManager::ConvertToStandard(devent);
+	  StandardEvent sev = eudaq::PluginManager<Event>::ConvertToStandard(devent);
 
 
 	  if (firstEvent)

@@ -64,13 +64,13 @@ namespace eudaq {
 #ifndef  FILEWRITEROLD
 
 		if (devent.IsBORE()) {
-			eudaq::PluginManager::Initialize(devent);
+			eudaq::PluginManager<Event>::Initialize(devent);
 			firstEvent =true;
 			return;
 		} else if (devent.IsEORE()) {
 			return;
 		}
-		StandardEvent sev = eudaq::PluginManager::ConvertToStandard(devent);
+		StandardEvent sev = eudaq::PluginManager<Event>::ConvertToStandard(devent);
 
 
 		if (firstEvent)
@@ -134,7 +134,7 @@ namespace eudaq {
 			<<  devent.GetRunNumber() <<"." << devent.GetEventNumber() << std::endl;
 
 		//disentangle the detector event
-		StandardEvent sevent(PluginManager::ConvertToStandard(devent));
+		StandardEvent sevent(PluginManager<Event>::ConvertToStandard(devent));
 		std::cout << "Event: " << sevent << std::endl;
 		//sevent.Print(std::cout);
 #endif

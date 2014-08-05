@@ -174,16 +174,16 @@ bool SyncBase::SyncNEvents( size_t N )
 		{
 			return false;
 		}
-// 		if (isAsync_)
-// 		{
-// 			isAsync_=false;
-// 			auto last_element=m_DetectorEventQueue.back(); //buffering the last event. because this is sync.
-// 		
-// 		
-// 			clearDetectorQueue();
-// 		
-// 			m_DetectorEventQueue.push(last_element);
-// 		}
+		if (isAsync_)
+		{
+			isAsync_=false;
+			auto last_element=m_DetectorEventQueue.back(); //buffering the last event. because this is sync.
+		
+		
+			clearDetectorQueue();
+		
+			m_DetectorEventQueue.push(last_element);
+		}
 	}
 	return true;
 }
@@ -237,7 +237,7 @@ bool SyncBase::compareTLUwithEventQueue( std::shared_ptr<eudaq::Event>& tlu_even
 	{
 		auto& currentEvent=event_queue.front();
 
-		ReturnValue=PluginManager::IsSyncWithTLU(*currentEvent,*tlu);
+		ReturnValue=PluginManager<Event>::IsSyncWithTLU(*currentEvent,*tlu);
 		if (ReturnValue== Event_IS_Sync )
 		{
 			
@@ -292,7 +292,7 @@ void SyncBase::PrepareForEvents()
 	}else if (m_TLUs_found>1)
 	{
 		//EUDAQ_THROW("to many TLUs in the data stream.\n the sync mechanism only works with 1 TLU");
-		std::cout<< "more than one TLU detected only the first TLU is used for synchronisation "<<std::endl;
+		std::cout<< "more than one TLU detected only the first TLU is used for synchronization "<<std::endl;
 	}
 	m_ProducerEventQueue.resize(m_registertProducer);
 }
@@ -313,7 +313,7 @@ void SyncBase::storeCurrentOrder()
 	for (size_t i=1; i<m_ProducerEventQueue.size();++i)
 	{
 		shared_ptr<Event> currentEvent=m_ProducerEventQueue[i].back();
-		eudaq::PluginManager::setCurrentTLUEvent(*currentEvent,*tlu);
+    eudaq::PluginManager<Event>::setCurrentTLUEvent(*currentEvent, *tlu);
 	}
 	
 }

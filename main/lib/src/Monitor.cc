@@ -19,7 +19,7 @@ namespace eudaq {
     if (datafile != "") {
       // set offline
       m_reader = std::shared_ptr<FileReader>(new FileReader(datafile));
-      PluginManager::Initialize(m_reader->GetDetectorEvent()); // process BORE
+      PluginManager<Event>::Initialize(m_reader->GetDetectorEvent()); // process BORE
       //m_callstart = true;
       std::cout << "DEBUG: Reading file " << datafile << " -> " << m_reader->Filename() << std::endl;
       //OnStartRun(m_run);
@@ -59,7 +59,7 @@ namespace eudaq {
     try {
       const DetectorEvent & dev = m_reader->GetDetectorEvent();
       if (dev.IsBORE()) m_lastbore =std::shared_ptr<DetectorEvent>(new DetectorEvent(dev));
-      OnEvent(PluginManager::ConvertToStandard(dev));
+      OnEvent(PluginManager<Event>::ConvertToStandard(dev));
       //        ++counter_events_for_online_monitor;
     } catch (const InterruptedException &) {
       return false;
@@ -89,7 +89,7 @@ namespace eudaq {
     std::cout << "run " << param << std::endl;
     m_run = param;
     m_reader = std::shared_ptr<FileReader>(new FileReader(to_string(m_run)));
-    PluginManager::Initialize(m_reader->GetDetectorEvent()); // process BORE
+    PluginManager<Event>::Initialize(m_reader->GetDetectorEvent()); // process BORE
     EUDAQ_INFO("Starting run " + to_string(m_run));
   }
 

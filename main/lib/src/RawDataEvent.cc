@@ -50,7 +50,7 @@ namespace eudaq {
     Event::Print(os);
     std::string tluevstr = "unknown";
     try {
-      unsigned tluev = PluginManager::GetTriggerID(*this);
+      unsigned tluev = PluginManager<Event>::GetTriggerID(*this);
       if (tluev != (unsigned)-1) {
         tluevstr = to_string(tluev);
       }

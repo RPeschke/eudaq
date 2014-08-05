@@ -9,6 +9,7 @@
 #include <fstream>
 
 using eudaq::StandardEvent;
+using eudaq::Event;
 using eudaq::from_string;
 using eudaq::to_string;
 using eudaq::split;
@@ -126,7 +127,7 @@ int main(int /*argc*/, char ** argv) {
       std::vector<unsigned> hit_hist;
       {
         const eudaq::DetectorEvent & dev = reader.GetDetectorEvent();
-        eudaq::PluginManager::Initialize(dev);
+        eudaq::PluginManager<Event>::Initialize(dev);
         runnum = dev.GetRunNumber();
         std::cout << "Found BORE, run number = " << runnum << std::endl;
         //eudaq::PluginManager::ConvertToStandard(dev);
@@ -170,7 +171,7 @@ int main(int /*argc*/, char ** argv) {
             for (size_t i = 0; i < track.size(); ++i) {
               track[i].clear();
             }
-            StandardEvent sev = eudaq::PluginManager::ConvertToStandard(dev);
+            StandardEvent sev = eudaq::PluginManager<Event>::ConvertToStandard(dev);
             for (size_t p = 0; p < sev.NumPlanes(); ++p) {
               if (!files[p]) continue;
               eudaq::StandardPlane & brd = sev.GetPlane(p);

@@ -9,7 +9,7 @@ namespace eudaq {
       virtual void StartRun(unsigned) {}
 	  virtual void WriteEvent(const DetectorEvent &devent) {	 
 		  if (devent.IsBORE()) {
-		  eudaq::PluginManager::Initialize(devent);
+		  eudaq::PluginManager<Event>::Initialize(devent);
 		  }
 	  } 
       virtual uint64_t FileBytes() const { return 0; }
