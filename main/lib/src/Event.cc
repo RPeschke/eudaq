@@ -61,23 +61,24 @@ namespace eudaq {
     }
   }
 
-  unsigned Event::str2id(const std::string & str) {
-    uint32_t result = 0;
-    for (size_t i = 0; i < 4; ++i) {
+  Event::mainType Event::str2id(const std::string & str) {
+    Event::mainType result = 0;
+    for (size_t i = 0; i < sizeof(Event::mainType); ++i) {
       if (i < str.length()) result |= str[i] << (8*i);
     }
     //std::cout << "str2id(" << str << ") = " << std::hex << result << std::dec << std::endl;
     return result;
   }
 
-  std::string Event::id2str(unsigned id) {
+  std::string Event::id2str(Event::mainType id) {
     //std::cout << "id2str(" << std::hex << id << std::dec << ")" << std::flush;
-    std::string result(4, '\0');
-    for (int i = 0; i < 4; ++i) {
+    const size_t sizeOfmaintype = sizeof(Event::mainType);
+    std::string result(sizeOfmaintype, '\0');
+    for (int i = 0; i < sizeOfmaintype; ++i) {
       result[i] = (char)(id & 0xff);
       id >>= 8;
     }
-    for (int i = 3; i >= 0; --i) {
+    for (int i = sizeOfmaintype-1; i >= 0; --i) {
       if (result[i] == '\0') {
         result.erase(i);
         break;
@@ -103,7 +104,7 @@ namespace eudaq {
 	  m_timestamp=static_cast<uint64_t>(clock());
   }
 
-  std::ostream & operator << (std::ostream &os, const Event &ev) {
+  std::ostream & operator<< (std::ostream &os, const Event &ev) {
     ev.Print(os);
     return os;
   }
@@ -123,4 +124,23 @@ namespace eudaq {
     return get_map()[id];
   }
 
+  std::string to_string(const Event& ev)
+  {
+    return to_string(ev.getID());
+  }
+
+  std::string to_string(const Event::t_id EventID)
+  {
+    return "AIDA Packet. main type: " + Event::id2str(EventID.first) + " subType: " + EventID.second;
+  }
+
 }
+
+
+
+#include "pluginManager.cc"
+registerNewPluginManagerType(eudaq::Event);
+
+#include "DataConverterPlugin.cc"
+
+RegisterNewDataConverterType(eudaq::Event);
