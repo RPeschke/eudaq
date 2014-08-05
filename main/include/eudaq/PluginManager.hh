@@ -76,6 +76,8 @@ namespace eudaq {
 
       static void ConvertStandardSubEvent(StandardEvent &dest, const containerT &source);
 
+      static size_t getNumberOfElemts(const containerT &ev);
+      static bool   getElement(containerT &source, size_t elementNr);
 
       /** Get the correct plugin implementation according to the event type.
        */
@@ -95,6 +97,8 @@ namespace eudaq {
       class _dummy;
       friend class _dummy; // Silence superfluous warnings in some gcc versions
   };
+
+
 
 }//namespace eudaq
 
