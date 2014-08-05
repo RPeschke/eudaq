@@ -165,9 +165,9 @@ namespace eudaq {
           EUDAQ_ERROR("Run number mismatch in event " + to_string(ev.GetEventNumber()));
         }
         if (i == 0) {
-          tluev = PluginManager::GetTriggerID(*m_buffer[i].events.front());
+          tluev = PluginManager<Event>::GetTriggerID(*m_buffer[i].events.front());
         } else {
-          unsigned tluev2 = PluginManager::GetTriggerID(*m_buffer[i].events.front());
+          unsigned tluev2 = PluginManager<Event>::GetTriggerID(*m_buffer[i].events.front());
           if (tluev2 != tluev) {
             //EUDAQ_ERROR("Trigger number mismatch: " + to_string(tluev) + " != " + to_string(tluev2) +
             //            " in " + m_buffer[i].id->GetName());
