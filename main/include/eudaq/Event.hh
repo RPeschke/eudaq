@@ -34,7 +34,7 @@ namespace _eudaq_dummy_ {                \
 static const int EUDAQ_DUMMY_VAR_DONT_USE = 0
 
 namespace eudaq {
-
+  
   static const uint64_t NOTIMESTAMP = (uint64_t)-1;
 
   class DLLEXPORT Event : public Serializable {
@@ -42,35 +42,38 @@ namespace eudaq {
       typedef unsigned mainType;
       typedef std::string subType;
       typedef std::pair<mainType, subType> t_id;
+      typedef uint64_t timeStamp_t;
+
       enum Flags { FLAG_BORE=1, FLAG_EORE=2, FLAG_HITS=4, FLAG_FAKE=8, FLAG_SIMU=16, FLAG_ALL=(unsigned)-1 }; // Matches FLAGNAMES in .cc file
-      Event(unsigned run, unsigned event, uint64_t timestamp = NOTIMESTAMP, unsigned flags=0)
+      Event(unsigned run, unsigned event, timeStamp_t timestamp = NOTIMESTAMP, unsigned flags=0)
         : m_flags(flags), m_runnumber(run), m_eventnumber(event), m_timestamp(timestamp) {}
       Event(Deserializer & ds);
-      virtual void Serialize(Serializer &) const = 0;
+      Event(){}
+      virtual void Serialize(Serializer &) const;
 
       unsigned GetRunNumber() const { return m_runnumber; }
       unsigned GetEventNumber() const { return m_eventnumber; }
-      uint64_t GetTimestamp() const { return m_timestamp; }
+      timeStamp_t GetTimestamp() const { return m_timestamp; }
 
       /** Returns the type string of the event implementation.
        *  Used by the plugin mechanism to identify the event type.
        */
       virtual subType GetSubType() const { return ""; }
 
-      t_id getID(){ return t_id(get_id(), GetSubType()); }
+      t_id getID() const { return t_id(get_id(), GetSubType()); }
 
-      virtual void Print(std::ostream & os) const = 0;
+      virtual void Print(std::ostream & os)const;
 
       Event & SetTag(const std::string & name, const std::string & val);
       template <typename T>
         Event & SetTag(const std::string & name, const T & val) {
-          return SetTag(name, eudaq::to_string(val));
+          return SetTag(name, to_string(val));
         }
       std::string GetTag(const std::string & name, const std::string & def = "") const;
       std::string GetTag(const std::string & name, const char * def) const { return GetTag(name, std::string(def)); }
       template <typename T>
         T GetTag(const std::string & name, T def) const {
-          return eudaq::from_string(GetTag(name), def);
+          return from_string(GetTag(name), def);
         }
 
       bool IsBORE() const { return GetFlags(FLAG_BORE) != 0; }
@@ -84,18 +87,19 @@ namespace eudaq {
       unsigned GetFlags(unsigned f = FLAG_ALL) const { return m_flags & f; }
       void SetFlags(unsigned f) { m_flags |= f; }
 	  void SetTimeStampToNow();
-	  void setTimeStamp(uint64_t timeStamp){m_timestamp=timeStamp; }
+    void setTimeStamp(timeStamp_t timeStamp){ m_timestamp = timeStamp; }
       void ClearFlags(unsigned f = FLAG_ALL) { m_flags &= ~f; }
-      virtual unsigned get_id() const = 0;
+      virtual mainType get_id() const { return Event::str2id("base"); }
     protected:
       typedef std::map<std::string, std::string> map_t;
 
       unsigned m_flags, m_runnumber, m_eventnumber;
-      uint64_t m_timestamp;
+      timeStamp_t m_timestamp;
       map_t m_tags; ///< Metadata tags in (name=value) pairs of strings
   };
-
-  DLLEXPORT std::ostream &  operator << (std::ostream &, const Event &);
+  DLLEXPORT std::string to_string(const Event::t_id EventID);
+  DLLEXPORT std::string to_string(const Event& ev);
+  DLLEXPORT std::ostream&  operator<< (std::ostream &, const Event & ev);
 
   class DLLEXPORT EventFactory {
     public:
@@ -128,6 +132,9 @@ namespace eudaq {
         return new T_Evt(ds);
       }
     };
+
+
+
 }
 
 #endif // EUDAQ_INCLUDED_Event
