@@ -1,7 +1,10 @@
 #include "dataQueue.h"
 #include "eudaq\AidaFileWriter.hh"
+#include "paketProducer.h"
+#include <chrono>
 using namespace std;
-
+using std::chrono::microseconds;
+using std::chrono::duration_cast;
 namespace eudaq {
 
 
@@ -49,6 +52,28 @@ namespace eudaq {
   { auto packet=getPacket();
     WritePacket(packet);
 
+  }
+
+  void dataQueue::addNewProducer(std::shared_ptr<paketProducer> prod)
+  {
+    m_producer.push_back(prod);
+    m_starttimer = duration_cast<microseconds>(std::chrono::high_resolution_clock::now().time_since_epoch()).count();
+  }
+
+  void dataQueue::trigger()
+  {
+    long long timeNow = duration_cast<microseconds>(std::chrono::high_resolution_clock::now().time_since_epoch()).count();
+    long long timeStamp = timeNow - m_starttimer;
+    for (auto& e : m_producer)
+    {
+      e->getTrigger(timeStamp);
+    }
+
+  }
+
+  bool dataQueue::empty()
+  {
+    return m_queue.empty();
   }
 
 
