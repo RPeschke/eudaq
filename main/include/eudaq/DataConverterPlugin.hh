@@ -18,6 +18,8 @@
 using namespace IMPL;
 using namespace UTIL;
 #endif
+//#include "Configuration.hh"
+
 
 
 
@@ -61,7 +63,7 @@ namespace eudaq{
     typedef typename containerT::mainType mainType;
     typedef typename containerT::subType  subType;
 
-    virtual void Initialize(containerT const &, eudaq::Configuration const &) {}
+    virtual void Initialize(containerT const &, Configuration const &) {}
 
     virtual unsigned GetTriggerID(containerT const &) const{ return (unsigned) -1; }
     virtual int IsSyncWithTLU(containerT const & ev, containerT const & tlu) const {
@@ -76,7 +78,7 @@ namespace eudaq{
     virtual void setCurrentTLUEvent(containerT & ev, containerT const & tlu){
       ev.SetTag("tlu_trigger_id", tlu.GetEventNumber());
     }
-    virtual void GetLCIORunHeader(lcio::LCRunHeader &, containerT const &, eudaq::Configuration const &) const {}
+    virtual void GetLCIORunHeader(lcio::LCRunHeader &, containerT const &, Configuration const &) const {}
 
 
     /** Returns the LCIO version of the event.
@@ -91,10 +93,22 @@ namespace eudaq{
      */
     virtual t_eventid const & GetEventType() const { return m_eventtype; }
 
+
+    // the default is that one container contains only one event. if it changes the user has to overload this function in their plugin 
+    virtual size_t getNumberOfElemts(const containerT &ev){ return 0; } 
+    virtual bool   getElement(containerT &ev, size_t elementNr){ return (elementNr <= getNumberOfElemts(ev)); }
+
     /** The empty destructor. Need to add it to make it virtual.
      */
     virtual ~DataConverterPlugin() {}
 
+
+    /** The constructor which automatically registers the plugin
+    *  at the pluginManager.
+    */
+    DataConverterPlugin(subType subtype);
+
+    DataConverterPlugin(mainType type, subType subtype);
   protected:
     /** The string storing the event type this plugin can convert to lcio.
      *  This string has to be set in the constructor of the actual implementations
@@ -103,11 +117,7 @@ namespace eudaq{
     t_eventid m_eventtype;
 
 
-    /** The protected constructor which automatically registers the plugin
-     *  at the pluginManager.
-     */
-    DataConverterPlugin(subType subtype);
-    DataConverterPlugin(mainType type, subType subtype );
+
 
   private:
     /** The private copy constructor and assignment operator. They are not used anywhere, so there is not
