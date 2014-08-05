@@ -19,30 +19,15 @@ namespace eudaq{
 
   void paketProducer::run()
   {
-    auto starttimer = std::chrono::high_resolution_clock::now();
+   if (m_readoutSpeed==0)
+   {
+     return;
+   }
     while (m_running)
     {
 
-
-      int i=0;
-      for(auto &e:m_data){
-        auto packet = std::make_shared<AidaPacket>(AidaPacket::str2type( m_paketName ), i++ );
-        
-        auto t = std::chrono::high_resolution_clock::now();
-        microseconds ns = duration_cast<microseconds>(t - starttimer);
-       // cout << " time: " << ns.count() << endl;
-        
-        packet->GetMetaData().add(1,m_type,static_cast<uint64_t>(ns.count()) );
-
-        
-
-        packet->SetData( e.m_data, e.m_data_size );
-
-        Sleep(m_readoutSpeed);
-        m_dataqueue->pushPacket(packet);
-      
-      }
-
+      newPacket();
+      Sleep(m_readoutSpeed);
     
     }
   }
@@ -62,6 +47,33 @@ namespace eudaq{
   {
     m_running = false;
     m_thread->join();
+  }
+
+  void paketProducer::getTrigger(long long timeStamp)
+  {
+    if (m_readoutSpeed==0)
+    {
+      newPacket();
+    }
+    lock_guard<std::mutex> m(m_mutex);
+    m_pack->GetMetaData().add(1, m_type, static_cast<uint64_t>(timeStamp));
+  }
+
+  void paketProducer::newPacket()
+  {
+    lock_guard<std::mutex> m(m_mutex);
+    if (m_pack)
+    {
+      std::string dummy = "new Event producer " + m_paketName + "\n";
+      std::cout << dummy;
+      m_dataqueue->pushPacket(m_pack);
+    }
+    m_pack = make_shared<AidaPacket>(AidaPacket::str2type(m_paketName), m_type);
+
+    
+    for (auto &e : m_data){
+      m_pack->SetData(e.m_data, e.m_data_size);
+    }
   }
 
 }

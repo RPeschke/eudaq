@@ -28,6 +28,8 @@ namespace eudaq{
 
     void addDataQueue(dataQueue* dqueue);
     void addDummyData( uint64_t* meta_data, size_t meta_data_size, uint64_t* data, size_t data_size );
+    void getTrigger(long long timeStamp);
+    void newPacket();
     void startDataTaking(int readoutSpeed);
     void stopDataTaking();
     void run();
@@ -35,7 +37,9 @@ namespace eudaq{
     std::string m_paketName;
     int m_readoutSpeed;
     dataQueue* m_dataqueue;
+    std::mutex m_mutex;
     std::unique_ptr<std::thread> m_thread;
+    std::shared_ptr<AidaPacket> m_pack=nullptr;
     struct data_struc
     {
       data_struc(uint64_t* meta_data,size_t meta_data_size,uint64_t* data,size_t data_size):
