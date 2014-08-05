@@ -110,8 +110,13 @@ namespace eudaq {
     const MetaData& GetMetaData() const{
       return m_meta_data;
     }
-    unsigned GetEventNumber() const {
-      return GetMetaData().getTriggerID(0);
+    uint64_t GetEventNumber(size_t Element=0) const {
+      if (Element>=GetMetaData().Size())
+      {
+        return 0;
+      }
+      std::cout << GetMetaData().getTriggerID(Element) << std::endl;
+      return GetMetaData().getTriggerID(Element);
     }
     void SerializeMetaData( Serializer & ) const;
 
