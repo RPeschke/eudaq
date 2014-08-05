@@ -59,7 +59,7 @@ namespace eudaq {
 
     if (!m_ser)
     	EUDAQ_THROW("AidaFileWriterNative: Attempt to write unopened file");
-      std::string line = AidaPacket::type2str(packet->GetPacketType()) + " ;  " + AidaPacket::type2str(packet->GetPacketSubType()) + " ; " + to_string(packet->GetMetaData().getTriggerID(0)) + " \n";
+    std::string line = AidaPacket::type2str(packet->GetPacketType()) + " ;  " + AidaPacket::type2str(packet->GetPacketSubType()) + " ; "+ to_string(packet->GetPacketNumber()) + " ; " + to_string(packet->GetMetaData().getTriggerID(0)) + " \n";
       std::cout << line;
       m_ser->write(line );
 	    m_ser->Flush();
