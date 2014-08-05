@@ -187,4 +187,21 @@ namespace eudaq {
     return get_map()[id];
   }
 
+   std::string to_string(AidaPacket::t_id packetID)
+  {
+    return "EUDET event. main type: " + AidaPacket::type2str(packetID.first) + " subType: " + AidaPacket::type2str(packetID.second);
+  }
+
+   std::string to_string(AidaPacket& ev)
+   {
+     return to_string(ev.getID());
+   }
+
 }
+
+#include "pluginManager.cc"
+registerNewPluginManagerType(eudaq::AidaPacket);
+
+#include "DataConverterPlugin.cc"
+
+RegisterNewDataConverterType(eudaq::AidaPacket);

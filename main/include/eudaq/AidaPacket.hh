@@ -67,7 +67,7 @@ namespace eudaq {
     AidaPacket(std::string type,std::string subtype):AidaPacket(){
       if (type.size()>sizeof(mainType)||subtype.size()>sizeof(subType))
       {
-        std::string errorMessage = string("AidaPacket can only handle strings with a length of " )
+        std::string errorMessage = std::string("AidaPacket can only handle strings with a length of " )
           + to_string(sizeof(mainType)) + " for the mainType and " + to_string(sizeof(subType)) +  " for the subtype";
 
         EUDAQ_THROW(errorMessage);
@@ -99,7 +99,7 @@ namespace eudaq {
     void SetPacketType( uint64_t type ) { m_header.data.packetType = type; };
     uint64_t GetPacketSubType() const { return m_header.data.packetSubType; };
     void SetPacketSubType( uint64_t type ) { m_header.data.packetSubType = type; };
-    t_id getID(){ return t_id(GetPacketType(), GetPacketSubType()); }
+    t_id getID() const { return t_id(GetPacketType(), GetPacketSubType()); }
     //
     // meta data
     //
@@ -109,6 +109,9 @@ namespace eudaq {
     }
     const MetaData& GetMetaData() const{
       return m_meta_data;
+    }
+    unsigned GetEventNumber() const {
+      return GetMetaData().getTriggerID(0);
     }
     void SerializeMetaData( Serializer & ) const;
 
@@ -213,7 +216,8 @@ namespace eudaq {
     const Event* m_ev;
 
   };
-
+  DLLEXPORT std::string to_string(AidaPacket::t_id packetID);
+  DLLEXPORT std::string to_string(AidaPacket& ev);
   DLLEXPORT std::ostream &  operator << (std::ostream &, const AidaPacket &);
 
 
