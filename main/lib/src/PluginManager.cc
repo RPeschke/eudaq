@@ -147,6 +147,18 @@ void PluginManager<containerT>::RegisterPlugin(DataConverterPlugin<containerT> *
   m_pluginmap[plugin->GetEventType()] = plugin;
 }
 
+template <typename containerT>
+size_t eudaq::PluginManager<containerT>::getNumberOfElemts(const containerT &ev)
+{
+  return GetInstance().GetPlugin(ev).getNumberOfElemts(ev);
+}
+
+template <typename containerT>
+bool eudaq::PluginManager<containerT>::getElement(containerT &ev, size_t elementNr)
+{
+  return GetInstance().GetPlugin(ev).getElement(ev, elementNr);
+}
+
 }//namespace eudaq
 
 
