@@ -1,13 +1,13 @@
 #ifndef EUDAQ_INCLUDED_PluginManager
 #define EUDAQ_INCLUDED_PluginManager
+#include <string>
+#include <map>
+#include <utility>
 
 #include "eudaq/DataConverterPlugin.hh"
 #include "eudaq/genericDetectorContainer.hh"
-
-
-#include <string>
-#include <map>
 #include "Configuration.hh"
+
 
 namespace eudaq {
 
@@ -23,8 +23,9 @@ namespace eudaq {
   class DLLEXPORT  PluginManager {
 
     public:
-      typedef typename containerT::t_id t_eventid;
+      typedef typename containerT::t_id        t_eventid;
       typedef genericDetContainer<containerT>  detContainer;
+      typedef std::pair<containerT, size_t>    ElementOfInterest;
       /** Register a new plugin to the plugin manager.
        */
       void RegisterPlugin(DataConverterPlugin<containerT> * plugin);
@@ -35,13 +36,32 @@ namespace eudaq {
       static PluginManager<containerT> & GetInstance();
 
       static unsigned GetTriggerID(const containerT &ev);
+      static unsigned GetTriggerID(const ElementOfInterest &ev){
+        getElement(ev.first, ev.second);
+        return GetTriggerID(ev.first);
+      }
 
       static int IsSyncWithTLU(const containerT & ev, const containerT & tlu);
+      static int IsSyncWithTLU(const ElementOfInterest  & ev, const ElementOfInterest  & tlu){
+        getElement(ev.first, ev.second);
+        getElement(tlu.first, tlu.second);
+        IsSyncWithTLU(ev.first, tlu.first);
+      }
+
       static t_eventid getEventId(const containerT & ev){
         return GetInstance().GetPlugin(ev).GetEventType();
       }
+      static t_eventid getEventId(const ElementOfInterest & ev){
+        return GetInstance().GetPlugin(ev.first).GetEventType();
+      }
 
       static void setCurrentTLUEvent(containerT & ev, const containerT & tlu);
+      static void setCurrentTLUEvent(ElementOfInterest & ev, const ElementOfInterest & tlu){
+        getElement(ev.first, ev.second);
+        getElement(tlu.first, tlu.second);
+        setCurrentTLUEvent(ev.first, tlu.first);
+      }
+
     template <typename detEv>
     static void Initialize(const detEv &dev){
       eudaq::Configuration conf(dev.GetTag("CONFIG"));
@@ -75,6 +95,11 @@ namespace eudaq {
 
 
       static void ConvertStandardSubEvent(StandardEvent &dest, const containerT &source);
+      static void ConvertStandardSubEvent(StandardEvent &dest, const ElementOfInterest &source){
+        getElement(source.first, source.second);
+        ConvertStandardSubEvent(dest, source.first);
+      }
+
 
       static size_t getNumberOfElemts(const containerT &ev);
       static bool   getElement(containerT &source, size_t elementNr);
