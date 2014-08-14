@@ -96,7 +96,15 @@ namespace eudaq{
 
     // the default is that one container contains only one event. if it changes the user has to overload this function in their plugin 
     virtual size_t getNumberOfElemts(const containerT &ev){ return 0; } 
-    virtual bool   getElement(containerT &ev, size_t elementNr){ return (elementNr <= getNumberOfElemts(ev)); }
+    virtual void  getElement(containerT &ev, size_t elementNr){ 
+      
+      if ((elementNr > getNumberOfElemts(ev)))
+      {
+        EUDAQ_THROW("Trying to access an element out of range");
+      }
+      m_ElementOfInterest = elementNr;
+      
+    }
 
     /** The empty destructor. Need to add it to make it virtual.
      */
@@ -115,7 +123,7 @@ namespace eudaq{
      *  of the plugin.
      */
     t_eventid m_eventtype;
-
+    size_t m_ElementOfInterest=0;
 
 
 
