@@ -2,10 +2,11 @@
 #define genericSynchronisation_h__
 
 #include "eudaq/resyncUtilities.hh"
+#include <deque>
 
 #define NOUNIQUEIDENTIFIER   0
 #define NOFILEINDEX          0
-#define NOTTLUFOUND          static_cast<size_t>(-1)
+#define NOTLUFOUND          static_cast<size_t>(-1)
 
 
 namespace eudaq{
@@ -16,7 +17,7 @@ namespace eudaq{
   class DLLEXPORT GenericPacketSync {
   public:
     typedef std::shared_ptr<T> epointer;
-    typedef std::queue<epointer> eventqueue_t;
+    typedef std::deque<epointer> eventqueue_t;
     typedef eudaq::genericDetContainer<T> DetectorContainer;
     typedef std::shared_ptr<DetectorContainer> detPointer;
     typedef typename T::t_id ELement_id;
@@ -37,7 +38,7 @@ namespace eudaq{
     // to have the possibility to have two producer of the same time the caller can set a unique identifier 
     // to separate two events of the same type and subtype
     void addElemtToProducerQueue(epointer ev, int UniqueIdentifier = NOUNIQUEIDENTIFIER){
-      getQueuefromId(ev, UniqueIdentifier).push(ev);
+      getQueuefromId(ev, UniqueIdentifier).push_back(ev);
     }
 
     bool SyncFirstEvent(){
@@ -55,7 +56,7 @@ namespace eudaq{
         }
         else if (!Event_Queue_Is_Empty())
         {
-          TLU_queue.pop();
+          TLU_queue.pop_front();
         }
       }
       return false;
@@ -93,7 +94,7 @@ namespace eudaq{
         {
           std::cout << "Event_IS_LATE" << std::endl;
           isAsync_ = true;
-          event_queue.pop();
+          event_queue.pop_front();
         }
         else if (ReturnValue == Event_IS_EARLY)
         {
@@ -139,11 +140,11 @@ namespace eudaq{
     void event_queue_pop(){
       for (auto& q : m_ProducerEventQueue)
       {
-        q.pop();
+        q.pop_front();
       }
     }
     void event_queue_pop_TLU_event(){
-      getMainTLUQueue().pop();
+      getMainTLUQueue().pop_front();
     }
     void makeDetectorEvent(){
       auto &TLU = getMainTLUQueue().front();
@@ -199,7 +200,7 @@ namespace eudaq{
         }
         m_ProducerId2Eventqueue[getUniqueID(BOREvent, UniqueIdentifier)] = id++;
         m_ProducerEventQueue.push_back(eventqueue_t());
-        m_ProducerEventQueue.back().push(BOREvent);
+        m_ProducerEventQueue.back().push_back(BOREvent);
         m_registertProducer = m_ProducerEventQueue.size();
       }
     }
@@ -253,7 +254,7 @@ namespace eudaq{
     size_t m_registertProducer = 0;
     int m_TLUs_found = 0;
     size_t m_main_TLU = 0;
-    size_t m_first_TLU_event_queue = NOTTLUFOUND;
+    size_t m_first_TLU_event_queue = NOTLUFOUND;
     bool isAsync_ = 0;
     size_t NumberOfEventsToSync_ = 1;
 
