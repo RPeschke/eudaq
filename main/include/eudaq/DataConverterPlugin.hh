@@ -65,7 +65,7 @@ namespace eudaq{
 
     virtual void Initialize(containerT const &, Configuration const &) {}
 
-    virtual unsigned GetTriggerID(containerT const &) const{ return (unsigned) -1; }
+    virtual unsigned GetTriggerID(containerT const &ev) const{ return ev.GetEventNumber(); }
     virtual int IsSyncWithTLU(containerT const & ev, containerT const & tlu) const {
       // dummy comparator. it is just checking if the event numbers are the same.
 
@@ -95,15 +95,25 @@ namespace eudaq{
 
 
     // the default is that one container contains only one event. if it changes the user has to overload this function in their plugin 
-    virtual size_t getNumberOfElemts(const containerT &ev){ return 0; } 
-    virtual void  getElement(containerT &ev, size_t elementNr){ 
+    virtual size_t getNumberOfElemts(const containerT &ev){ return 1; } 
+    virtual void  getElement(const containerT &ev, size_t elementNr){ 
       
-      if ((elementNr > getNumberOfElemts(ev)))
+      if ((elementNr >= getNumberOfElemts(ev)))
       {
         EUDAQ_THROW("Trying to access an element out of range");
       }
-      m_ElementOfInterest = elementNr;
+      m_elenentNumerator = elementNr;
       
+    }
+
+    virtual size_t getCurrentNumerator(const containerT &ev) { return m_elenentNumerator; }
+
+    virtual bool NextNumerator(const containerT &ev){
+      if (getCurrentNumerator(ev)+1 < getNumberOfElemts(ev)){
+        getElement(ev,getCurrentNumerator(ev) + 1);
+        return true;
+      }
+      return false;
     }
 
     /** The empty destructor. Need to add it to make it virtual.
@@ -123,7 +133,7 @@ namespace eudaq{
      *  of the plugin.
      */
     t_eventid m_eventtype;
-    size_t m_ElementOfInterest=0;
+    size_t m_elenentNumerator=0;
 
 
 

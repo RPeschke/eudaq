@@ -148,15 +148,29 @@ void PluginManager<containerT>::RegisterPlugin(DataConverterPlugin<containerT> *
 }
 
 template <typename containerT>
-size_t eudaq::PluginManager<containerT>::getNumberOfElemts(const containerT &ev)
+size_t PluginManager<containerT>::getNumberOfElemts(const containerT &ev)
 {
   return GetInstance().GetPlugin(ev).getNumberOfElemts(ev);
 }
 
 template <typename containerT>
-bool eudaq::PluginManager<containerT>::getElement(containerT &ev, size_t elementNr)
+void PluginManager<containerT>::getElement(const containerT &ev, size_t elementNr)
 {
   return GetInstance().GetPlugin(ev).getElement(ev, elementNr);
+}
+
+
+
+template <typename containerT>
+bool PluginManager<containerT>::NextNumerator(const containerT &ev)
+{
+  return GetInstance().GetPlugin(ev).NextNumerator(ev);
+}
+
+template <typename containerT>
+size_t PluginManager<containerT>::getCurrentNumerator(const containerT& ev)
+{
+  return GetInstance().GetPlugin(ev).getCurrentNumerator(ev);
 }
 
 }//namespace eudaq
@@ -173,6 +187,9 @@ void TemporaryFunction(T& t)
   eudaq::PluginManager < T >::GetInstance().IsSyncWithTLU(t, t);
   eudaq::PluginManager < T >::GetInstance().setCurrentTLUEvent(t, t);
   eudaq::PluginManager < T >::GetInstance().ConvertStandardSubEvent(eudaq::StandardEvent(), t);
+  eudaq::PluginManager < T >::GetInstance().getCurrentNumerator(t);
+  eudaq::PluginManager < T >::GetInstance().NextNumerator(t);
+  eudaq::PluginManager < T >::GetInstance().getElement(t, 1);
   eudaq::DataConverterPlugin<T> * plugin = nullptr;
   eudaq::PluginManager < T >::GetInstance().RegisterPlugin(plugin);
 }

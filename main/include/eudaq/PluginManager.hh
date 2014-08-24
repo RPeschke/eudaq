@@ -25,7 +25,8 @@ namespace eudaq {
     public:
       typedef typename containerT::t_id        t_eventid;
       typedef genericDetContainer<containerT>  detContainer;
-      typedef std::pair<containerT, size_t>    ElementOfInterest;
+      typedef size_t                           elementNumerator_t;
+      typedef std::pair<containerT, elementNumerator_t>    ElementOfInterest;
       /** Register a new plugin to the plugin manager.
        */
       void RegisterPlugin(DataConverterPlugin<containerT> * plugin);
@@ -62,6 +63,8 @@ namespace eudaq {
         setCurrentTLUEvent(ev.first, tlu.first);
       }
 
+      static size_t getCurrentNumerator(const containerT& ev);
+      static bool NextNumerator(const containerT &ev);
     template <typename detEv>
     static void Initialize(const detEv &dev){
       eudaq::Configuration conf(dev.GetTag("CONFIG"));
@@ -102,7 +105,8 @@ namespace eudaq {
 
 
       static size_t getNumberOfElemts(const containerT &ev);
-      static bool   getElement(containerT &source, size_t elementNr);
+      static void  getElement(const containerT &ev, size_t elementNr);
+
 
       /** Get the correct plugin implementation according to the event type.
        */
@@ -122,6 +126,11 @@ namespace eudaq {
       class _dummy;
       friend class _dummy; // Silence superfluous warnings in some gcc versions
   };
+
+
+
+
+
 
 
 
