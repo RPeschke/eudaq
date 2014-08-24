@@ -16,13 +16,34 @@ namespace eudaq{
   template <typename T>
   class DLLEXPORT GenericPacketSync {
   public:
+    
     typedef std::shared_ptr<T> epointer;
+    typedef std::pair<epointer, size_t> elementOfIntresst;
     typedef std::deque<epointer> eventqueue_t;
     typedef eudaq::genericDetContainer<T> DetectorContainer;
     typedef std::shared_ptr<DetectorContainer> detPointer;
     typedef typename T::t_id ELement_id;
     typedef std::pair<ELement_id, int> ProducerID;
 
+    static elementOfIntresst createElementOfIntresst(epointer ev,size_t id=0){
+
+      return elementOfIntresst(ev,id);
+    }
+    static bool nextElement(eventqueue_t& equeue){
+    
+      if (PluginManager<T>::NextNumerator(*equeue.front()))
+      {
+        return true;
+      }
+      equeue.pop_front();
+      if (!equeue.empty())
+      {
+
+        PluginManager<T>::getElement(*equeue.front(), 0);
+        return true;
+      }
+      return false;
+    }
     static bool isReferenceToSameQueue(eventqueue_t& a, eventqueue_t& b){
       return &a == &b;
     }
@@ -56,7 +77,8 @@ namespace eudaq{
         }
         else if (!Event_Queue_Is_Empty())
         {
-          TLU_queue.pop_front();
+          nextElement(TLU_queue);
+          //TLU_queue.pop_front();
         }
       }
       return false;
@@ -74,7 +96,13 @@ namespace eudaq{
       }
       return false;
     }
+    
+    int compareTLUwithDUT(epointer tlu_event, epointer dut_event){
+      for (size_t i=)
+      {
+      }
 
+    }
 
     bool compareTLUwithEventQueue(epointer tlu_event, eventqueue_t& event_queue){
       int ReturnValue = Event_IS_Sync;
@@ -94,7 +122,8 @@ namespace eudaq{
         {
           std::cout << "Event_IS_LATE" << std::endl;
           isAsync_ = true;
-          event_queue.pop_front();
+          nextElement(event_queue);
+          //event_queue.pop_front();
         }
         else if (ReturnValue == Event_IS_EARLY)
         {
@@ -140,11 +169,12 @@ namespace eudaq{
     void event_queue_pop(){
       for (auto& q : m_ProducerEventQueue)
       {
-        q.pop_front();
+        nextElement(q);
+        
       }
     }
     void event_queue_pop_TLU_event(){
-      getMainTLUQueue().pop_front();
+      nextElement(getMainTLUQueue());
     }
     void makeDetectorEvent(){
       auto &TLU = getMainTLUQueue().front();
