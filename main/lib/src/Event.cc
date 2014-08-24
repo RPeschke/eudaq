@@ -141,6 +141,6 @@ namespace eudaq {
 #include "pluginManager.cc"
 registerNewPluginManagerType(eudaq::Event);
 
-#include "DataConverterPlugin.cc"
+#include "../plugins/DataConverterPlugin.cc"
 
 RegisterNewDataConverterType(eudaq::Event);

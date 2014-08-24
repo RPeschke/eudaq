@@ -202,6 +202,6 @@ namespace eudaq {
 #include "pluginManager.cc"
 registerNewPluginManagerType(eudaq::AidaPacket);
 
-#include "DataConverterPlugin.cc"
+#include "..\plugins\DataConverterPlugin.cc"
 
 RegisterNewDataConverterType(eudaq::AidaPacket);
