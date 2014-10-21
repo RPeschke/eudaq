@@ -305,7 +305,7 @@ void SyncBase::PrepareForEvents()
 		}
 		else if (m_TLUs_found > 1)
 		{
-			std::cout << "more than one TLU detected only the first TLU is used for synchronisation " << std::endl;
+			std::cout << "more than one TLU detected only the first TLU is used for synchronization " << std::endl;
 		}
 	}
 	m_ProducerEventQueue.resize(m_registertProducer);
