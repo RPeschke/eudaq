@@ -62,15 +62,7 @@ namespace eudaq {
 		return GetInstance().GetPlugin(ev).GetTriggerID(ev);
 	}
 
-	//   uint64_t PluginManager::GetTimeStamp( const Event& ev)
-	//   {
-	// 	  return GetInstance().GetPlugin(ev).GetTimeStamp(ev);
-	//   }
-	// 
-	//   uint64_t PluginManager::GetTimeDuration( const Event& ev )
-	//   {
-	// 	  return GetInstance().GetPlugin(ev).GetTimeDuration(ev);
-	//   }
+
 	int PluginManager::IsSyncWithTLU(eudaq::Event const & ev, eudaq::Event const & tlu)
 	{
 		return GetInstance().GetPlugin(ev).IsSyncWithTLU(ev, tlu);
