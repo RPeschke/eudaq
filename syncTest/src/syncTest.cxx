@@ -32,7 +32,7 @@ int main(){
     size_t size = 3;
     slowP->addDummyData(&meta, 1, data, size);
     dq.addNewProducer(slowP);
-    slowP->addDataQueue(&dq);
+  
 
 
 	auto fastP = make_shared<paketProducer>("fastP", AidaPacket::str2type("_ROF"));
@@ -42,7 +42,7 @@ int main(){
     size_t size1 = 3;
     fastP->addDummyData(&meta1, 1, data1, size1);
     dq.addNewProducer(fastP);
-    fastP->addDataQueue(&dq);
+   
 
 	auto multiP = make_shared<paketProducer>("multi", AidaPacket::str2type("_ROF"));
     uint64_t meta2 = 333;
@@ -51,7 +51,7 @@ int main(){
     size_t size2 = 3;
     multiP->addDummyData(&meta2, 1, data2, size2);
     dq.addNewProducer(multiP);
-    multiP->addDataQueue(&dq);
+   
 
 
 	

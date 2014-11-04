@@ -58,6 +58,7 @@ namespace eudaq {
   {
     m_producer.push_back(prod);
     m_starttimer = duration_cast<microseconds>(std::chrono::high_resolution_clock::now().time_since_epoch()).count();
+	prod->addDataQueue(this);
   }
 
   void dataQueue::trigger()
