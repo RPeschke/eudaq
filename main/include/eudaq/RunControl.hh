@@ -55,7 +55,7 @@ namespace eudaq {
     protected:
       int32_t m_runnumber;   ///< The current run number
       TransportServer * m_cmdserver; ///< Transport for sending commands
-      std::unique_ptr<std::thread> m_thread;
+	std::unique_ptr<std::thread> m_thread;
       size_t m_idata, m_ilog;
       std::string m_logaddr; // address of log collector
       std::map<size_t,std::string> m_dataaddr; // map of data collector addresses

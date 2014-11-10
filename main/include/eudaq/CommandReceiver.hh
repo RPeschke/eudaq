@@ -49,7 +49,7 @@ class Configuration;
       bool m_done;
       std::string m_type, m_name;
       void CommandHandler(TransportEvent &);
-      std::unique_ptr<std::thread> m_thread;
+	  std::unique_ptr<std::thread> m_thread;
       bool m_threadcreated;
   };
 

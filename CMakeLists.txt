@@ -163,12 +163,22 @@ ENDIF()
 # build resender Producer
 option(BUILD_resender "Compile resender Producer?" OFF)
 IF(BUILD_resender)
-  add_subdirectory(reSendProducer)
+  add_subdirectory(reSendProducer)  
 ENDIF()
+  
+# build ROOT Interface 
+option(BUILD_ROOT_Interface "Compile Producer interface for ROOT Interpreter (requires ROOT)?" OFF)
+IF(BUILD_ROOT_Interface)
+  add_subdirectory(RootInterface)
+ENDIF()
+
+
+
+
 
 # build Offline Monitor
 option(BUILD_offlinemon "Compile Offline Monitor executable (requires ROOT)?" OFF)
-IF(BUILD_offlinemon)
+IF(BUILD_Offline_monitor)
   add_subdirectory(monitors/offlinemon)
 ENDIF()
 
