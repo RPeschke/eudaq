@@ -23,7 +23,7 @@ int main(){
 
     dataQueue dq;
 
-	shared_ptr<paketProducer> slowP = make_shared<paketProducer>("slowP", AidaPacket::str2type("_ROF"));
+	shared_ptr<paketProducer> slowP = make_shared<paketProducer>("slowP", AidaPacket::str2type("_RAW"));
 
 
     uint64_t meta = 111;
@@ -35,7 +35,7 @@ int main(){
     slowP->addDataQueue(&dq);
 
 
-	auto fastP = make_shared<paketProducer>("fastP", AidaPacket::str2type("_ROF"));
+	auto fastP = make_shared<paketProducer>("fastP", AidaPacket::str2type("_RAW"));
     uint64_t meta1 = 222;
     const char * dataString1 = "hallo dass ist ein test2  ";
     uint64_t * data1 = (uint64_t*) (dataString1);
@@ -44,7 +44,7 @@ int main(){
     dq.addNewProducer(fastP);
     fastP->addDataQueue(&dq);
 
-	auto multiP = make_shared<paketProducer>("multi", AidaPacket::str2type("_ROF"));
+	auto multiP = make_shared<paketProducer>("multi", AidaPacket::str2type("_RAW"));
     uint64_t meta2 = 333;
     const char * dataString2 = "hallo dass ist ein test3  ";
     uint64_t * data2 = (uint64_t*) (dataString2);
