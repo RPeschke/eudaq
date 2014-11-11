@@ -48,13 +48,16 @@ namespace eudaq {
 
     enum Flags { FLAG_BORE = 1, FLAG_EORE = 2, FLAG_HITS = 4, FLAG_FAKE = 8, FLAG_SIMU = 16, FLAG_ALL = (unsigned)-1 }; // Matches FLAGNAMES in .cc file
     Event(unsigned run, unsigned event, uint64_t timestamp = NOTIMESTAMP, unsigned flags = 0)
-      : m_flags(flags), m_runnumber(run), m_eventnumber(event), m_timestamp(timestamp) {}
+      : m_flags(flags), m_runnumber(run), m_eventnumber(event)  {
+      m_timestamp.push_back(timestamp);
+    }
     Event(Deserializer & ds);
     virtual void Serialize(Serializer &) const = 0;
 
     unsigned GetRunNumber() const { return m_runnumber; }
     unsigned GetEventNumber() const { return m_eventnumber; }
-    uint64_t GetTimestamp() const { return m_timestamp; }
+    uint64_t GetTimestamp(size_t i=0) const { return m_timestamp[i]; }
+    size_t   GetSizeOfTimeStamps() const { return m_timestamp.size(); }
 
     /** Returns the type string of the event implementation.
      *  Used by the plugin mechanism to identify the event type.
@@ -85,8 +88,10 @@ namespace eudaq {
     static std::string id2str(unsigned id);
     unsigned GetFlags(unsigned f = FLAG_ALL) const { return m_flags & f; }
     void SetFlags(unsigned f) { m_flags |= f; }
-    void SetTimeStampToNow();
-    void setTimeStamp(uint64_t timeStamp){ m_timestamp = timeStamp; }
+    void SetTimeStampToNow(size_t i=0);
+    void pushTimeStampToNow();
+    void setTimeStamp(uint64_t timeStamp,size_t i=0){ m_timestamp[i]=timeStamp; }
+    void pushTimeStamp(uint64_t timeStamp){ m_timestamp.push_back(timeStamp); }
     void setRunNumber(unsigned newRunNumber){ m_runnumber = newRunNumber; }
     void ClearFlags(unsigned f = FLAG_ALL) { m_flags &= ~f; }
     virtual unsigned get_id() const = 0;
@@ -94,7 +99,7 @@ namespace eudaq {
     typedef std::map<std::string, std::string> map_t;
 
     unsigned m_flags, m_runnumber, m_eventnumber;
-    uint64_t m_timestamp;
+    std::vector<uint64_t> m_timestamp;
     map_t m_tags; ///< Metadata tags in (name=value) pairs of strings
   };
 

@@ -40,8 +40,8 @@ namespace eudaq {
   void Event::Print(std::ostream & os) const {
     os << "Type=" << id2str(get_id()) << ":" << GetSubType()
       << ", Number=" << m_runnumber << "." << m_eventnumber;
-    if (m_timestamp != NOTIMESTAMP)
-      os << ", Time=0x" << to_hex(m_timestamp, 16);
+    if (m_timestamp[0] != NOTIMESTAMP)
+      os << ", Time=0x" << to_hex(m_timestamp[0], 16);
     if (m_flags) {
       unsigned f = m_flags;
       bool first = true;
@@ -98,9 +98,14 @@ namespace eudaq {
     return i->second;
   }
 
-  void Event::SetTimeStampToNow()
+  void Event::SetTimeStampToNow(size_t i)
   {
-    m_timestamp = static_cast<uint64_t>(clock());
+    m_timestamp[i]=static_cast<uint64_t>(clock());
+  }
+
+  void Event::pushTimeStampToNow()
+  {
+    m_timestamp.push_back(static_cast<uint64_t>(clock()));
   }
 
   std::ostream & operator << (std::ostream &os, const Event &ev) {
