@@ -55,7 +55,7 @@ namespace eudaq {
     }
     if (m_tags.size() > 0) {
       for (map_t::const_iterator i = m_tags.begin(); i != m_tags.end(); ++i) {
-        os << (i == m_tags.begin() ? ", {" : ", ")  << i->first << "=" << i->second;
+        os << (i == m_tags.begin() ? ", {" : ", ") << i->first << "=" << i->second;
       }
       os << "}";
     }
@@ -64,7 +64,7 @@ namespace eudaq {
   unsigned Event::str2id(const std::string & str) {
     uint32_t result = 0;
     for (size_t i = 0; i < 4; ++i) {
-      if (i < str.length()) result |= str[i] << (8*i);
+      if (i < str.length()) result |= str[i] << (8 * i);
     }
     //std::cout << "str2id(" << str << ") = " << std::hex << result << std::dec << std::endl;
     return result;
@@ -100,7 +100,7 @@ namespace eudaq {
 
   void Event::SetTimeStampToNow()
   {
-	  m_timestamp=static_cast<uint64_t>(clock());
+    m_timestamp = static_cast<uint64_t>(clock());
   }
 
   std::ostream & operator << (std::ostream &os, const Event &ev) {
