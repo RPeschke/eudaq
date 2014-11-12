@@ -36,8 +36,8 @@ namespace eudaq{
     bool SubEventQueueIsEmpty(int i);
     void event_queue_pop();
     void event_queue_pop_TLU_event();
-    void makeDetectorEvent();
-    void clearDetectorQueue();
+    virtual void makeOutputEvent()=0;
+    void clearOutputQueue();
 
     /** The empty destructor. Need to add it to make it virtual.
      */
@@ -62,7 +62,7 @@ namespace eudaq{
 
     std::vector<eventqueue_t> m_ProducerEventQueue;
 
-    std::queue<std::shared_ptr<eudaq::DetectorEvent>> m_DetectorEventQueue;
+    std::queue<std::shared_ptr<eudaq::Event>> m_outPutQueue;
 
 
     int m_TLUs_found;

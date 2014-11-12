@@ -122,11 +122,11 @@ bool SyncBase::SubEventQueueIsEmpty( int FileID )
 bool SyncBase::getNextEvent(  std::shared_ptr<eudaq::DetectorEvent>  & ev )
 {
   
-    if (!m_DetectorEventQueue.empty())
+    if (!m_outPutQueue.empty())
     {
       
-      ev=m_DetectorEventQueue.front();
-      m_DetectorEventQueue.pop();
+      ev=m_outPutQueue.front();
+      m_outPutQueue.pop();
       return true;
     }
   return false;
@@ -167,7 +167,7 @@ bool SyncBase::SyncFirstEvent()
   {
     if (!Event_Queue_Is_Empty())
     {
-      makeDetectorEvent();
+      makeOutputEvent();
       return true;
     }
     else
@@ -185,7 +185,7 @@ bool SyncBase::SyncFirstEvent()
     
     if (compareTLUwithEventQueues(TLU_queue.front()))
     {
-      makeDetectorEvent();
+      makeOutputEvent();
       return true;
     }else if(!Event_Queue_Is_Empty())
     {
@@ -205,7 +205,7 @@ bool SyncBase::SyncFirstEvent()
 bool SyncBase::SyncNEvents( size_t N )
 {
 
-  while (m_DetectorEventQueue.size()<=N)
+  while (m_outPutQueue.size()<=N)
   {
     if (!SyncFirstEvent())
     {
@@ -216,7 +216,7 @@ bool SyncBase::SyncNEvents( size_t N )
   return true;
 }
 
-void SyncBase::makeDetectorEvent()
+void SyncBase::makeOutputEvent()
 {
   auto &TLU=m_ProducerEventQueue[0].front();
   shared_ptr<DetectorEvent> det=make_shared<DetectorEvent>(TLU->GetRunNumber(),TLU->GetEventNumber(),TLU->GetTimestamp());
@@ -236,7 +236,7 @@ void SyncBase::makeDetectorEvent()
   }
 
   
-  m_DetectorEventQueue.push(det);
+  m_outPutQueue.push(det);
 
   if (m_sync)
   {
@@ -320,11 +320,11 @@ bool SyncBase::compareTLUwithEventQueues( std::shared_ptr<eudaq::Event>& tlu_eve
   return true;
 }
 
-void SyncBase::clearDetectorQueue()
+void SyncBase::clearOutputQueue()
 {
   
-    std::queue<std::shared_ptr<eudaq::DetectorEvent>> empty;
-    std::swap( m_DetectorEventQueue, empty );
+    std::queue<std::shared_ptr<eudaq::Event>> empty;
+    std::swap( m_outPutQueue, empty );
 
 }
 
