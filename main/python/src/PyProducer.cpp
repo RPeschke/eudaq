@@ -21,23 +21,13 @@ class PyProducer : public eudaq::Producer {
   public:
     PyProducer(const std::string & name, const std::string & runcontrol)
       : eudaq::Producer(name, runcontrol), m_internalstate(Init), m_name(name), m_run(0), m_evt(0), m_config(NULL) {}
-    void SendEvent(uint64_t* data, size_t size) {
-      RawDataEvent ev("Test", m_run, ++m_evt);
-        ev.AddBlock(0, data, size);
-        eudaq::DataSender::SendEvent(ev);
-      }
-    void SendPacket( uint64_t* meta_data, size_t meta_data_size, uint64_t* data, size_t data_size ) {
-    	AidaPacket packet( AidaPacket::str2type( "-pytest-" ), 0 );
-    	for ( int i = 0; i < meta_data_size; i++ )
-    		packet.GetMetaData().getArray().push_back( meta_data[i] );
-    	packet.SetData( data, data_size );
-        eudaq::DataSender::SendPacket(packet);
-      }
-    void sendPacket() {
-    	eudaq::PyPacket * p = eudaq::PyPacket::getNextToSend();
-    	if ( p )
-    		eudaq::DataSender::SendPacket( *(p->packet) );
-      }
+  
+    void SendEvent(uint8_t* data, size_t size) {
+      RawDataEvent ev(m_name, m_run, ++m_evt);
+      ev.AddBlock(0, data, size);
+      eudaq::DataSender::SendEvent(ev);
+    }
+
     virtual void OnConfigure(const eudaq::Configuration & param) {
       std::cout << "[PyProducer] Received Configuration" << std::endl;
       m_config = new eudaq::Configuration(param);
@@ -51,6 +41,7 @@ class PyProducer : public eudaq::Producer {
 	SetStatus(eudaq::Status::LVL_OK, "Configured (" + m_config->Name() + ")");
       }
     }
+
     virtual void OnStartRun(unsigned param) {
       m_run = param;
       m_evt = 0;
@@ -67,7 +58,7 @@ class PyProducer : public eudaq::Producer {
 	eudaq::mSleep(100);
       }
       if (m_internalstate == Running) {
-	eudaq::DataSender::SendEvent(RawDataEvent::BORE("Test", m_run));
+	eudaq::DataSender::SendEvent(RawDataEvent::BORE(m_name, m_run));
 	SetStatus(eudaq::Status::LVL_OK, "");
       }
     }
@@ -80,7 +71,7 @@ class PyProducer : public eudaq::Producer {
 	eudaq::mSleep(100);
       }
       if (m_internalstate == Stopped) {
-	eudaq::DataSender::SendEvent(RawDataEvent::EORE("Test", m_run, ++m_evt));
+	eudaq::DataSender::SendEvent(RawDataEvent::EORE(m_name, m_run, ++m_evt));
 	SetStatus(eudaq::Status::LVL_OK);
       }
     }
@@ -158,13 +149,8 @@ private:
 extern "C" {
   DLLEXPORT PyProducer* PyProducer_new(char *name, char *rcaddress){return new PyProducer(std::string(name),std::string(rcaddress));}
   // functions for I/O
-  DLLEXPORT void PyProducer_SendEvent(PyProducer *pp, uint64_t* buffer, size_t size){pp->SendEvent(buffer,size);}
-  DLLEXPORT void PyProducer_SendPacket(PyProducer *pp, uint64_t* meta_data, size_t meta_data_size, uint64_t* data, size_t data_size ) {
-	  pp->SendPacket( meta_data, meta_data_size, data, data_size );
-  }
-  DLLEXPORT void PyProducer_sendPacket(PyProducer *pp ) {
-	  pp->sendPacket();
-  }
+  DLLEXPORT void PyProducer_SendEvent(PyProducer *pp, uint8_t* buffer, size_t size){pp->SendEvent(buffer,size);}
+  
   DLLEXPORT char* PyProducer_GetConfigParameter(PyProducer *pp, char *item){
     std::string value = pp->GetConfigParameter(std::string(item));
     // convert string to char*

@@ -1,4 +1,3 @@
-
 #include "eudaq/Configuration.hh"
 #include "eudaq/Producer.hh"
 #include "eudaq/Logger.hh"
