@@ -23,7 +23,16 @@ namespace eudaq {
     ds.read(m_flags);
     ds.read(m_runnumber);
     ds.read(m_eventnumber);
-    ds.read(m_timestamp);
+    if (IsEUDAQ2())
+    {
+      ds.read(m_timestamp);
+    }
+    else
+    {
+      uint64_t timestamp;
+      ds.read(timestamp);
+      m_timestamp.push_back(timestamp);
+    }
     ds.read(m_tags);
   }
 
@@ -33,7 +42,15 @@ namespace eudaq {
     ser.write(m_flags);
     ser.write(m_runnumber);
     ser.write(m_eventnumber);
-    ser.write(m_timestamp);
+    if (IsEUDAQ2())
+    {
+      ser.write(m_timestamp);
+    }
+    else
+    {
+      ser.write(m_timestamp.at(0));
+    }
+    
     ser.write(m_tags);
   }
 

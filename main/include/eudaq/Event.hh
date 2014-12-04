@@ -46,9 +46,9 @@ namespace eudaq {
     using t_eventid = std::pair < MainType_t, SubType_t > ;
 
 
-    enum Flags { FLAG_BORE = 1, FLAG_EORE = 2, FLAG_HITS = 4, FLAG_FAKE = 8, FLAG_SIMU = 16, FLAG_ALL = (unsigned)-1 }; // Matches FLAGNAMES in .cc file
+    enum Flags { FLAG_BORE = 1, FLAG_EORE = 2, FLAG_HITS = 4, FLAG_FAKE = 8, FLAG_SIMU = 16, FLAG_EUDAQ2 = 32, FLAG_PACKET = 64, FLAG_ALL = (unsigned) -1 }; // Matches FLAGNAMES in .cc file
     Event(unsigned run, unsigned event, uint64_t timestamp = NOTIMESTAMP, unsigned flags = 0)
-      : m_flags(flags), m_runnumber(run), m_eventnumber(event)  {
+      : m_flags(flags|FLAG_EUDAQ2), m_runnumber(run), m_eventnumber(event)  {
       m_timestamp.push_back(timestamp);
     }
     Event(Deserializer & ds);
@@ -83,6 +83,9 @@ namespace eudaq {
     bool HasHits() const { return GetFlags(FLAG_HITS) != 0; }
     bool IsFake() const { return GetFlags(FLAG_FAKE) != 0; }
     bool IsSimulation() const { return GetFlags(FLAG_SIMU) != 0; }
+    bool IsEUDAQ2() const { return GetFlags(FLAG_EUDAQ2) != 0; }
+    bool IsPacket() const { return GetFlags(FLAG_PACKET) != 0; }
+
 
     static unsigned str2id(const std::string & idstr);
     static std::string id2str(unsigned id);
