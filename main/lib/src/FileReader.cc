@@ -72,17 +72,17 @@ namespace eudaq {
   }
 
   std::shared_ptr<eudaq::Event> FileReader::GetNextEvent(){
-    static size_t i = 0;
+    
     auto ev = std::dynamic_pointer_cast<eudaq::DetectorEvent>(m_ev);
-    if (i == ev->NumEvents()){
-      i = 0;
+    if (m_subevent_counter == ev->NumEvents()){
+      m_subevent_counter = 0;
       if (!NextEvent()) {
         return nullptr;
       }
       ev = std::dynamic_pointer_cast<eudaq::DetectorEvent>(m_ev);
     }
      
-    return ev->GetEventPtr(i++);
+    return ev->GetEventPtr(m_subevent_counter++);
     
   }
 
