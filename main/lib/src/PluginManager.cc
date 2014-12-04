@@ -44,6 +44,7 @@ namespace eudaq {
 
 		if (pluginiter == m_pluginmap.end()) {
 			EUDAQ_THROW("PluginManager::GetPlugin(): Unkown event type " + Event::id2str(eventtype.first) + ":" + eventtype.second);
+
 		}
 
 		return *pluginiter->second;
@@ -54,9 +55,17 @@ namespace eudaq {
 		conf.Set("timeDelay", dev.GetTag("longTimeDelay", "0"));
 		for (size_t i = 0; i < dev.NumEvents(); ++i) {
 			const eudaq::Event & subev = *dev.GetEvent(i);
-			GetInstance().GetPlugin(subev).Initialize(subev, conf);
+      InitializeSubEvent(subev, conf);
 		}
 	}
+
+  void PluginManager::InitializeSubEvent(const Event& subev, const Configuration& conf)
+  {
+    GetInstance().GetPlugin(subev).Initialize(subev, conf);
+  }
+
+
+
 
 	unsigned PluginManager::GetTriggerID(const Event & ev) {
 		return GetInstance().GetPlugin(ev).GetTriggerID(ev);
@@ -184,8 +193,5 @@ namespace eudaq {
 	{
 		return GetInstance().GetPlugin(ev).isTLU(ev);
 	}
-
-
-
 
 }//namespace eudaq

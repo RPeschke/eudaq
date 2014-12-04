@@ -38,6 +38,7 @@ namespace eudaq {
 
 	  static void setCurrentTLUEvent(eudaq::Event & ev,eudaq::TLUEvent const & tlu);
       static void Initialize(const DetectorEvent &);
+      static void InitializeSubEvent(const Event&, const Configuration&);
       static lcio::LCRunHeader * GetLCRunHeader(const DetectorEvent &);
       static StandardEvent ConvertToStandard(const DetectorEvent &);
       static lcio::LCEvent * ConvertToLCIO(const DetectorEvent &);
