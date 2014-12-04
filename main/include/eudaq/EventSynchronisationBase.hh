@@ -22,39 +22,48 @@ namespace eudaq{
     typedef std::queue<std::shared_ptr<eudaq::Event>> eventqueue_t;
 
 
+    // public interface
+
+    bool getNextEvent(std::shared_ptr<eudaq::Event>&   ev);
     int AddDetectorEventToProducerQueue(int fileIndex, std::shared_ptr<eudaq::DetectorEvent> dev);
     int AddEventToProducerQueue(int fileIndex, std::shared_ptr<eudaq::Event> Ev);
-    virtual bool SyncFirstEvent();
-    virtual bool SyncNEvents(size_t N);
-    virtual bool getNextEvent(std::shared_ptr<eudaq::DetectorEvent>  & ev);
-
-    virtual bool compareTLUwithEventQueue(std::shared_ptr<eudaq::Event>& tlu_event, SyncBase::eventqueue_t& event_queue);
-    virtual bool compareTLUwithEventQueues(std::shared_ptr<eudaq::Event>& tlu_event);
-
-    void storeCurrentOrder();
-    bool Event_Queue_Is_Empty();
-    bool SubEventQueueIsEmpty(int i);
-    void event_queue_pop();
-    void event_queue_pop_TLU_event();
-    void makeDetectorEvent();
-    void clearDetectorQueue();
-
-    /** The empty destructor. Need to add it to make it virtual.
-     */
-    virtual ~SyncBase() {}
-    SyncBase(bool sync = true);
+    void clearOutputQueue();
     void addBOREDetectorEvent(int fileIndex, const eudaq::DetectorEvent& BOREvent);
     void addBORE_Event(int fileIndex, const eudaq::Event& BOREEvent);
+    SyncBase(bool sync = true);
+    virtual ~SyncBase() {}
+    bool SyncNEvents(size_t N);
     void PrepareForEvents();
+    bool SubEventQueueIsEmpty(int i);
+    bool SyncFirstEvent();
+    
+  private:
+    
+    virtual void Process_Event_is_sync(std::shared_ptr<eudaq::Event>   ev, eudaq::Event const & tlu) {}
+    virtual void Process_Event_is_late(std::shared_ptr<eudaq::Event>   ev, eudaq::Event const & tlu) {}
+    virtual void Process_Event_is_early(std::shared_ptr<eudaq::Event> ev, eudaq::Event const & tlu) {}
+
+    virtual void storeCurrentOrder(){}
+    virtual void makeDetectorEvent(){}
+
+
+    size_t  m_event_id = 0;
+    /** The empty destructor. Need to add it to make it virtual.
+     */
 
   protected:
 
+    bool compareTLUwithEventQueues(std::shared_ptr<eudaq::Event>& tlu_event);
+    bool compareTLUwithEventQueue(std::shared_ptr<eudaq::Event>& tlu_event, SyncBase::eventqueue_t& event_queue);
+    bool Event_Queue_Is_Empty();
+    void event_queue_pop_TLU_event();
+    void event_queue_pop();
     eventqueue_t& getQueuefromId(unsigned producerID);
     eventqueue_t& getQueuefromId(unsigned fileIndex, unsigned eventIndex);
 
     eventqueue_t& getFirstTLUQueue();
     unsigned getUniqueID(unsigned fileIndex, unsigned eventIndex);
-    unsigned getTLU_UniqueID(unsigned fileIndex);
+    //unsigned getTLU_UniqueID(unsigned fileIndex);
     std::map<unsigned, size_t> m_ProducerId2Eventqueue;
     size_t m_registertProducer;
     std::vector<size_t> m_EventsProFileReader;
@@ -62,7 +71,7 @@ namespace eudaq{
 
     std::vector<eventqueue_t> m_ProducerEventQueue;
 
-    std::queue<std::shared_ptr<eudaq::DetectorEvent>> m_DetectorEventQueue;
+    std::queue<std::shared_ptr<eudaq::Event>> m_outPutQueue;
 
 
     int m_TLUs_found;
@@ -73,6 +82,8 @@ namespace eudaq{
 
     bool m_sync;
   };
+
+  std::unique_ptr<SyncBase>  factory_sync_class(const char* name,bool sync);
 
 }//namespace eudaq
 
