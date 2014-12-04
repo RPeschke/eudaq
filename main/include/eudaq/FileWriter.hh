@@ -13,6 +13,7 @@ namespace eudaq {
     public:
       FileWriter();
       virtual void StartRun(unsigned runnumber) = 0;
+      virtual void WriteBaseEvent(const Event&);
       virtual void WriteEvent(const DetectorEvent &) = 0;
       virtual uint64_t FileBytes() const = 0;
       void SetFilePattern(const std::string & p) { m_filepattern = p; }
@@ -30,7 +31,7 @@ namespace eudaq {
 	}
 	  
   }
-  inline void helper_ProcessEvent(FileWriter& writer,const DetectorEvent &ev){writer.WriteEvent(ev);}
+  inline void helper_ProcessEvent(FileWriter& writer, const Event &ev){ writer.WriteBaseEvent(ev); }
   inline void helper_StartRun(FileWriter& writer,unsigned runnumber){writer.StartRun(runnumber);}
   inline void helper_EndRun(FileWriter& writer){};
 
