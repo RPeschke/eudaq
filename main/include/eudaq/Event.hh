@@ -48,7 +48,10 @@ namespace eudaq {
 
     enum Flags { FLAG_BORE = 1, FLAG_EORE = 2, FLAG_HITS = 4, FLAG_FAKE = 8, FLAG_SIMU = 16, FLAG_EUDAQ2 = 32, FLAG_PACKET = 64, FLAG_ALL = (unsigned) -1 }; // Matches FLAGNAMES in .cc file
     Event(unsigned run, unsigned event, uint64_t timestamp = NOTIMESTAMP, unsigned flags = 0)
-      : m_flags(flags|FLAG_EUDAQ2), m_runnumber(run), m_eventnumber(event)  {
+      : m_flags(flags|FLAG_EUDAQ2), // it is not desired that user use old EUDAQ 1 event format. If one wants to use it one has clear the flags first and then set flags with again.
+      m_runnumber(run),
+      m_eventnumber(event)  
+    {
       m_timestamp.push_back(timestamp);
     }
     Event(Deserializer & ds);
