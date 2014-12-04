@@ -86,7 +86,7 @@ public:
       return false;
     }
     else if (CheckIfElementIsElementOfIntrest()) {
-      helper_ProcessEvent(*m_processor, m_reader.GetDetectorEvent());
+      helper_ProcessEvent(*m_processor, m_reader.GetEvent());
     }
     return m_reader.NextEvent();
   }
@@ -97,7 +97,7 @@ private:
     {
       return false;
     }
-    if (m_reader.GetDetectorEvent().GetEventNumber() > m_eventsOfInterest.back())
+    if (m_reader.GetEvent().GetEventNumber() > m_eventsOfInterest.back())
     {
       return true;
     }
@@ -105,11 +105,11 @@ private:
   }
   bool CheckIfElementIsElementOfIntrest(){
 
-    if (m_reader.GetDetectorEvent().IsBORE()
-      || m_reader.GetDetectorEvent().IsEORE()
+    if (m_reader.GetEvent().IsBORE()
+      || m_reader.GetEvent().IsEORE()
       || m_eventsOfInterest.empty()
       || std::find(m_eventsOfInterest.begin(), m_eventsOfInterest.end(),
-      m_reader.GetDetectorEvent().GetEventNumber()) != m_eventsOfInterest.end()
+      m_reader.GetEvent().GetEventNumber()) != m_eventsOfInterest.end()
       )
     {
       return true;
