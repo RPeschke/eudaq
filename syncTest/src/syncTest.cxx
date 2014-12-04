@@ -71,22 +71,22 @@ int main(){
 //	auto writer1(AidaFileWriterFactory())
  //   GenericPacketSync<eudaq::AidaPacket> sync;
 
-//    sync.addBOREEvent(packet1);
- //   sync.addBOREEvent(packet3);
- //   sync.addBOREEvent(packet2);
+//    sync->addBOREEvent(packet1);
+ //   sync->addBOREEvent(packet3);
+ //   sync->addBOREEvent(packet2);
     
-  //  sync.PrepareForEvents();
-	SyncBase sync;
-	sync.addBORE_Event(0, *PluginManager::ExtractEventN(dq.getPacket(),0));
-	sync.addBORE_Event(0, *PluginManager::ExtractEventN(dq.getPacket(),0));
-	sync.addBORE_Event(0, *PluginManager::ExtractEventN(dq.getPacket(),0));
-	sync.PrepareForEvents();
+  //  sync->PrepareForEvents();
+	std::unique_ptr<SyncBase> sync;
+	sync->addBORE_Event(0, *PluginManager::ExtractEventN(dq.getPacket(),0));
+	sync->addBORE_Event(0, *PluginManager::ExtractEventN(dq.getPacket(),0));
+	sync->addBORE_Event(0, *PluginManager::ExtractEventN(dq.getPacket(),0));
+	sync->PrepareForEvents();
     while (!dq.empty()){
 		auto pack = dq.getPacket();
 		for (size_t i = 0; i < PluginManager::GetNumberOfROF(*pack); i++)
 		{
 			auto ev = PluginManager::ExtractEventN(pack,i);
-			sync.AddEventToProducerQueue(0, ev);
+			sync->AddEventToProducerQueue(0, ev);
 		}
     }
 
@@ -95,13 +95,13 @@ int main(){
     do
     {
 	
-     } while (sync.SyncFirstEvent());
+     } while (sync->SyncFirstEvent());
     Sleep(1);
 	std::shared_ptr<eudaq::FileWriter> writer(FileWriterFactory::Create("meta"));
 	writer->SetFilePattern("test.txt");
 	writer->StartRun(0);
 	std::shared_ptr<eudaq::DetectorEvent> det;
-	while (sync.getNextEvent(det))
+	while (sync->getNextEvent(det))
 	{
 		writer->WriteEvent(*det);
 	}
