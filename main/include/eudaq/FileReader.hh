@@ -36,6 +36,7 @@ namespace eudaq {
       FileDeserializer m_des;
      std::shared_ptr<eudaq::Event> m_ev;
       unsigned m_ver;
+      size_t m_subevent_counter = 0;
 
   };
  

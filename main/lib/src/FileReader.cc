@@ -23,12 +23,12 @@ namespace eudaq {
 // 		m_ev->SetTag("longTimeDelay",longTimeDelay);
 // 		m_ev->SetTag("NumberOfEvents",syncEvents);
 
-		eudaq::Configuration conf(GetDetectorEvent().GetTag("CONFIG"));
-		conf.SetSection("EventStruct");
+    eudaq::Configuration conf(GetDetectorEvent().GetTag("CONFIG"));
+    conf.SetSection("EventStruct");
 
 
 
-		
+    
 //       if (synctriggerid) {
 // 
 // 	// saves this information in the BOR event. the DataConverterPlugins can extract this information during initializing.
@@ -72,33 +72,33 @@ namespace eudaq {
   }
 
   std::shared_ptr<eudaq::Event> FileReader::GetNextEvent(){
-	  static size_t i = 0;
-	  auto ev = std::dynamic_pointer_cast<eudaq::DetectorEvent>(m_ev);
-	  if (i == ev->NumEvents()){
-		  i = 0;
-		  if (!NextEvent()) {
-			  return nullptr;
-		  }
-		  ev = std::dynamic_pointer_cast<eudaq::DetectorEvent>(m_ev);
-	  }
-	   
-	  return ev->GetEventPtr(i++);
-	  
+    
+    auto ev = std::dynamic_pointer_cast<eudaq::DetectorEvent>(m_ev);
+    if (m_subevent_counter == ev->NumEvents()){
+      m_subevent_counter = 0;
+      if (!NextEvent()) {
+        return nullptr;
+      }
+      ev = std::dynamic_pointer_cast<eudaq::DetectorEvent>(m_ev);
+    }
+     
+    return ev->GetEventPtr(m_subevent_counter++);
+    
   }
 
   bool FileIsEUDET(const std::string& in)
   {
-	  auto pos_of_Dot = in.find_last_of('.');
-	  if (pos_of_Dot<in.size())
-	  {
-		  auto sub = in.substr(pos_of_Dot+1);
-		  if (sub.compare("raw")==0)
-		  {
-			  return true;
-		  }
-	  }
+    auto pos_of_Dot = in.find_last_of('.');
+    if (pos_of_Dot<in.size())
+    {
+      auto sub = in.substr(pos_of_Dot+1);
+      if (sub.compare("raw")==0)
+      {
+        return true;
+      }
+    }
 
-	  return false;
+    return false;
   }
 
  

@@ -33,9 +33,9 @@ namespace eudaq{
 		void Interrupt() ;
 	private:
 		std::string m_filename;
-		std::shared_ptr<eudaq::DetectorEvent> m_ev;
+		std::shared_ptr<eudaq::Event> m_ev;
 		std::vector<std::shared_ptr<eudaq::baseFileReader>> m_fileReaders;
-		SyncBase m_sync;
+		std::unique_ptr<SyncBase> m_sync;
 		size_t m_eventsToSync;
 		bool m_preaparedForEvents;
 		

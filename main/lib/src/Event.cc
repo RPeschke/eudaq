@@ -15,6 +15,8 @@ namespace eudaq {
       "HITS",
       "FAKE",
       "SIMU"
+      "EUDAQ2"
+      "Packet"
     };
 
   }
@@ -23,7 +25,16 @@ namespace eudaq {
     ds.read(m_flags);
     ds.read(m_runnumber);
     ds.read(m_eventnumber);
-    ds.read(m_timestamp);
+    if (IsEUDAQ2())
+    {
+      ds.read(m_timestamp);
+    }
+    else
+    {
+      uint64_t timestamp;
+      ds.read(timestamp);
+      m_timestamp.push_back(timestamp);
+    }
     ds.read(m_tags);
   }
 
@@ -33,15 +44,23 @@ namespace eudaq {
     ser.write(m_flags);
     ser.write(m_runnumber);
     ser.write(m_eventnumber);
-    ser.write(m_timestamp);
+    if (IsEUDAQ2())
+    {
+      ser.write(m_timestamp);
+    }
+    else
+    {
+      ser.write(m_timestamp.at(0));
+    }
+    
     ser.write(m_tags);
   }
 
   void Event::Print(std::ostream & os) const {
     os << "Type=" << id2str(get_id()) << ":" << GetSubType()
       << ", Number=" << m_runnumber << "." << m_eventnumber;
-    if (m_timestamp != NOTIMESTAMP)
-      os << ", Time=0x" << to_hex(m_timestamp, 16);
+    if (m_timestamp[0] != NOTIMESTAMP)
+      os << ", Time=0x" << to_hex(m_timestamp[0], 16);
     if (m_flags) {
       unsigned f = m_flags;
       bool first = true;
@@ -55,7 +74,7 @@ namespace eudaq {
     }
     if (m_tags.size() > 0) {
       for (map_t::const_iterator i = m_tags.begin(); i != m_tags.end(); ++i) {
-        os << (i == m_tags.begin() ? ", {" : ", ")  << i->first << "=" << i->second;
+        os << (i == m_tags.begin() ? ", {" : ", ") << i->first << "=" << i->second;
       }
       os << "}";
     }
@@ -64,7 +83,7 @@ namespace eudaq {
   unsigned Event::str2id(const std::string & str) {
     uint32_t result = 0;
     for (size_t i = 0; i < 4; ++i) {
-      if (i < str.length()) result |= str[i] << (8*i);
+      if (i < str.length()) result |= str[i] << (8 * i);
     }
     //std::cout << "str2id(" << str << ") = " << std::hex << result << std::dec << std::endl;
     return result;
@@ -98,9 +117,14 @@ namespace eudaq {
     return i->second;
   }
 
-  void Event::SetTimeStampToNow()
+  void Event::SetTimeStampToNow(size_t i)
   {
-	  m_timestamp=static_cast<uint64_t>(clock());
+    m_timestamp[i]=static_cast<uint64_t>(clock());
+  }
+
+  void Event::pushTimeStampToNow()
+  {
+    m_timestamp.push_back(static_cast<uint64_t>(clock()));
   }
 
   std::ostream & operator << (std::ostream &os, const Event &ev) {

@@ -10,10 +10,12 @@ namespace eudaq {
       FileWriterNative(const std::string &);
       virtual void StartRun(unsigned);
       virtual void WriteEvent(const DetectorEvent &);
+      virtual void WriteBaseEvent(const Event&);
       virtual uint64_t FileBytes() const;
       virtual ~FileWriterNative();
     private:
       FileSerializer * m_ser;
+
   };
 
   namespace {
@@ -26,10 +28,15 @@ namespace eudaq {
 
   void FileWriterNative::StartRun(unsigned runnumber) {
     delete m_ser;
-    m_ser = new FileSerializer(FileNamer(m_filepattern).Set('X', ".raw").Set('R', runnumber));
+    m_ser = new FileSerializer(FileNamer(m_filepattern).Set('X', ".raw").Set('R', runnumber),true);
   }
 
   void FileWriterNative::WriteEvent(const DetectorEvent & ev) {
+    if (!m_ser) EUDAQ_THROW("FileWriterNative: Attempt to write unopened file");
+    m_ser->write(ev);
+    m_ser->Flush();
+  }
+  void FileWriterNative::WriteBaseEvent(const Event& ev){
     if (!m_ser) EUDAQ_THROW("FileWriterNative: Attempt to write unopened file");
     m_ser->write(ev);
     m_ser->Flush();
