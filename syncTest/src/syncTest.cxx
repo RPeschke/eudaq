@@ -23,7 +23,7 @@ int main(){
 
     dataQueue dq;
 
-	shared_ptr<paketProducer> slowP = make_shared<paketProducer>("slowP", AidaPacket::str2type("_RAW"));
+    shared_ptr<paketProducer> slowP = make_shared<paketProducer>("slowP", AidaPacket::str2type("_RAW"));
 
 
     uint64_t meta = 111;
@@ -35,7 +35,7 @@ int main(){
     slowP->addDataQueue(&dq);
 
 
-	auto fastP = make_shared<paketProducer>("fastP", AidaPacket::str2type("_RAW"));
+    auto fastP = make_shared<paketProducer>("fastP", AidaPacket::str2type("_RAW"));
     uint64_t meta1 = 222;
     const char * dataString1 = "hallo dass ist ein test2  ";
     uint64_t * data1 = (uint64_t*) (dataString1);
@@ -44,7 +44,7 @@ int main(){
     dq.addNewProducer(fastP);
     fastP->addDataQueue(&dq);
 
-	auto multiP = make_shared<paketProducer>("multi", AidaPacket::str2type("_RAW"));
+    auto multiP = make_shared<paketProducer>("multi", AidaPacket::str2type("_RAW"));
     uint64_t meta2 = 333;
     const char * dataString2 = "hallo dass ist ein test3  ";
     uint64_t * data2 = (uint64_t*) (dataString2);
@@ -54,7 +54,7 @@ int main(){
     multiP->addDataQueue(&dq);
 
 
-	
+
     slowP->startDataTaking(100);
     fastP->startDataTaking(0);
     multiP->startDataTaking(20);
@@ -64,48 +64,48 @@ int main(){
       Sleep(1);
     }
 
-    
+
     slowP->stopDataTaking();
     fastP->stopDataTaking();
     multiP->stopDataTaking();
-//	auto writer1(AidaFileWriterFactory())
- //   GenericPacketSync<eudaq::AidaPacket> sync;
+    //	auto writer1(AidaFileWriterFactory())
+    //   GenericPacketSync<eudaq::AidaPacket> sync;
 
-//    sync->addBOREEvent(packet1);
- //   sync->addBOREEvent(packet3);
- //   sync->addBOREEvent(packet2);
-    
-  //  sync->PrepareForEvents();
-	std::unique_ptr<SyncBase> sync;
-	sync->addBORE_Event(0, *PluginManager::ExtractEventN(dq.getPacket(),0));
-	sync->addBORE_Event(0, *PluginManager::ExtractEventN(dq.getPacket(),0));
-	sync->addBORE_Event(0, *PluginManager::ExtractEventN(dq.getPacket(),0));
-	sync->PrepareForEvents();
+    //    sync->addBOREEvent(packet1);
+    //   sync->addBOREEvent(packet3);
+    //   sync->addBOREEvent(packet2);
+
+    //  sync->PrepareForEvents();
+    std::unique_ptr<SyncBase> sync;
+    sync->addBORE_Event(0, *PluginManager::ExtractEventN(dq.getPacket(), 0));
+    sync->addBORE_Event(0, *PluginManager::ExtractEventN(dq.getPacket(), 0));
+    sync->addBORE_Event(0, *PluginManager::ExtractEventN(dq.getPacket(), 0));
+    sync->PrepareForEvents();
     while (!dq.empty()){
-		auto pack = dq.getPacket();
-		for (size_t i = 0; i < PluginManager::GetNumberOfROF(*pack); i++)
-		{
-			auto ev = PluginManager::ExtractEventN(pack,i);
-			sync->AddEventToProducerQueue(0, ev);
-		}
+      auto pack = dq.getPacket();
+      for (size_t i = 0; i < PluginManager::GetNumberOfROF(*pack); i++)
+      {
+        auto ev = PluginManager::ExtractEventN(pack, i);
+        sync->AddEventToProducerQueue(0, ev);
+      }
     }
 
     Sleep(1);
 
     do
     {
-	
-     } while (sync->SyncFirstEvent());
+
+    } while (sync->SyncFirstEvent());
     Sleep(1);
-	std::shared_ptr<eudaq::FileWriter> writer(FileWriterFactory::Create("meta"));
-	writer->SetFilePattern("test.txt");
-	writer->StartRun(0);
-	std::shared_ptr<eudaq::DetectorEvent> det;
-	while (sync->getNextEvent(det))
-	{
-		writer->WriteEvent(*det);
-	}
-	cout << "ende" << endl;
+    std::shared_ptr<eudaq::FileWriter> writer(FileWriterFactory::Create("meta"));
+    writer->SetFilePattern("test.txt");
+    writer->StartRun(0);
+    std::shared_ptr<eudaq::Event> det;
+    while (sync->getNextEvent(det))
+    {
+      writer->WriteBaseEvent(*det);
+    }
+    cout << "end" << endl;
   }
   catch (...){
     return op.HandleMainException();
