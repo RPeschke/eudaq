@@ -27,10 +27,10 @@ namespace eudaq {
     using  MainType_t = unsigned;
     using SubType_t = std::string;
     using t_eventid = std::pair < MainType_t, SubType_t > ;
-
+    using timeStamp_t = uint64_t;
 
     enum Flags { FLAG_BORE = 1, FLAG_EORE = 2, FLAG_HITS = 4, FLAG_FAKE = 8, FLAG_SIMU = 16, FLAG_EUDAQ2 = 32, FLAG_PACKET = 64, FLAG_ALL = (unsigned) -1 }; // Matches FLAGNAMES in .cc file
-    Event(unsigned run, unsigned event, uint64_t timestamp = NOTIMESTAMP, unsigned flags = 0)
+    Event(unsigned run, unsigned event, timeStamp_t timestamp = NOTIMESTAMP, unsigned flags = 0)
       : m_flags(flags|FLAG_EUDAQ2), // it is not desired that user use old EUDAQ 1 event format. If one wants to use it one has clear the flags first and then set flags with again.
       m_runnumber(run),
       m_eventnumber(event)  
@@ -42,7 +42,7 @@ namespace eudaq {
 
     unsigned GetRunNumber() const { return m_runnumber; }
     unsigned GetEventNumber() const { return m_eventnumber; }
-    uint64_t GetTimestamp(size_t i=0) const { return m_timestamp[i]; }
+    timeStamp_t GetTimestamp(size_t i=0) const { return m_timestamp[i]; }
     size_t   GetSizeOfTimeStamps() const { return m_timestamp.size(); }
 
     /** Returns the type string of the event implementation.
@@ -79,8 +79,8 @@ namespace eudaq {
     void SetFlags(unsigned f) { m_flags |= f; }
     void SetTimeStampToNow(size_t i=0);
     void pushTimeStampToNow();
-    void setTimeStamp(uint64_t timeStamp,size_t i=0){ m_timestamp[i]=timeStamp; }
-    void pushTimeStamp(uint64_t timeStamp){ m_timestamp.push_back(timeStamp); }
+    void setTimeStamp(timeStamp_t timeStamp,size_t i=0){ m_timestamp[i]=timeStamp; }
+    void pushTimeStamp(timeStamp_t timeStamp){ m_timestamp.push_back(timeStamp); }
     void setRunNumber(unsigned newRunNumber){ m_runnumber = newRunNumber; }
     void ClearFlags(unsigned f = FLAG_ALL) { m_flags &= ~f; }
     virtual unsigned get_id() const = 0;
@@ -88,7 +88,7 @@ namespace eudaq {
     typedef std::map<std::string, std::string> map_t;
 
     unsigned m_flags, m_runnumber, m_eventnumber;
-    std::vector<uint64_t> m_timestamp;
+    std::vector<timeStamp_t> m_timestamp;
     map_t m_tags; ///< Metadata tags in (name=value) pairs of strings
   };
 
