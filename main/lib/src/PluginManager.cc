@@ -179,11 +179,21 @@ namespace eudaq {
 
 	}
 
+  std::shared_ptr<eudaq::Event> PluginManager::ExtractEventN(std::shared_ptr<eudaq::Event> pac, size_t NumberOfROF)
+  {
+    return GetInstance().GetPlugin(*pac).ExtractEventN(pac, NumberOfROF);
+  }
+
 	size_t PluginManager::GetNumberOfROF(const eudaq::AidaPacket& pac)
 	{
 		return GetInstance().GetPlugin(pac).GetNumberOfROF(pac);
 
 	}
+  size_t PluginManager::GetNumberOfROF(const eudaq::Event& pac)
+  {
+    return GetInstance().GetPlugin(pac).GetNumberOfROF(pac);
+
+  }
 	unsigned PluginManager::getUniqueIdentifier(const Event &ev)
 	{
 		return GetInstance().GetPlugin(ev).getUniqueIdentifier(ev);
