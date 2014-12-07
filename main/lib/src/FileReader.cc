@@ -54,13 +54,13 @@ namespace eudaq {
   std::shared_ptr<eudaq::Event> FileReader::GetNextEvent(){
     if (m_ev->IsPacket())
     {
-      
+
       if (m_subevent_counter == PluginManager::GetNumberOfROF(*m_ev)){
         m_subevent_counter = 0;
         if (!NextEvent()) {
           return nullptr;
         }
-        return PluginManager::ExtractEventN(m_ev,m_subevent_counter++);
+        return PluginManager::ExtractEventN(m_ev, m_subevent_counter++);
       }
     }
     else{
