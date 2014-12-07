@@ -6,7 +6,7 @@
 
 namespace eudaq {
 
-  EUDAQ_DEFINE_EVENT(DetectorEvent, str2id("_DET"));
+  EUDAQ_DEFINE_EVENT(DetectorEvent, str2id(DetectorEventMaintype));
 
   DetectorEvent::DetectorEvent(Deserializer & ds) :
     Event(ds)
