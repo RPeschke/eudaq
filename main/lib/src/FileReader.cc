@@ -20,28 +20,8 @@ namespace eudaq {
     m_ver(1)
   {
 
-    // 		m_ev->SetTag("longTimeDelay",longTimeDelay);
-    // 		m_ev->SetTag("NumberOfEvents",syncEvents);
-
-    eudaq::Configuration conf(GetDetectorEvent().GetTag("CONFIG"));
-    conf.SetSection("EventStruct");
-
-
-
-
-    //       if (synctriggerid) {
-    // 
-    // 	// saves this information in the BOR event. the DataConverterPlugins can extract this information during initializing.
-    // 		m_sync =std::make_shared<eudaq::SyncBase>(GetDetectorEvent());
-    // 
-    // 
-    //       }
   }
-  //   FileReader::FileReader(FileReader&& fileR):m_filename(fileR.Filename()),
-  // 	  m_des(m_filename){
-  // 
-  // 
-  //   }
+
   FileReader::~FileReader() {
 
   }
