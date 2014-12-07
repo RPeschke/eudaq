@@ -3,9 +3,10 @@
 #include "eudaq/PluginManager.hh"
 #include "eudaq/Event.hh"
 #include "eudaq/Logger.hh"
-#include <list>
 #include "eudaq/FileSerializer.hh"
 #include "eudaq/Configuration.hh"
+
+#include <list>
 
 namespace eudaq {
 
