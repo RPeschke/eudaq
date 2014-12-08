@@ -17,10 +17,13 @@ namespace eudaq {
     public:
       FileReader(const std::string & filename, const std::string & filepattern = "");
 
+      FileReader(Parameter_ref param);
+
+
       ~FileReader();
       bool NextEvent(size_t skip = 0);
 
-	  // std::string Filename() const { return m_filename; }
+
     virtual  unsigned RunNumber() const;
 
       const eudaq::Event & GetEvent() const;
@@ -32,7 +35,7 @@ namespace eudaq {
       virtual void Interrupt() { m_des.Interrupt(); }
       
     private:
-      //std::string m_filename;
+      
       FileDeserializer m_des;
      std::shared_ptr<eudaq::Event> m_ev;
       unsigned m_ver;
@@ -40,8 +43,6 @@ namespace eudaq {
 
   };
  
-  bool FileIsEUDET(const std::string& in);
-
 }
 
 #endif // EUDAQ_INCLUDED_FileReader

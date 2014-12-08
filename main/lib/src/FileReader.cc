@@ -1,3 +1,4 @@
+#include <list>
 #include "eudaq/FileReader.hh"
 #include "eudaq/FileNamer.hh"
 #include "eudaq/PluginManager.hh"
@@ -5,8 +6,7 @@
 #include "eudaq/Logger.hh"
 #include "eudaq/FileSerializer.hh"
 #include "eudaq/Configuration.hh"
-
-#include <list>
+#include "eudaq/factory.hh"
 
 namespace eudaq {
 
@@ -19,6 +19,11 @@ namespace eudaq {
     m_des(Filename()),
     m_ev(EventFactory::Create(m_des)),
     m_ver(1)
+  {
+
+  }
+
+  FileReader::FileReader(Parameter_ref param) :FileReader(param[0], param[1])
   {
 
   }
@@ -70,21 +75,7 @@ namespace eudaq {
 
   }
 
-  bool FileIsEUDET(const std::string& in)
-  {
-    auto pos_of_Dot = in.find_last_of('.');
-    if (pos_of_Dot < in.size())
-    {
-      auto sub = in.substr(pos_of_Dot + 1);
-      if (sub.compare("raw") == 0)
-      {
-        return true;
-      }
-    }
 
-    return false;
-  }
-
-
-
+  RegisterFileReader(FileReader, "raw");
+ 
 }
