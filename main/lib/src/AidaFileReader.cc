@@ -21,6 +21,11 @@ namespace eudaq {
 	  readNext();
   }
 
+  AidaFileReader::AidaFileReader(Parameter_ref filename) :AidaFileReader(filename[0])
+  {
+
+  }
+
   AidaFileReader::~AidaFileReader() {
 	  if ( m_des )
 		  delete m_des;
@@ -84,41 +89,31 @@ namespace eudaq {
   std::shared_ptr<eudaq::Event> AidaFileReader::GetNextEventFromEventPacket(std::shared_ptr<EventPacket>& eventPack)
   {
 	 
-	  auto ev = std::dynamic_pointer_cast<DetectorEvent>(eventPack->getEventPointer());
-	  if (ev==nullptr )
+	  if (eventPack->getEventPointer()->IsPacket())
 	  {
-		  return eventPack->getEventPointer();
-	  }
-	  
-	  if (itter<ev->NumEvents())
-	  {
-		  return ev->GetEventPtr(itter++);
-	  }
-	  else
-	  {
-		  itter = 0;
-		  if (readNext())
-		  {
-			  return GetNextEvent();
-		  }
-	  }
+      if (itter<PluginManager::GetNumberOfROF(*eventPack->getEventPointer()))
+      {
+        return PluginManager::ExtractEventN(eventPack->getEventPointer(),itter++);
+      }
+      else
+      {
+        itter = 0;
+        if (readNext())
+        {
+          return GetNextEvent();
+        }
+      }
+
+    }
+    else
+    {
+      return eventPack->getEventPointer();
+    }
 	  return nullptr;
   }
-
-  bool FileIsAIDA(const std::string& in)
-  {
-	  auto pos_of_Dot = in.find_last_of('.');
-	  if (pos_of_Dot < in.size())
-	  {
-		  auto sub = in.substr(pos_of_Dot + 1);
-		  if (sub.compare("raw2") == 0)
-		  {
-			  return true;
-		  }
-	  }
-
-	  return false;
-  }
+    
+    
 
 
+  RegisterFileReader(AidaFileReader, "raw2");
 }

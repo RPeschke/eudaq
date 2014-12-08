@@ -18,11 +18,10 @@ class EventPacket;
   class DLLEXPORT AidaFileReader :public baseFileReader{
     public:
       AidaFileReader(const std::string & filename );
-
+      AidaFileReader(Parameter_ref filename);
       virtual ~AidaFileReader();
       bool readNext();
 	  virtual std::shared_ptr<eudaq::Event> GetNextEvent();
-	 // std::string Filename() const { return m_filename; }
       virtual unsigned RunNumber() const { return m_runNumber; }
       std::string getJsonConfig() { return m_json_config; }
       std::string getJsonPacketInfo();
@@ -30,7 +29,6 @@ class EventPacket;
       std::shared_ptr<eudaq::AidaPacket> GetPacket() const { return m_packet; };
 	 
     private:
-      //std::string m_filename;
 		std::shared_ptr<eudaq::Event> GetNextEventFromPacket();
 		std::shared_ptr<eudaq::Event> GetNextEventFromEventPacket(std::shared_ptr<EventPacket>& eventPack);
       unsigned long long m_runNumber;
@@ -40,7 +38,6 @@ class EventPacket;
 	  size_t itter = 0;
   };
  
-  bool FileIsAIDA(const std::string& in);
 }
 
 
