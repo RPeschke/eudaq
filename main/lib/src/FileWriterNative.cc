@@ -18,10 +18,9 @@ namespace eudaq {
 
   };
 
-  namespace {
-    static RegisterFileWriter<FileWriterNative> reg("native");
-  }
-
+  
+  registerFileWriter(FileWriterNative, "native");
+  
   FileWriterNative::FileWriterNative(const std::string & /*param*/) : m_ser(0) {
     //EUDAQ_DEBUG("Constructing FileWriterNative(" + to_string(param) + ")");
   }

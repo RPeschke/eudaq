@@ -28,9 +28,9 @@ namespace eudaq {
 
   };
 
-  namespace {
-    static RegisterFileWriter<FileWriterMetaSingleEvents> reg("smeta");
-  }
+ 
+  registerFileWriter(FileWriterMetaSingleEvents, "smeta");
+
 
   FileWriterMetaSingleEvents::FileWriterMetaSingleEvents(const std::string & /*param*/)  {
   }
