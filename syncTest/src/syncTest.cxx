@@ -97,7 +97,7 @@ int main(){
 
     } while (sync->SyncFirstEvent());
     Sleep(1);
-    std::shared_ptr<eudaq::FileWriter> writer(FileWriterFactory::Create("meta"));
+    auto writer=FileWriterFactory::Create("meta");
     writer->SetFilePattern("test.txt");
     writer->StartRun(0);
     std::shared_ptr<eudaq::Event> det;
