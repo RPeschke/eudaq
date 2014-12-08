@@ -53,6 +53,14 @@ public:
 
   }
 
+  void setWriter(std::unique_ptr<processClass> newPrecessor){
+    if (m_processor)
+    {
+      EUDAQ_THROW("processor alredy defined");
+    }
+    m_processor = std::move(newPrecessor);
+
+  }
 
   template <typename T>
   inline void SetParameter(const std::string& TagName, T TagValue){
@@ -116,7 +124,7 @@ private:
     }
     return false;
   }
-  std::shared_ptr<processClass> m_processor;
+  std::unique_ptr<processClass> m_processor;
   eudaq::multiFileReader m_reader;
   std::vector<unsigned> m_eventsOfInterest;
 };
