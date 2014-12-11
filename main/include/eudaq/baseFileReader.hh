@@ -12,8 +12,8 @@ namespace eudaq{
   class DLLEXPORT baseFileReader{
   public:
     using MainType = std::string;
-    using Parameter_t = std::string;
-    using Parameter_ref = std::vector<Parameter_t>;
+    using Parameter_t = std::vector<std::string>;
+    using Parameter_ref = const Parameter_t&;
     baseFileReader(Parameter_ref fileName);
     baseFileReader(const std::string&  fileName);
     std::string Filename()const;

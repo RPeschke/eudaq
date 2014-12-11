@@ -34,7 +34,7 @@ namespace eudaq {
   std::unique_ptr<baseFileReader> Factory_file_reader(const std::string & filename, const std::string & filepattern)
   {
     // return nullptr;
-    baseFileReader::Parameter_ref m;
+    baseFileReader::Parameter_t m;
     m.push_back(filename);
     m.push_back(filepattern);
     if (filename.find_first_not_of("0123456789") == std::string::npos) {
