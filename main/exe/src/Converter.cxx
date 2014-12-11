@@ -24,6 +24,7 @@ int main(int, char ** argv) {
   eudaq::Option<std::string> level(op, "l", "log-level", "INFO", "level",
     "The minimum level for displaying log messages locally");
   op.ExtraHelpText("Available output types are: " + to_string(eudaq::FileWriterFactory::GetTypes(), ", "));
+  op.ExtraHelpText(Help_text_File_reader());
   try {
     op.Parse(argv);
     EUDAQ_LOG_LEVEL(level.Value());
