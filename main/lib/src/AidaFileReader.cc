@@ -21,7 +21,7 @@ namespace eudaq {
 	  readNext();
   }
 
-  AidaFileReader::AidaFileReader(Parameter_ref filename) :AidaFileReader(filename[0])
+  AidaFileReader::AidaFileReader(Parameter_ref filename) :AidaFileReader(FileNamer(filename[1]).Set('X', ".raw2").SetReplace('R', filename[0]))
   {
 
   }
