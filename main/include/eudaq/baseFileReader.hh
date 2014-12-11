@@ -27,8 +27,8 @@ namespace eudaq{
   };
 
 
-
   std::unique_ptr<baseFileReader> DLLEXPORT Factory_file_reader(const std::string & filename, const std::string & filepattern="");
+  std::string DLLEXPORT Help_text_File_reader();
 }
 
 #endif // baseFileReader_h__
