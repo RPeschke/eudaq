@@ -4,7 +4,7 @@
 #include <ostream>
 #include <sstream>
 #include <fstream>
-
+#include <memory>
 namespace eudaq {
 
   inline std::ostream & operator << (std::ostream & os, const OptionBase & opt) {
@@ -157,6 +157,13 @@ namespace eudaq {
       }
     }
     return result;
+  }
+
+  std::unique_ptr<eudaq::Option<std::string>>  add_Command_line_option_eventNumbers(OptionParser & op)
+  {
+    return std::unique_ptr<eudaq::Option<std::string>>(new eudaq::Option<std::string>(op, "e", "events", "", "numbers", "Event numbers to process (eg. '1-10,99' default is all)"));
+
+    
   }
 
 }
