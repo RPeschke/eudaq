@@ -1,16 +1,20 @@
 #ifndef EventSynchronisationBase_h__
 #define EventSynchronisationBase_h__
 
-
+#include <queue>
+#include <memory>
+#include <string>
 #include "eudaq/DetectorEvent.hh"
 #include "eudaq/FileSerializer.hh"
-#include <memory>
-#include <queue>
+#include "eudaq/factory.hh"
 // base class for all Synchronization Plugins
 // it is desired to be as modular es possible with this approach.
 // first step is to separate the events from different Producers. 
 // then it will be recombined to a new event
 // The Idea is that the user can define a condition that need to be true to define if an event is sync or not
+
+
+#define registerSyncClass(DerivedFileWriter,ID)  registerClass(SyncBase,DerivedFileWriter,ID)
 
 namespace eudaq{
 
@@ -20,7 +24,9 @@ namespace eudaq{
   class DLLEXPORT SyncBase {
   public:
     typedef std::queue<std::shared_ptr<eudaq::Event>> eventqueue_t;
-
+    using MainType = std::string;
+    using Parameter_t = bool;
+    using Parameter_ref = const Parameter_t&;
 
     // public interface
 
@@ -30,7 +36,7 @@ namespace eudaq{
     void clearOutputQueue();
     void addBOREDetectorEvent(int fileIndex, const eudaq::DetectorEvent& BOREvent);
     void addBORE_Event(int fileIndex, const eudaq::Event& BOREEvent);
-    SyncBase(bool sync = true);
+    SyncBase(Parameter_ref = true);
     virtual ~SyncBase() {}
     bool SyncNEvents(size_t N);
     void PrepareForEvents();
@@ -83,7 +89,7 @@ namespace eudaq{
     bool m_sync;
   };
 
-  std::unique_ptr<SyncBase>  factory_sync_class(const char* name,bool sync);
+  std::unique_ptr<SyncBase>  factory_sync_class(SyncBase::MainType name,SyncBase::Parameter_ref sync);
 
 }//namespace eudaq
 

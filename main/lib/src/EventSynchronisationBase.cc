@@ -1,14 +1,14 @@
-#include "eudaq/EventSynchronisationBase.hh"
 
-#include "eudaq/Event.hh"
 
 #include <iostream>
 
 #include <memory>
+#include "eudaq/Event.hh"
+#include "eudaq/EventSynchronisationBase.hh"
 #include "eudaq/PluginManager.hh"
 #include "eudaq/Configuration.hh"
-#include "eudaq/EventSynchronisationDetectorEvents.hh"
-#include "eudaq/EventSynchronisationMultiTSEvents.hh"
+#include "eudaq/factoryDev.hh"
+
 
 #define FILEINDEX_OFFSET 10000
 using std::cout;
@@ -16,7 +16,7 @@ using std::endl;
 using std::shared_ptr;
 using namespace std;
 namespace eudaq{
-  SyncBase::SyncBase(bool sync) :
+  SyncBase::SyncBase(Parameter_ref sync) :
     m_registertProducer(0),
     m_ProducerEventQueue(0),
     isAsync_(false),
@@ -354,18 +354,15 @@ namespace eudaq{
     return true;
   }
 
-  std::unique_ptr<SyncBase> factory_sync_class(const char* name, bool sync)
-  {
-    if (strcmp(name, "DetectorEvents")==0)
-    {
-      return std::unique_ptr<SyncBase>(new syncToDetectorEvents(sync));
-    }
-    else if (strcmp(name, "aida")==0)
-    {
-      return std::unique_ptr<SyncBase>(new syncToMultiTSEvents(sync));
-    }
 
-    return nullptr;
+  registerBaseClassDev(SyncBase);
+
+
+
+  std::unique_ptr<SyncBase> factory_sync_class(SyncBase::MainType name, SyncBase::Parameter_ref sync)
+  {
+
+    return EUDAQ_Utilities::Factory<SyncBase>::Create(name, sync);
   }
 
 }

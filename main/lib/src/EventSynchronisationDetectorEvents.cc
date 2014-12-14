@@ -62,5 +62,5 @@ namespace eudaq{
   }
 
 
-
+  registerSyncClass(syncToDetectorEvents, "DetectorEvents");
 }

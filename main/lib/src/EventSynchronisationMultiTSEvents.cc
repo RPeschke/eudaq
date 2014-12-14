@@ -72,5 +72,5 @@ namespace eudaq{
   }
 
 
-
+  registerSyncClass(syncToMultiTSEvents, "aida");
 }
