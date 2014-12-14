@@ -3,9 +3,12 @@
 
 #include <vector>
 #include <string>
+#include <memory>
 
 #include "eudaq/DetectorEvent.hh"
 #include "eudaq/factory.hh"
+#include "eudaq/OptionParser.hh"
+
 
 #define TAGNAME_OUTPUTPATTER "outpattern"
 #define registerFileWriter(DerivedFileWriter,ID)  registerClass(FileWriter,DerivedFileWriter,ID)
@@ -49,7 +52,15 @@ namespace eudaq {
     static std::unique_ptr<FileWriter> Create(const std::string & name, const std::string & params = "");
 
     static std::vector<std::string> GetTypes();
+
+    static std::unique_ptr<eudaq::Option<std::string>> add_Command_line_option_OutputTypes(OptionParser & op);
+
+    static std::unique_ptr<eudaq::Option<std::string>> add_Command_line_option_OutputPattern(OptionParser & op);
+    static std::string  Help_text();
+
   };
+
+
 }
 
 

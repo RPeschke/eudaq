@@ -35,5 +35,21 @@ namespace eudaq {
 
   registerBaseClassDev(FileWriter);
 
+  std::unique_ptr<eudaq::Option<std::string>> FileWriterFactory::add_Command_line_option_OutputTypes(OptionParser & op)
+  {
+    return std::unique_ptr<eudaq::Option<std::string>>(new eudaq::Option<std::string>(op, "t", "type", "native", "name", "Output file type" ));
+  }
+
+  std::unique_ptr<eudaq::Option<std::string>>  FileWriterFactory::add_Command_line_option_OutputPattern(OptionParser & op)
+  {
+    return std::unique_ptr<eudaq::Option<std::string>>(new eudaq::Option<std::string>(op, "o", "outpattern", "test$6R$X", "string", "Output filename pattern"));
+  }
+
+  std::string  FileWriterFactory::Help_text()
+  {
+    return std::string("Available output types are: " + to_string(eudaq::FileWriterFactory::GetTypes(), ", "));
+
+  }
+
  
 }
