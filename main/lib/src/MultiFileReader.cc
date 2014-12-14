@@ -81,7 +81,7 @@ const eudaq::Event & eudaq::multiFileReader::GetEvent() const
 
 eudaq::multiFileReader::multiFileReader(bool sync) : m_eventsToSync(0), m_preaparedForEvents(0)
 {
-  m_sync = factory_sync_class("aida", sync);
+ // m_sync = factory_sync_class("aida", sync);
   
 }
 
@@ -89,3 +89,29 @@ unsigned eudaq::multiFileReader::RunNumber() const
 { 
   return m_ev->GetRunNumber();
 }
+
+void eudaq::multiFileReader::addSyncAlgorithm(std::unique_ptr<SyncBase> sync)
+{
+  if (m_sync)
+  {
+    EUDAQ_THROW("Sync algoritm already defined");
+  }
+  m_sync = std::move(sync);
+}
+
+void eudaq::multiFileReader::addSyncAlgorithm(SyncBase::MainType type /*= ""*/, SyncBase::Parameter_ref sync/*= 0*/)
+{
+  addSyncAlgorithm(factory_sync_class(type, sync));
+}
+
+eudaq::multiFileReader::strOption_ptr eudaq::multiFileReader::add_Command_line_option_inputPattern(OptionParser & op)
+{
+  return eudaq::multiFileReader::strOption_ptr(new eudaq::Option<std::string>(op, "i", "inpattern", "../data/run$6R.raw", "string", "Input filename pattern"));
+
+}
+
+std::string eudaq::multiFileReader::help_text()
+{
+  return Help_text_File_reader();
+}
+
