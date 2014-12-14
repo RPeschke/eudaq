@@ -3,9 +3,9 @@
 #include "eudaq/Utils.hh"
 #include "eudaq/Logger.hh"
 
-#include <iostream>
 #include "eudaq/MultiFileReader.hh"
 #include "eudaq/readAndProcessDataTemplate.h"
+#include <iostream>
 
 using namespace eudaq;
 unsigned dbg = 0;
@@ -16,29 +16,35 @@ int main(int, char ** argv) {
 
   start = std::clock();
   eudaq::OptionParser op("EUDAQ File Converter", "1.0", "", 1);
-  eudaq::Option<std::string> type(op, "t", "type", "native", "name", "Output file type");
-  eudaq::Option<std::string> events(op, "e", "events", "", "numbers", "Event numbers to convert (eg. '1-10,99' default is all)");
-  eudaq::Option<std::string> ipat(op, "i", "inpattern", "../data/run$6R.raw", "string", "Input filename pattern");
-  eudaq::Option<std::string> opat(op, "o", "outpattern", "test$6R$X", "string", "Output filename pattern");
+  
+  auto events = add_Command_line_option_eventNumbers(op);
+
+
+  auto type = FileWriterFactory::add_Command_line_option_OutputTypes(op);
+  auto opat = FileWriterFactory::add_Command_line_option_OutputPattern(op);
+  op.ExtraHelpText(FileWriterFactory::Help_text());
+
+  auto ipat = multiFileReader::add_Command_line_option_inputPattern(op);
+  op.ExtraHelpText(multiFileReader::help_text());
+
+
   eudaq::OptionFlag async(op, "a", "nosync", "Disables Synchronization with TLU events");
   eudaq::Option<std::string> level(op, "l", "log-level", "INFO", "level",
     "The minimum level for displaying log messages locally");
-  op.ExtraHelpText("Available output types are: " + to_string(eudaq::FileWriterFactory::GetTypes(), ", "));
-  op.ExtraHelpText(Help_text_File_reader());
   try {
     op.Parse(argv);
     EUDAQ_LOG_LEVEL(level.Value());
 
     ReadAndProcess<eudaq::FileWriter> readProcess(!async.Value());
-    readProcess.setEventsOfInterest(parsenumbers(events.Value()));
+    readProcess.setEventsOfInterest(parsenumbers(events->Value()));
     for (size_t i = 0; i < op.NumArgs(); ++i) {
 
-      readProcess.addFileReader(op.GetArg(i), ipat.Value());
+      readProcess.addFileReader(op.GetArg(i), ipat->Value());
 
     }
-    readProcess.setWriter(FileWriterFactory::Create(type.Value()));
+    readProcess.setWriter(FileWriterFactory::Create(type->Value()));
 
-    readProcess.SetParameter(TAGNAME_OUTPUTPATTER, opat.Value());
+    readProcess.SetParameter(TAGNAME_OUTPUTPATTER, opat->Value());
 
     readProcess.StartRun();
     readProcess.process();
