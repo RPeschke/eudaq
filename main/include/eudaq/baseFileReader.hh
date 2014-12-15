@@ -18,6 +18,7 @@ namespace eudaq{
     baseFileReader(const std::string&  fileName);
     std::string Filename()const;
     virtual unsigned RunNumber() const = 0;
+    virtual bool NextEvent(size_t skip = 0) = 0;
     virtual std::shared_ptr<eudaq::Event> GetNextEvent() = 0;
     virtual void Interrupt();
 

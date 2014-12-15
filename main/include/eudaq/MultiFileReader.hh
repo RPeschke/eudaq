@@ -17,7 +17,7 @@ namespace eudaq{
 	class Event;
 	class DetectorEvent;
   
-	class DLLEXPORT multiFileReader{
+	class DLLEXPORT multiFileReader:public baseFileReader{
 	public:
 		multiFileReader(bool sync=true);
 

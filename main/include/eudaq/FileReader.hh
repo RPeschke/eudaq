@@ -23,16 +23,16 @@ namespace eudaq {
     ~FileReader();
     virtual  unsigned RunNumber() const;
     virtual bool NextEvent(size_t skip = 0);
+    virtual std::shared_ptr<eudaq::Event> GetNextEvent();
+    virtual void Interrupt() { m_des.Interrupt(); }
 
 
 
     const eudaq::Event & GetEvent() const;
     const DetectorEvent & Event() const { return GetDetectorEvent(); } // for backward compatibility
-    virtual std::shared_ptr<eudaq::Event> GetNextEvent();
     const DetectorEvent & GetDetectorEvent() const;
     const StandardEvent & GetStandardEvent() const;
     std::shared_ptr<eudaq::DetectorEvent> GetDetectorEvent_ptr(){ return std::dynamic_pointer_cast<eudaq::DetectorEvent>(m_ev); };
-    virtual void Interrupt() { m_des.Interrupt(); }
 
   private:
 
