@@ -21,7 +21,9 @@ class EventPacket;
       AidaFileReader(Parameter_ref filename);
       virtual ~AidaFileReader();
       bool readNext();
-	  virtual std::shared_ptr<eudaq::Event> GetNextEvent();
+	    virtual std::shared_ptr<eudaq::Event> GetNextEvent();
+      virtual const eudaq::Event & GetEvent() const ;
+      virtual bool NextEvent(size_t skip = 0);
       virtual unsigned RunNumber() const { return m_runNumber; }
       std::string getJsonConfig() { return m_json_config; }
       std::string getJsonPacketInfo();
@@ -35,6 +37,7 @@ class EventPacket;
       FileDeserializer * m_des;
       std::string m_json_config;
       std::shared_ptr<eudaq::AidaPacket> m_packet;
+      std::shared_ptr<eudaq::Event> m_ev;
 	  size_t itter = 0;
   };
  

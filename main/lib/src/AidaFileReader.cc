@@ -60,7 +60,8 @@ namespace eudaq {
 		  return GetNextEventFromEventPacket(evPack);
 	  }
 	  
-	  return GetNextEventFromPacket();
+    m_ev = GetNextEventFromPacket();
+	  return m_ev;
 	
 
   }
@@ -111,7 +112,25 @@ namespace eudaq {
     }
 	  return nullptr;
   }
-    
+
+  bool AidaFileReader::NextEvent(size_t skip /*= 0*/)
+  {
+    for (size_t i = 0; i < skip;++i)
+    {
+      if (!readNext())
+      {
+        return false;
+      }
+    }
+    return true;
+  }
+
+  const eudaq::Event & AidaFileReader::GetEvent() const
+  {
+    return *m_ev;
+  }
+
+
     
 
 
