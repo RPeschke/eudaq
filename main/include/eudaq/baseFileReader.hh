@@ -17,9 +17,12 @@ namespace eudaq{
     baseFileReader(Parameter_ref fileName);
     baseFileReader(const std::string&  fileName);
     std::string Filename()const;
+
+
     virtual unsigned RunNumber() const = 0;
     virtual bool NextEvent(size_t skip = 0) = 0;
     virtual std::shared_ptr<eudaq::Event> GetNextEvent() = 0;
+    virtual const eudaq::Event & GetEvent() const = 0;
     virtual void Interrupt();
 
   private:
@@ -29,6 +32,7 @@ namespace eudaq{
 
 
   std::unique_ptr<baseFileReader> DLLEXPORT Factory_file_reader(const std::string & filename, const std::string & filepattern="");
+  
   std::string DLLEXPORT Help_text_File_reader();
 }
 
