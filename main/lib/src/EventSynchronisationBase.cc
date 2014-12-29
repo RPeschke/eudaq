@@ -354,6 +354,12 @@ namespace eudaq{
     return true;
   }
 
+  bool SyncBase::outputQueueIsEmpty()
+  {
+    return m_outPutQueue.empty();
+
+  }
+
 
   registerBaseClassDev(SyncBase);
 

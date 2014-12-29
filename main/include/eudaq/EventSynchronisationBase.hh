@@ -42,7 +42,7 @@ namespace eudaq{
     void PrepareForEvents();
     bool SubEventQueueIsEmpty(int i);
     bool SyncFirstEvent();
-    
+    bool outputQueueIsEmpty();
   private:
     
     virtual void Process_Event_is_sync(std::shared_ptr<eudaq::Event>   ev, eudaq::Event const & tlu) {}
