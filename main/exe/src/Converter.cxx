@@ -16,8 +16,8 @@ int main(int, char ** argv) {
 
   start = std::clock();
   eudaq::OptionParser op("EUDAQ File Converter", "1.0", "", 1);
-  
-  auto events = add_Command_line_option_eventNumbers(op);
+
+  auto events = ReadAndProcess<eudaq::FileWriter>::add_Command_line_option_EventsOfInterest(op);
 
 
   auto type = FileWriterFactory::add_Command_line_option_OutputTypes(op);
@@ -30,16 +30,26 @@ int main(int, char ** argv) {
 
   eudaq::OptionFlag async(op, "a", "nosync", "Disables Synchronization with TLU events");
   eudaq::Option<std::string> level(op, "l", "log-level", "INFO", "level",
-    "The minimum level for displaying log messages locally");
+                                   "The minimum level for displaying log messages locally");
   try {
     op.Parse(argv);
     EUDAQ_LOG_LEVEL(level.Value());
 
     ReadAndProcess<eudaq::FileWriter> readProcess(!async.Value());
     readProcess.setEventsOfInterest(parsenumbers(events->Value()));
-    for (size_t i = 0; i < op.NumArgs(); ++i) {
+    
+    if (op.NumArgs() == 1)
+    {
+      readProcess.addFileReader(eudaq::Factory_file_reader(op.GetArg(1), ipat->Value()));
 
-      readProcess.addFileReader(op.GetArg(i), ipat->Value());
+    }
+    else
+    {
+      auto multiReader = std::unique_ptr<baseFileReader>(new multiFileReader());
+      for (size_t i = 0; i < op.NumArgs(); ++i) {
+
+
+      }
 
     }
     readProcess.setWriter(FileWriterFactory::Create(type->Value()));
@@ -52,10 +62,10 @@ int main(int, char ** argv) {
 
   }
   catch (...) {
-    std::cout << "Time: " << (std::clock() - start) / (double)(CLOCKS_PER_SEC / 1000) << " ms" << std::endl;
+    std::cout << "Time: " << (std::clock() - start) / (double) (CLOCKS_PER_SEC / 1000) << " ms" << std::endl;
     return op.HandleMainException();
   }
-  std::cout << "Time: " << (std::clock() - start) / (double)(CLOCKS_PER_SEC / 1000) << " ms" << std::endl;
+  std::cout << "Time: " << (std::clock() - start) / (double) (CLOCKS_PER_SEC / 1000) << " ms" << std::endl;
   if (dbg>0)std::cout << "almost done with Converter. exiting" << std::endl;
   return 0;
 }
