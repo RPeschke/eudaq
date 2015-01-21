@@ -13,6 +13,7 @@ namespace eudaq {
   {
     unsigned n;
     ds.read(n);
+    SetFlags(Event::FLAG_PACKET);
     //std::cout << "Num=" << n << std::endl;
     for (size_t i = 0; i < n; ++i) {
       std::shared_ptr<Event> ev(EventFactory::Create(ds));
