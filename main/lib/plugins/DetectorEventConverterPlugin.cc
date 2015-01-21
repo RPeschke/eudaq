@@ -3,6 +3,7 @@
 #include "eudaq/Utils.hh"
 #include "eudaq/DetectorEvent.hh"
 #include "eudaq/Event.hh"
+#include "eudaq/PluginManager.hh"
 // All LCIO-specific parts are put in conditional compilation blocks
 // so that the other parts may still be used if LCIO is not available.
 #if USE_LCIO
@@ -58,12 +59,36 @@ namespace eudaq {
 #endif
 
     virtual size_t GetNumberOfROF(const eudaq::Event& pac){ 
-      return dynamic_cast<const DetectorEvent*>(&pac)->NumEvents(); 
+      size_t sum = 0;
+     auto det = dynamic_cast<const DetectorEvent*>(&pac);
+     for (size_t i = 0; i < det->NumEvents();++i)
+     {
+       sum += PluginManager::GetNumberOfROF(*(det->GetEvent(i)));
+     }
+
+
+      return sum; 
     }
 
     virtual std::shared_ptr<eudaq::Event> ExtractEventN(std::shared_ptr<eudaq::Event> pac, 
                                                         size_t NumberOfROF) {
-      return std::dynamic_pointer_cast<DetectorEvent>(pac)->GetEventPtr(NumberOfROF);
+      
+      size_t Sum = 0;
+      
+      
+      auto det = std::dynamic_pointer_cast<DetectorEvent>(pac);
+      for (size_t i = 0; i < det->NumEvents(); ++i)
+      {
+        auto elements_in_current_Event= PluginManager::GetNumberOfROF(*(det->GetEvent(i)));
+        if (Sum+elements_in_current_Event>NumberOfROF)
+        {
+          return PluginManager::ExtractEventN(det->GetEventPtr(i),NumberOfROF - Sum);
+
+        }
+        Sum += elements_in_current_Event;
+      }
+
+      return nullptr;
     }
 
   private:
@@ -73,7 +98,7 @@ namespace eudaq {
     // in order to register this converter for the corresponding conversions
     // Member variables should also be initialized to default values here.
     DetectorEventConverterPlugin()
-      : DataConverterPlugin(Event::str2id(DetectorEventMaintype), DetectorEventSubtype)
+      : DataConverterPlugin(Event::str2id(DetectorEventMaintype), "")
     {}
 
 
