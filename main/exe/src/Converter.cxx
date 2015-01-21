@@ -6,6 +6,7 @@
 #include "eudaq/MultiFileReader.hh"
 #include "eudaq/readAndProcessDataTemplate.h"
 #include <iostream>
+#include "eudaq/EventSynchronisationDetectorEvents.hh"
 
 using namespace eudaq;
 unsigned dbg = 0;
@@ -40,17 +41,21 @@ int main(int, char ** argv) {
     
     if (op.NumArgs() == 1)
     {
-      readProcess.addFileReader(eudaq::Factory_file_reader(op.GetArg(1), ipat->Value()));
+      readProcess.addFileReader(eudaq::Factory_file_reader(op.GetArg(0), ipat->Value()));
 
     }
     else
     {
       auto multiReader = std::unique_ptr<baseFileReader>(new multiFileReader());
+      auto mReader = dynamic_cast<eudaq::multiFileReader*>(multiReader.get());
+      mReader->addSyncAlgorithm(std::unique_ptr<SyncBase>(new syncToDetectorEvents(true)));
       for (size_t i = 0; i < op.NumArgs(); ++i) {
-
+       mReader->addFileReader(eudaq::Factory_file_reader(op.GetArg(i), ipat->Value()));
 
       }
 
+      readProcess.addFileReader(std::move(multiReader));
+     
     }
     readProcess.setWriter(FileWriterFactory::Create(type->Value()));
 
