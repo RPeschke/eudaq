@@ -19,7 +19,7 @@ namespace eudaq {
     //  std::FILE * m_file;
     std::ofstream *m_out;
     bool firstEvent;
-    uint64_t DUT_start_time;
+    uint64_t DUT_start_time,TLU_start_Time;
   };
 
   
@@ -78,15 +78,16 @@ namespace eudaq {
       }
 
       DUT_start_time = sev.GetTag("DUT_time", (uint64_t) 0);
-
+      TLU_start_Time = sev.GetTimestamp();
       firstEvent = false;
     }
-    if (sev.NumPlanes() == 0)// only TLU Events
+    //if (sev.NumPlanes() == 0)// only TLU Events
     {
 
-      *m_out << sev.GetTimestamp() << "; " << sev.GetTag("TLU_trigger") << std::endl;
+      *m_out << sev.GetTimestamp()-TLU_start_Time << "; " << sev.GetTag("TLU_trigger") << std::endl;
 
     }
+    /*
     for (size_t iplane = 0; iplane < sev.NumPlanes(); ++iplane) {
 
       const eudaq::StandardPlane & plane = sev.GetPlane(iplane);
@@ -94,7 +95,7 @@ namespace eudaq {
 
 
       //          if (ipix < 10) std::cout << ", " << plane.m_pix[0][ipix] << ";" << cds[ipix]
-      *m_out << sev.GetTimestamp() / 384066 << "; ";
+      *m_out << sev.GetTimestamp()  << "; ";
       *m_out << sev.GetTag("TLU_trigger") << "; ";
       *m_out << plane.ID() << "; ";
       *m_out << plane.TLUEvent() << "; ";
@@ -104,7 +105,7 @@ namespace eudaq {
       //		*m_out<<std::stoi(sev.GetTag("TLU_input"))<<"; ";
       *m_out << std::endl;
 
-    }
+    }*/
   }
 
   FileWriterTextCompact::~FileWriterTextCompact() {
