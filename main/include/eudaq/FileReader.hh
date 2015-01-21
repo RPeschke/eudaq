@@ -23,6 +23,7 @@ namespace eudaq {
     ~FileReader();
     virtual  unsigned RunNumber() const;
     virtual bool NextEvent(size_t skip = 0);
+    virtual std::shared_ptr<eudaq::Event> getEventPtr() { return m_ev; }
     virtual std::shared_ptr<eudaq::Event> GetNextEvent();
     virtual void Interrupt() { m_des.Interrupt(); }
 

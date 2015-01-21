@@ -62,12 +62,11 @@ namespace eudaq {
     if (!NextEvent()) {
       return nullptr;
     }
-    else{
-      return m_ev;
-    }
-    
-  }
 
+    return m_ev;
+
+
+  }
 
   RegisterFileReader(FileReader, "raw");
 
