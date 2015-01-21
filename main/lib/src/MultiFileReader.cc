@@ -5,6 +5,7 @@
 
 #include "eudaq/Event.hh"
 #include "eudaq/DetectorEvent.hh"
+#include "eudaq/PluginManager.hh"
 void eudaq::multiFileReader::addFileReader( const std::string & filename, const std::string & filepattern /*= ""*/ )
 {
   
@@ -25,8 +26,13 @@ void eudaq::multiFileReader::addFileReader(std::unique_ptr<baseFileReader> FileR
 
       m_ev = std::make_shared<DetectorEvent>(ev->GetRunNumber(), 0, ev->GetTimestamp());
     }
-    m_sync->addBORE_Event(m_fileReaders.size() - 1, *ev);
-    std::dynamic_pointer_cast<DetectorEvent>(m_ev)->AddEvent(ev);
+    
+   
+      m_sync->addBORE_Event(m_fileReaders.size() - 1, *ev);
+      std::dynamic_pointer_cast<DetectorEvent>(m_ev)->AddEvent(ev);
+  
+    
+    
 
     ev = m_fileReaders.back()->GetNextEvent();
 
@@ -157,3 +163,4 @@ std::string eudaq::multiFileReader::help_text()
 {
   return Help_text_File_reader();
 }
+

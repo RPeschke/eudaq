@@ -25,7 +25,7 @@ namespace eudaq{
     virtual bool NextEvent(size_t skip = 0);
     virtual std::shared_ptr<eudaq::Event> GetNextEvent();
     virtual const eudaq::Event & GetEvent() const;
-    
+    virtual std::shared_ptr<eudaq::Event> getEventPtr() { return m_ev; }
     const DetectorEvent & GetDetectorEvent() const;
 
     void addFileReader(const std::string & filename, const std::string & filepattern = "");
