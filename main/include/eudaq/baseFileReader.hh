@@ -23,10 +23,12 @@ namespace eudaq{
     virtual bool NextEvent(size_t skip = 0) = 0;
     virtual std::shared_ptr<eudaq::Event> GetNextEvent() = 0;
     virtual const eudaq::Event & GetEvent() const = 0;
+    virtual std::shared_ptr<eudaq::Event> getEventPtr()  = 0 ;
     virtual void Interrupt();
 
   private:
     std::string m_fileName;
+    
 
   };
 
