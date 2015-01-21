@@ -32,7 +32,7 @@ template <typename processClass>
 class ReadAndProcess{
 public:
 
-  ReadAndProcess(bool SyncEvents) :m_reader(SyncEvents){
+  ReadAndProcess(bool SyncEvents) {
 
   }
   //   void addFileReader(const std::string & filename, const std::string & filepattern){
@@ -133,7 +133,7 @@ private:
   std::unique_ptr<processClass> m_processor;
   std::vector<unsigned> m_eventsOfInterest;
 public:
-  static std::unique_ptr<eudaq::Option<std::string>>  add_Command_line_option_EventsOfInterest(OptionParser & op)
+  static std::unique_ptr<eudaq::Option<std::string>>  add_Command_line_option_EventsOfInterest(eudaq::OptionParser & op)
   {
 
     return std::unique_ptr<eudaq::Option<std::string>>(new eudaq::Option<std::string>(op, "e", "events", "", "numbers", "Event numbers to process (eg. '1-10,99' default is all)"));
