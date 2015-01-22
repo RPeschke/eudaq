@@ -1,18 +1,17 @@
 #include "dataQueue.h"
 #include "paketProducer.h"
 #include "eudaq/OptionParser.hh"
-//#include "eudaq/genericDetectorContainer.hh"
-//#include "eudaq/genericSynchronisation.hh"
+
 #include "eudaq/PluginManager.hh"
-#include "eudaq/AidaFileWriter.hh"
+
 #include "eudaq/EventSynchronisationBase.hh"
 #include "eudaq/FileWriter.hh"
 
 using namespace eudaq;
 using namespace std;
-bool isTLUContainer(shared_ptr<AidaPacket> tlu){
-  return tlu->GetPacketSubType() == 3;
-
+bool isTLUContainer(shared_ptr<RawDataEvent> tlu){
+ // return tlu->GetPacketSubType() == 3; //todo Implement this correctly 
+  return false;
 }
 int main(){
 
@@ -23,7 +22,7 @@ int main(){
 
     dataQueue dq;
 
-    shared_ptr<paketProducer> slowP = make_shared<paketProducer>("slowP", AidaPacket::str2type("_RAW"));
+    auto slowP = make_shared<paketProducer>("slowP");
 
 
     uint64_t meta = 111;
@@ -35,7 +34,7 @@ int main(){
     slowP->addDataQueue(&dq);
 
 
-    auto fastP = make_shared<paketProducer>("fastP", AidaPacket::str2type("_RAW"));
+    auto fastP = make_shared<paketProducer>("fastP");
     uint64_t meta1 = 222;
     const char * dataString1 = "hallo dass ist ein test2  ";
     uint64_t * data1 = (uint64_t*) (dataString1);
@@ -44,7 +43,7 @@ int main(){
     dq.addNewProducer(fastP);
     fastP->addDataQueue(&dq);
 
-    auto multiP = make_shared<paketProducer>("multi", AidaPacket::str2type("_RAW"));
+    auto multiP = make_shared<paketProducer>("multi");
     uint64_t meta2 = 333;
     const char * dataString2 = "hallo dass ist ein test3  ";
     uint64_t * data2 = (uint64_t*) (dataString2);
