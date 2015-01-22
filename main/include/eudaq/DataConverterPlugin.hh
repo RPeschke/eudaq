@@ -207,7 +207,7 @@ namespace eudaq{
       t_eventid m_eventtype;
 	  
 
-      /** The protected constructor which automatically registeres the plugin
+      /** The protected constructor which automatically registers the plugin
        *  at the pluginManager.
        */
       DataConverterPlugin(std::string subtype);

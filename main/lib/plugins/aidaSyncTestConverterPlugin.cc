@@ -1,7 +1,6 @@
 #include "eudaq/DataConverterPlugin.hh"
 #include "eudaq/StandardEvent.hh"
 #include "eudaq/Utils.hh"
-#include "eudaq/AidaPacket.hh"
 #include "eudaq/PluginManager.hh"
 
 // All LCIO-specific parts are put in conditional compilation blocks

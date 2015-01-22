@@ -1,5 +1,4 @@
 #include "eudaq/MultiFileReader.hh"
-#include "eudaq/AidaFileReader.hh"
 #include "eudaq/FileReader.hh"
 #include "eudaq/baseFileReader.hh"
 

@@ -56,7 +56,7 @@ namespace eudaq {
 
 		if (rof)
 		{
-      *m_out << AidaPacket::type2str(rof->get_id()) << "  " << rof->GetSubType() << " <timeStamps>";
+      *m_out << Event::id2str(rof->get_id()) << "  " << rof->GetSubType() << " <timeStamps>";
 			for (size_t j = 0; j < rof->GetSizeOfTimeStamps();++j)
 				{
 				*m_out << rof->GetTimestamp(j) << " ";
@@ -66,7 +66,7 @@ namespace eudaq {
 		}
 		else
 		{
-      *m_out << AidaPacket::type2str(rof->get_id()) << "  " << rof->GetSubType() << " " << rof->GetTimestamp() << "  " << rof->GetTag("eventID") << "||";
+      *m_out <<Event::id2str(rof->get_id()) << "  " << rof->GetSubType() << " " << rof->GetTimestamp() << "  " << rof->GetTag("eventID") << "||";
 		}
 		
    }
