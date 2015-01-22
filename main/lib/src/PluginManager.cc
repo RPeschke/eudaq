@@ -31,9 +31,7 @@ namespace eudaq {
 		m_pluginmap[plugin->GetEventType()] = plugin;
 	}
 
-	DataConverterPlugin & PluginManager::GetPlugin(const AidaPacket & pack) {
-		return GetPlugin(Event::t_eventid(pack.GetPacketType(), AidaPacket::type2str(pack.GetPacketSubType())));
-	}
+
 	DataConverterPlugin & PluginManager::GetPlugin(const Event & event) {
 		return GetPlugin(std::make_pair(event.get_id(), event.GetSubType()));
 	}
@@ -71,15 +69,7 @@ namespace eudaq {
 		return GetInstance().GetPlugin(ev).GetTriggerID(ev);
 	}
 
-	//   uint64_t PluginManager::GetTimeStamp( const Event& ev)
-	//   {
-	// 	  return GetInstance().GetPlugin(ev).GetTimeStamp(ev);
-	//   }
-	// 
-	//   uint64_t PluginManager::GetTimeDuration( const Event& ev )
-	//   {
-	// 	  return GetInstance().GetPlugin(ev).GetTimeDuration(ev);
-	//   }
+
 	int PluginManager::IsSyncWithTLU(eudaq::Event const & ev, eudaq::Event const & tlu)
 	{
 		return GetInstance().GetPlugin(ev).IsSyncWithTLU(ev, tlu);
@@ -173,22 +163,13 @@ namespace eudaq {
 		GetInstance().GetPlugin(ev).setCurrentTLUEvent(ev, tlu);
 	}
 
-	std::shared_ptr<eudaq::Event> PluginManager::ExtractEventN(std::shared_ptr<eudaq::AidaPacket> pac, size_t NumberOfROF)
-	{
-		return GetInstance().GetPlugin(*pac).ExtractEventN(pac,NumberOfROF);
 
-	}
 
   std::shared_ptr<eudaq::Event> PluginManager::ExtractEventN(std::shared_ptr<eudaq::Event> pac, size_t NumberOfROF)
   {
     return GetInstance().GetPlugin(*pac).ExtractEventN(pac, NumberOfROF);
   }
 
-	size_t PluginManager::GetNumberOfROF(const eudaq::AidaPacket& pac)
-	{
-		return GetInstance().GetPlugin(pac).GetNumberOfROF(pac);
-
-	}
   size_t PluginManager::GetNumberOfROF(const eudaq::Event& pac)
   {
     return GetInstance().GetPlugin(pac).GetNumberOfROF(pac);
