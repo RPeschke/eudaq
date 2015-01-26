@@ -32,7 +32,7 @@ namespace eudaq{
     void addFileReader(const std::string & filename);
     void addFileReader(std::unique_ptr<baseFileReader> FileReader);
     void addSyncAlgorithm(std::unique_ptr<SyncBase> sync);
-    void addSyncAlgorithm(SyncBase::MainType type = "", SyncBase::Parameter_ref sync = 0);
+    void addSyncAlgorithm(SyncBase::MainType type , SyncBase::Parameter_ref sync);
     void Interrupt();
     using strOption_ptr = std::unique_ptr < eudaq::Option<std::string> > ;
     static strOption_ptr  add_Command_line_option_inputPattern(OptionParser & op);

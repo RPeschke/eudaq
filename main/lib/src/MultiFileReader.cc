@@ -29,23 +29,11 @@ void  multiFileReader::addFileReader(std::unique_ptr<baseFileReader> FileReader)
 
   while (ev->IsBORE())
   {
-
-    if (!m_ev)
-    {
-
-      m_ev = std::make_shared<DetectorEvent>(ev->GetRunNumber(), 0, ev->GetTimestamp());
-    }
-    
-   
-      m_sync->addBORE_Event(m_fileReaders.size() - 1, *ev);
-      std::dynamic_pointer_cast<DetectorEvent>(m_ev)->AddEvent(ev);
-  
-    
-    
-
+    m_sync->pushEvent(ev, m_fileReaders.size() - 1);
     ev = m_fileReaders.back()->GetNextEvent();
-
   }
+
+
 
 }
 
@@ -63,38 +51,29 @@ bool  multiFileReader::readFiles()
 
     auto ev = m_fileReaders[fileID]->GetNextEvent();
 
-    if (ev == nullptr&&m_sync->SubEventQueueIsEmpty(fileID))
+    if (!m_sync->pushEvent(ev,fileID))
     {
       return false;
     }
-    m_sync->AddEventToProducerQueue(fileID, ev);
+
   }
   return true;
 }
 
 bool  multiFileReader::NextEvent( size_t skip /*= 0*/ )
 {
-  if (!m_preaparedForEvents)
-  {
-    m_sync->PrepareForEvents();
-    m_preaparedForEvents=true;
-  }
+
   for (size_t skipIndex=0;skipIndex<=skip;skipIndex++)
   {
   
-  do{
-  
-    if (!readFiles())
-    {
-      return false;
-    }
-    //m_sync.storeCurrentOrder();
-  }while (!m_sync->SyncNEvents(m_eventsToSync));
-  
-  if (!m_sync->getNextEvent(m_ev))
-  {
-    return false;
-  }
+    do{
+
+      if (!readFiles())
+      {
+        return false;
+      }
+      //m_sync.storeCurrentOrder();
+    } while (!m_sync->getNextEvent(m_ev));
   
   }	
   return true;
@@ -103,27 +82,12 @@ bool  multiFileReader::NextEvent( size_t skip /*= 0*/ )
 std::shared_ptr< Event>  multiFileReader::GetNextEvent()
 {
 
-  if (m_sync->outputQueueIsEmpty())
-  {
 
   if (!NextEvent()) {
     return nullptr;
   }
-  else{
-  
-    return GetNextEvent();
-  }
 
-
-
-  }
-  else{
-    if (!m_sync->getNextEvent(m_ev))
-    {
-      return m_ev;
-    }
-  }
-
+  return getEventPtr();
 }
 
 
@@ -148,7 +112,7 @@ const  Event &  multiFileReader::GetEvent() const
 
    if (userParameterSize()>0)
    {
-     m_sync = EventSyncFactory::create(UserParameter(0),true);
+     m_sync = EventSyncFactory::create(UserParameter(0),"");
    }
    else
    {
