@@ -32,7 +32,7 @@ template <typename processClass>
 class ReadAndProcess{
 public:
 
-  ReadAndProcess(bool SyncEvents) {
+  ReadAndProcess() {
 
   }
   //   void addFileReader(const std::string & filename, const std::string & filepattern){
