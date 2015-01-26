@@ -2,6 +2,7 @@
 #include "eudaq/baseFileReader.hh"
 #include "eudaq/factoryDev.hh"
 #include "eudaq/Exception.hh"
+#include "eudaq/OptionParser.hh"
 
 namespace eudaq {
 
@@ -9,25 +10,41 @@ namespace eudaq {
 
 
 
-  baseFileReader::baseFileReader(Parameter_ref fileName) :baseFileReader(fileName[0])
+  baseFileReader::baseFileReader(Parameter_ref fileName) :m_fileName(fileName)
   {
-
+    
   }
 
-  baseFileReader::baseFileReader(const std::string& fileName) : m_fileName(fileName)
+  baseFileReader::baseFileReader(const std::string& fileName)  
   {
-
+    m_fileName.push_back(fileName);
   }
 
   std::string baseFileReader::Filename() const
   {
-    return m_fileName;
+    return m_fileName[File_name];
   }
 
   void baseFileReader::Interrupt()
   {
 
   }
+
+  std::string baseFileReader::InputPattern() const
+  {
+    return m_fileName[Input_pattern];
+  }
+
+  std::string baseFileReader::UserParameter(size_t ID) const
+  {
+    return m_fileName.at(ID + first_users_index);
+  }
+
+  size_t baseFileReader::userParameterSize() const
+  {
+    return m_fileName.size() - first_users_index;
+  }
+
 
   registerBaseClassDev(baseFileReader);
 
@@ -75,17 +92,26 @@ namespace eudaq {
     return ret;
   }
 
-  std::unique_ptr<baseFileReader> Factory_file_reader(const std::string & filename, const std::string & filepattern)
+
+  class FileReaderFactory::Impl{
+
+  public:
+    std::unique_ptr<eudaq::Option<std::string>> m_default_filePattern;
+
+  };
+
+  std::unique_ptr<baseFileReader> FileReaderFactory::create(const std::string & filename, const std::string & filepattern)
   {
     // return nullptr;
     baseFileReader::Parameter_t m;
- 
+
     if (filename.find_first_not_of("0123456789") == std::string::npos) {
       // filename is run number. using default file reader
-     
+
       auto splitted_pattern = split_name_identifier(filepattern);
-      m.push_back(filename);
       
+      m.push_back(filename);
+
       m.push_back(splitted_pattern.second);
       return EUDAQ_Utilities::Factory<baseFileReader>::Create(splitted_pattern.first, m);
 
@@ -104,10 +130,40 @@ namespace eudaq {
 
 
     return nullptr;
-   
+
   }
 
-  std::string Help_text_File_reader()
+  std::unique_ptr<baseFileReader> FileReaderFactory::create(const std::string & filename)
+  {
+    return create(filename, getDefaultInputpattern());
+  }
+
+  std::unique_ptr<baseFileReader> FileReaderFactory::create(eudaq::OptionParser & op)
+  {
+
+    if (op.NumArgs() == 1)
+    {
+      return eudaq::FileReaderFactory::create(op.GetArg(0));
+
+    }
+    else
+    {
+
+      std::string combinedFiles = "";
+        for (size_t i = 0; i < op.NumArgs(); ++i)
+        {
+          combinedFiles += op.GetArg(i);
+          combinedFiles += ',';
+          
+        }
+        combinedFiles += "#multi";
+
+        return eudaq::FileReaderFactory::create(combinedFiles);
+    }
+
+  }
+
+  std::string FileReaderFactory::Help_text()
   {
     std::string ret = "\n =========== \n";
     ret += "HELP: File Reader: \n";
@@ -132,6 +188,30 @@ namespace eudaq {
 
 
     return ret;
+  }
+
+  
+
+  FileReaderFactory::Impl& FileReaderFactory::getImpl()
+  {
+    static FileReaderFactory::Impl m_impl;
+    return m_impl;
+  }
+
+  void FileReaderFactory::addComandLineOptions(eudaq::OptionParser & op)
+  {
+
+    getImpl().m_default_filePattern = std::unique_ptr<eudaq::Option<std::string>>(new Option<std::string>(op, "i", "inpattern", getDefaultInputpattern(), "string", "Input filename pattern"));
+
+  }
+
+  std::string FileReaderFactory::getDefaultInputpattern()
+  {
+    if (getImpl().m_default_filePattern && getImpl().m_default_filePattern->IsSet())
+    {
+      return getImpl().m_default_filePattern->Value();
+    }
+    return "../data/run$6R.raw";
   }
 
 }
