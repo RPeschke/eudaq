@@ -2,9 +2,8 @@
 #define EventSynchronisationDetectorEvents_h__
 
 
-#include "eudaq/DetectorEvent.hh"
-#include "eudaq/FileSerializer.hh"
-#include "eudaq/EventSynchronisationBase.hh"
+
+#include "eudaq/EventSynchronisationCompareWithTLU.hh"
 #include <memory>
 #include <queue>
 
@@ -15,9 +14,9 @@ namespace eudaq{
 
 
 
-  class DLLEXPORT syncToDetectorEvents: public SyncBase {
+  class DLLEXPORT syncToDetectorEvents: public Sync2TLU {
   public:
-    syncToDetectorEvents(bool sync);
+    syncToDetectorEvents(SyncBase::Parameter_ref sync);
     virtual void makeDetectorEvent();
     
   private:

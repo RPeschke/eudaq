@@ -4,8 +4,8 @@
 
 
 
-#include "eudaq/FileSerializer.hh"
-#include "eudaq/EventSynchronisationBase.hh"
+
+#include "eudaq/EventSynchronisationCompareWithTLU.hh"
 #include <memory>
 #include <queue>
 // base class for all Synchronization Plugins
@@ -19,12 +19,14 @@ namespace eudaq{
 
 
 
-  class DLLEXPORT syncToMultiTSEvents: public SyncBase {
+  class DLLEXPORT syncToMultiTSEvents: public Sync2TLU {
   public:
-    syncToMultiTSEvents(bool sync);
+    syncToMultiTSEvents(Parameter_ref sync);
     virtual void Process_Event_is_late(std::shared_ptr<eudaq::Event>  ev, eudaq::Event const & tlu);
     virtual void Process_Event_is_sync(std::shared_ptr<eudaq::Event>  ev, eudaq::Event const & tlu);
-    virtual void makeDetectorEvent();;
+    virtual void makeDetectorEvent();
+    
+
   };
 
 

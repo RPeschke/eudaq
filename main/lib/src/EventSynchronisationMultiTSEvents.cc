@@ -54,7 +54,7 @@ namespace eudaq{
 
   }
 
-  syncToMultiTSEvents::syncToMultiTSEvents(bool sync) :SyncBase(sync)
+  syncToMultiTSEvents::syncToMultiTSEvents(SyncBase::Parameter_ref sync) :Sync2TLU(sync)
   {
 
   }

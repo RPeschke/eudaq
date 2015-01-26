@@ -56,7 +56,7 @@ namespace eudaq{
 
   }
 
-  syncToDetectorEvents::syncToDetectorEvents(bool sync) :SyncBase(sync)
+  syncToDetectorEvents::syncToDetectorEvents(SyncBase::Parameter_ref sync) :Sync2TLU(sync)
   {
 
   }
