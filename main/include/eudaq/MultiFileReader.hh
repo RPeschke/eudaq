@@ -20,7 +20,7 @@ namespace eudaq{
   class DLLEXPORT multiFileReader :public baseFileReader{
   public:
     multiFileReader(bool sync = true);
-
+    multiFileReader(baseFileReader::Parameter_ref parameterList);
     virtual unsigned RunNumber() const;
     virtual bool NextEvent(size_t skip = 0);
     virtual std::shared_ptr<eudaq::Event> GetNextEvent();
@@ -28,7 +28,8 @@ namespace eudaq{
     virtual std::shared_ptr<eudaq::Event> getEventPtr() { return m_ev; }
     const DetectorEvent & GetDetectorEvent() const;
 
-    void addFileReader(const std::string & filename, const std::string & filepattern = "");
+    void addFileReader(const std::string & filename, const std::string & filepattern );
+    void addFileReader(const std::string & filename);
     void addFileReader(std::unique_ptr<baseFileReader> FileReader);
     void addSyncAlgorithm(std::unique_ptr<SyncBase> sync);
     void addSyncAlgorithm(SyncBase::MainType type = "", SyncBase::Parameter_ref sync = 0);
