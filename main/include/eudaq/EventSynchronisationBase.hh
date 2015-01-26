@@ -19,7 +19,7 @@
 namespace eudaq{
 
 
-
+  class OptionParser;
 
   class DLLEXPORT SyncBase {
   public:
@@ -89,8 +89,24 @@ namespace eudaq{
     bool m_sync;
   };
 
-  std::unique_ptr<SyncBase>  factory_sync_class(SyncBase::MainType name,SyncBase::Parameter_ref sync);
 
+
+
+  class DLLEXPORT EventSyncFactory{
+  public:
+
+   static std::unique_ptr<SyncBase>  create(SyncBase::MainType name, SyncBase::Parameter_ref sync);
+   static std::unique_ptr<SyncBase> create();
+   static std::vector<std::string> GetTypes();
+   static std::string  Help_text();
+   static void addComandLineOptions(eudaq::OptionParser & op);
+   static std::string getDefaultSync();
+   
+  private:
+    class Impl;
+    static Impl& getImpl();
+    
+  };
 }//namespace eudaq
 
 
