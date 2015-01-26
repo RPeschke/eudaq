@@ -7,14 +7,14 @@
 
 #include "eudaq/DetectorEvent.hh"
 #include "eudaq/factory.hh"
-#include "eudaq/OptionParser.hh"
 
 
-#define TAGNAME_OUTPUTPATTER "outpattern"
+
 #define registerFileWriter(DerivedFileWriter,ID)  registerClass(FileWriter,DerivedFileWriter,ID)
 
 namespace eudaq {
 
+  class OptionParser;
   class DLLEXPORT FileWriter {
   public:
     using MainType = std::string;
@@ -32,13 +32,7 @@ namespace eudaq {
   };
 
 
-  inline void helper_setParameter(FileWriter& writer, const std::string& tagName, const std::string& tagValue){
-    if (tagName.compare(TAGNAME_OUTPUTPATTER) == 0)
-    {
-      writer.SetFilePattern(tagValue);
-    }
 
-  }
   inline void helper_ProcessEvent(FileWriter& writer, const Event &ev){ writer.WriteBaseEvent(ev); }
   inline void helper_StartRun(FileWriter& writer, unsigned runnumber){ writer.StartRun(runnumber); }
   inline void helper_EndRun(FileWriter& writer){};
@@ -50,13 +44,19 @@ namespace eudaq {
   class DLLEXPORT FileWriterFactory {
   public:
     static std::unique_ptr<FileWriter> Create(const std::string & name, const std::string & params = "");
-
+    static std::unique_ptr<FileWriter> Create();
     static std::vector<std::string> GetTypes();
 
-    static std::unique_ptr<eudaq::Option<std::string>> add_Command_line_option_OutputTypes(OptionParser & op);
-
-    static std::unique_ptr<eudaq::Option<std::string>> add_Command_line_option_OutputPattern(OptionParser & op);
+    static void addComandLineOptions(OptionParser & op);
     static std::string  Help_text();
+    static std::string getDefaultType();
+    static std::string getDefaultOutputPattern();
+
+
+  private:
+    class Impl;
+    static Impl& getImpl();
+
 
   };
 
