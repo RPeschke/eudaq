@@ -79,13 +79,30 @@ namespace eudaq {
       auto det = std::dynamic_pointer_cast<DetectorEvent>(pac);
       for (size_t i = 0; i < det->NumEvents(); ++i)
       {
-        auto elements_in_current_Event= PluginManager::GetNumberOfROF(*(det->GetEvent(i)));
-        if (Sum+elements_in_current_Event>NumberOfROF)
+        auto ev = det->GetEventPtr(i);
+
+        if (ev->IsPacket())
         {
-          return PluginManager::ExtractEventN(det->GetEventPtr(i),NumberOfROF - Sum);
+
+          auto elements_in_current_Event= PluginManager::GetNumberOfROF(*(det->GetEvent(i)));
+          if (Sum + elements_in_current_Event > NumberOfROF)
+          {
+            return PluginManager::ExtractEventN(det->GetEventPtr(i), NumberOfROF - Sum);
+          }
+          Sum += elements_in_current_Event;
 
         }
-        Sum += elements_in_current_Event;
+        else
+        {
+
+          auto elements_in_current_Event = 1;
+          if (Sum + elements_in_current_Event > NumberOfROF)
+          {
+            return det->GetEventPtr(i);
+          }
+          Sum += elements_in_current_Event;
+        }
+
       }
 
       return nullptr;
