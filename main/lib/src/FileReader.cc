@@ -23,7 +23,7 @@ namespace eudaq {
 
   }
 
-  FileReader::FileReader(Parameter_ref param) :FileReader(param[0], param[1])
+  FileReader::FileReader(Parameter_ref param) :FileReader(param[File_name], param[Input_pattern])
   {
 
   }
