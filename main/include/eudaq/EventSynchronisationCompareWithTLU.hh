@@ -40,7 +40,8 @@ namespace eudaq{
     virtual bool getNextEvent(Event_sp& ev) override;
     virtual bool OutputIsEmpty() const override;
     virtual bool InputIsEmpty() const override;
-    
+    virtual bool mergeBoreEvent(Event_sp& ev);
+
     //////////////////////////////////////////////////////////////////////////
 
 
@@ -51,6 +52,7 @@ namespace eudaq{
     
 
     int AddEventToProducerQueue(int fileIndex, Event_sp Ev);
+    int AddBaseEventToProducerQueue(int fileIndex, Event_sp Ev);
     void clearOutputQueue();
 
     void addBORE_Event(int fileIndex, Event_sp BOREEvent);
@@ -69,7 +71,7 @@ namespace eudaq{
     virtual void makeDetectorEvent(){}
 
 
-    size_t  m_event_id = 0;
+    size_t  m_event_id = 1;
     /** The empty destructor. Need to add it to make it virtual.
      */
 
@@ -102,7 +104,7 @@ namespace eudaq{
     size_t NumberOfEventsToSync_;
     uint64_t longTimeDiff_;
 
-    bool m_sync,m_preparedforEvents=false;
+    bool m_sync=true,m_preparedforEvents=false;
   };
 
 

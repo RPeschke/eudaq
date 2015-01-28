@@ -30,8 +30,10 @@ namespace eudaq{
 
   void Sync2TLU::addBORE_BaseEvent(int fileIndex, Event_sp BOREEvent)
   {
+    
     if (BOREEvent->IsPacket())
     {
+      m_outPutQueue.push(BOREEvent);
       for (size_t i = 0; i < PluginManager::GetNumberOfROF(*BOREEvent); ++i)
       {
         addBORE_Event(fileIndex, PluginManager::ExtractEventN(BOREEvent,i));
@@ -80,7 +82,69 @@ namespace eudaq{
       m_ProducerId2Eventqueue[getUniqueID(fileIndex, identifier)] = m_event_id++;
     }
 
+    size_t elements = 0;
+    for (auto&e1:m_ProducerId2Eventqueue)
+    {
+      for (auto&e2 : m_ProducerId2Eventqueue)
+      {
+        if (e2.second==e1.second)
+        {
+          elements++;
+        }
 
+      }
+
+    }
+
+    if (elements!=m_ProducerId2Eventqueue.size())
+    {
+      EUDAQ_THROW("Duplication in the producer event queue id");
+    }
+    m_outPutQueue.push(BOREEvent);
+  }
+
+  int Sync2TLU::AddBaseEventToProducerQueue(int fileIndex, Event_sp Ev)
+  {
+    if (!Ev)
+    {
+      return false;
+    }
+    if (Ev->IsPacket())
+    {
+      for (size_t i = 0; i < PluginManager::GetNumberOfROF(*Ev); ++i)
+      {
+        AddEventToProducerQueue(fileIndex, PluginManager::ExtractEventN(Ev, i));
+      }
+
+    }
+    else
+    {
+      AddEventToProducerQueue(fileIndex, Ev);
+    }
+    return true;
+  }
+  
+
+  int Sync2TLU::AddEventToProducerQueue(int fileIndex, Event_sp Ev)
+  {
+    if (Ev)
+    {
+      if (!m_preparedforEvents)
+      {
+        PrepareForEvents();
+      }
+      auto identifier = PluginManager::getUniqueIdentifier(*Ev);
+      try{
+        auto &q = getQueuefromId(fileIndex, identifier);
+        q.push(Ev);
+      }
+      catch (...){
+        std::cerr << " error in Sync2TLU::AddEventToProducerQueue(int fileIndex, std::shared_ptr<eudaq::Event> Ev) \n unkown event id: " << identifier << "\n for the event: \n";
+        Ev->Print(cout);
+      }
+
+    }
+    return true;
   }
 
   bool Sync2TLU::Event_Queue_Is_Empty() const
@@ -116,26 +180,13 @@ namespace eudaq{
 
 
 
-  bool Sync2TLU::getNextEvent(Event_sp&   ev)
-  {
-
-    if (!m_outPutQueue.empty())
-    {
-
-      ev = m_outPutQueue.front();
-      m_outPutQueue.pop();
-      return true;
-    }
-    return false;
-  }
-
   Sync2TLU::eventqueue_t& Sync2TLU::getQueuefromId(unsigned producerID)
   {
     if (m_ProducerId2Eventqueue.find(producerID) == m_ProducerId2Eventqueue.end()){
 
       EUDAQ_THROW("unknown Producer ID " + std::to_string(producerID));
     }
-
+    auto converions = m_ProducerId2Eventqueue[producerID];
     return m_ProducerEventQueue[m_ProducerId2Eventqueue[producerID]];
   }
 
@@ -320,8 +371,12 @@ namespace eudaq{
       }
   
     }
-  
+ 
+
+    clearOutputQueue();
+   
     m_preparedforEvents = true;
+
   }
 
   unsigned Sync2TLU::getUniqueID(unsigned fileIndex, unsigned eventIndex)
@@ -331,32 +386,43 @@ namespace eudaq{
   }
 
 
-  int Sync2TLU::AddEventToProducerQueue(int fileIndex, Event_sp Ev)
-  {
-    if (Ev)
-    {
-      if (!m_preparedforEvents)
-      {
-        PrepareForEvents();
-      }
-      auto identifier = PluginManager::getUniqueIdentifier(*Ev);
-      try{
-        auto &q = getQueuefromId(fileIndex, identifier);
-        q.push(Ev);
-      }
-      catch (...){
-        std::cerr << " error in Sync2TLU::AddEventToProducerQueue(int fileIndex, std::shared_ptr<eudaq::Event> Ev) \n unkown event id: " << identifier << "\n for the event: \n";
-        Ev->Print(cout);
-      }
-
-    }
-    return true;
-  }
-
   bool Sync2TLU::outputQueueIsEmpty() const 
   {
     return m_outPutQueue.empty();
 
+  }
+
+  bool Sync2TLU::getNextEvent(Event_sp&   ev)
+  {
+
+    
+
+    if (!m_outPutQueue.empty()||SyncFirstEvent())
+    {
+
+      ev = m_outPutQueue.front();
+      m_outPutQueue.pop();
+      return true;
+    }
+
+    return false;
+  }
+
+  bool Sync2TLU::mergeBoreEvent(Event_sp& ev)
+  {
+    if(!ev)
+    {
+      auto firstEV = m_outPutQueue.front();
+      ev = std::make_shared<DetectorEvent>(firstEV->GetRunNumber(), firstEV->GetEventNumber(), firstEV->GetTimestamp());
+    }
+    DetectorEvent* det = dynamic_cast<DetectorEvent*>(ev.get());
+    while (!m_outPutQueue.empty())
+    {
+      det->AddEvent(m_outPutQueue.front());
+      m_outPutQueue.pop();
+    }
+
+    return true;
   }
 
   bool Sync2TLU::pushEvent(Event_sp ev,size_t Index)
@@ -370,9 +436,9 @@ namespace eudaq{
       }
       else
       {
-        AddEventToProducerQueue(Index, ev);
+        AddBaseEventToProducerQueue(Index, ev);
       }
-     
+      
       return true;
     }
     else if(!SubEventQueueIsEmpty(Index))
