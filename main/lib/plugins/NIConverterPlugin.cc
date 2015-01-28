@@ -51,6 +51,69 @@ namespace eudaq {
     public:
     virtual ~NIConverterPlugin(){ }
 
+
+    virtual int IsSyncWithTLU(eudaq::Event const & ev, const eudaq::Event  & tluEvent) const {
+        
+
+
+      if (m_offset>0)
+      {
+        --m_offset;
+        return Event_IS_EARLY;
+      }
+      else if (m_offset < 0){
+        ++m_offset;
+        return Event_IS_LATE;
+      }
+
+      if (m_tlu_begin == 0 && m_dut_begin == 0)
+      {
+        m_dut_begin = ev.GetTimestamp();
+        m_tlu_begin = tluEvent.GetTimestamp();
+      }
+      auto evnr = tluEvent.GetEventNumber();
+      auto DUT_TimeStamp = ev.GetTimestamp() - m_dut_begin;
+      auto TLU_TimeStamp = tluEvent.GetTimestamp() - m_tlu_begin;
+
+#ifdef _DEBUG
+      auto diff1 = static_cast<__int64>(DUT_TimeStamp) -static_cast<__int64>(TLU_TimeStamp);
+
+#endif // _DEBUG
+
+     // std::cout << "DUT Ev: " << ev.GetEventNumber() << " TLU Ev: "<< tluEvent.GetEventNumber() << " diff: "<< static_cast<__int64>(DUT_TimeStamp) -static_cast<__int64>(TLU_TimeStamp) << std::endl;
+
+      if (tluEvent.GetTag("trigger",0)==1)
+      {
+        auto eventDiff = TLU_TimeStamp - m_last_tlu;
+        auto jitter = eventDiff / (161242*8/10) + 50;
+        auto sync = hasTimeOVerlaping(DUT_TimeStamp + 4000, DUT_TimeStamp +4000 +100+jitter, TLU_TimeStamp, TLU_TimeStamp + jitter);
+          auto diff = abs(static_cast<__int64>(ev.GetTimestamp() - m_dut_begin + 4040) - static_cast<__int64>(TLU_TimeStamp));
+          //std::cout << "event time diff: " << eventDiff << " Jitter_Expected: " <<jitter<< " jitter: " << diff << std::endl;
+
+        if (sync==Event_IS_Sync)
+        {
+          // recalibrate clocks 
+#ifdef  _DEBUG
+          if ( ev.GetTimestamp() + 4040 < TLU_TimeStamp)
+          {
+            EUDAQ_THROW("Timestamp offset is negative");
+          }
+
+          if (diff >jitter)
+          {
+         //   EUDAQ_THROW("Offset shift to big");
+          }
+#endif //  DEBUG
+          m_last_tlu = TLU_TimeStamp;
+          m_dut_begin = ev.GetTimestamp() + 4040 - TLU_TimeStamp;
+
+        }
+        return sync;
+      }
+      return hasTimeOVerlaping(DUT_TimeStamp, DUT_TimeStamp + 90000, TLU_TimeStamp, TLU_TimeStamp + 10);//96000
+
+
+    }
     virtual void Initialize(const Event & bore, const Configuration & /*c*/) {
 
     
@@ -83,7 +146,8 @@ namespace eudaq {
         // nothing to do
         return true;
       }
-
+      result.SetTag("ni_time", source.GetTimestamp());
+      result.SetTag("ni_event_nr", source.GetEventNumber());
       if(dbg>0) std::cout << "GetStandardSubEvent : data" << std::endl;
 
       // If we get here it must be a data event
@@ -277,6 +341,10 @@ namespace eudaq {
     unsigned m_boards;
     std::vector<int> m_ids;
     static NIConverterPlugin const m_instance;
+
+    mutable uint64_t m_dut_begin = 0, m_tlu_begin = 0,m_last_tlu=0;
+    mutable int m_offset =0;
+
   };
 
   NIConverterPlugin const NIConverterPlugin::m_instance;
