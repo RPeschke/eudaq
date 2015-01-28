@@ -44,7 +44,7 @@ namespace eudaq{
     std::unique_ptr<SyncBase> m_sync;
     size_t m_eventsToSync;
     bool m_preaparedForEvents;
-
+    bool m_firstEvent=true;
   };
 
 }

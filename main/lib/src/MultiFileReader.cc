@@ -34,7 +34,7 @@ void  multiFileReader::addFileReader(std::unique_ptr<baseFileReader> FileReader)
   }
 
 
-
+  m_sync->mergeBoreEvent(m_ev);
 }
 
 void  multiFileReader::Interrupt()
@@ -48,13 +48,28 @@ bool  multiFileReader::readFiles()
 {
   for (size_t fileID = 0; fileID < m_fileReaders.size(); ++fileID)
   {
+    std::shared_ptr<eudaq::Event> ev;
+    if (m_firstEvent)
+    {
+      ev = m_fileReaders[fileID]->getEventPtr();
+      
+    }
+    else
+    {
+      ev = m_fileReaders[fileID]->GetNextEvent();
 
-    auto ev = m_fileReaders[fileID]->GetNextEvent();
+    }
+    
 
     if (!m_sync->pushEvent(ev,fileID))
     {
       return false;
     }
+
+  }
+  if (m_firstEvent)
+  {
+    m_firstEvent = false;
 
   }
   return true;
@@ -159,7 +174,7 @@ void  multiFileReader::addSyncAlgorithm(SyncBase::MainType type /*= ""*/, SyncBa
 
 }
 
-std::string  multiFileReader::help_text()
+std::string multiFileReader::help_text()
 {
   return "";
 }
