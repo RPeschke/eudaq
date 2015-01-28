@@ -66,46 +66,39 @@ namespace eudaq {
 
     if (firstEvent)
     {
-      if (sev.NumPlanes() == 0)// only TLU Events
-      {
 
-        *m_out << "i_time_stamp;  TLU_trigger" << std::endl;
 
-      }
-      else{
+        *m_out << "i_time_stamp;  TLU_trigger; DUT_time_stamp" << std::endl;
 
-        *m_out << "i_time_stamp; id_plane; i_tlu; i_event; DUT_time_stamp; " << std::endl;
-      }
 
-      DUT_start_time = sev.GetTag("DUT_time", (uint64_t) 0);
+      DUT_start_time = sev.GetTag("ni_time", (uint64_t) 0);
       TLU_start_Time = sev.GetTimestamp();
       firstEvent = false;
     }
-    //if (sev.NumPlanes() == 0)// only TLU Events
-    {
+ 
 
-      *m_out << sev.GetTimestamp()-TLU_start_Time << "; " << sev.GetTag("TLU_trigger") << std::endl;
+    *m_out << sev.GetTimestamp() - TLU_start_Time << "; " << sev.GetTag("TLU_trigger") << ";" << sev.GetTag("TLU_event_nr",(uint64_t)0) << "; " << sev.GetTag("ni_time", (uint64_t) 0) - DUT_start_time << "; " << sev.GetTag("ni_event_nr", (uint64_t) 0) << std::endl;
 
-    }
-    /*
-    for (size_t iplane = 0; iplane < sev.NumPlanes(); ++iplane) {
-
-      const eudaq::StandardPlane & plane = sev.GetPlane(iplane);
-      std::vector<double> cds = plane.GetPixels<double>();
-
-
-      //          if (ipix < 10) std::cout << ", " << plane.m_pix[0][ipix] << ";" << cds[ipix]
-      *m_out << sev.GetTimestamp()  << "; ";
-      *m_out << sev.GetTag("TLU_trigger") << "; ";
-      *m_out << plane.ID() << "; ";
-      *m_out << plane.TLUEvent() << "; ";
-      *m_out << sev.GetEventNumber() << "; ";
-      *m_out << sev.GetTag("DUT_time", (uint64_t) 0) << "; ";
-      //std::string dummy=sev.GetTag("TLU_input");
-      //		*m_out<<std::stoi(sev.GetTag("TLU_input"))<<"; ";
-      *m_out << std::endl;
-
-    }*/
+  
+    
+//     for (size_t iplane = 0; iplane < sev.NumPlanes(); ++iplane) {
+// 
+//       const eudaq::StandardPlane & plane = sev.GetPlane(iplane);
+//       std::vector<double> cds = plane.GetPixels<double>();
+// 
+// 
+//       //          if (ipix < 10) std::cout << ", " << plane.m_pix[0][ipix] << ";" << cds[ipix]
+//       *m_out << sev.GetTimestamp() -TLU_start_Time << "; ";
+//       *m_out << sev.GetTag("TLU_trigger") << "; ";
+//       *m_out << plane.ID() << "; ";
+//       *m_out << plane.TLUEvent() << "; ";
+//       *m_out << sev.GetEventNumber() << "; ";
+//       *m_out << sev.GetTag("ni_time", (uint64_t) 0) - DUT_start_time << "; ";
+//       //std::string dummy=sev.GetTag("TLU_input");
+//       //		*m_out<<std::stoi(sev.GetTag("TLU_input"))<<"; ";
+//       *m_out << std::endl;
+// 
+//     }
   }
 
   FileWriterTextCompact::~FileWriterTextCompact() {
