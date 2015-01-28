@@ -80,43 +80,28 @@ namespace eudaq {
 
 #endif // _DEBUG
 
-     // std::cout << "DUT Ev: " << ev.GetEventNumber() << " TLU Ev: "<< tluEvent.GetEventNumber() << " diff: "<< static_cast<__int64>(DUT_TimeStamp) -static_cast<__int64>(TLU_TimeStamp) << std::endl;
-
-      if (tluEvent.GetTag("trigger",0)==1)
-      {
-        auto eventDiff = TLU_TimeStamp - m_last_tlu;
-        auto jitter = eventDiff / (161242*8/10) + 50;
-        auto sync = hasTimeOVerlaping(DUT_TimeStamp + 4000, DUT_TimeStamp +4000 +100+jitter, TLU_TimeStamp, TLU_TimeStamp + jitter);
-          auto diff = abs(static_cast<__int64>(ev.GetTimestamp() - m_dut_begin + 4040) - static_cast<__int64>(TLU_TimeStamp));
-          //std::cout << "event time diff: " << eventDiff << " Jitter_Expected: " <<jitter<< " jitter: " << diff << std::endl;
-
-        if (sync==Event_IS_Sync)
-        {
-          // recalibrate clocks 
-#ifdef  _DEBUG
-          if ( ev.GetTimestamp() + 4040 < TLU_TimeStamp)
-          {
-            EUDAQ_THROW("Timestamp offset is negative");
-          }
-
-          if (diff >jitter)
-          {
-         //   EUDAQ_THROW("Offset shift to big");
-          }
-#endif //  DEBUG
-          m_last_tlu = TLU_TimeStamp;
-          m_dut_begin = ev.GetTimestamp() + 4040 - TLU_TimeStamp;
-
-        }
-        return sync;
-      }
-      return hasTimeOVerlaping(DUT_TimeStamp, DUT_TimeStamp + 90000, TLU_TimeStamp, TLU_TimeStamp + 10);//96000
+      std::cout << "DUT Ev: " << ev.GetEventNumber() << " TLU Ev: "<< tluEvent.GetEventNumber() << " diff: "<< static_cast<__int64>(DUT_TimeStamp) -static_cast<__int64>(TLU_TimeStamp) << std::endl;
+      return m_TimestampComparer.compareDUT2TLU(ev, tluEvent);
 
 
     }
-    virtual void Initialize(const Event & bore, const Configuration & /*c*/) {
+    virtual void Initialize(const Event & bore, const Configuration & c) {
 
-    
+      c.SetSection("DoubleTluSetup");
+      auto default_timeDiff = c.Get("default_timeDiff", (uint64_t) 4040);
+      auto TLU_jitter = c.Get("TLU_jitter", 160000);
+      auto sync_trigger_mask = c.Get("Sync_trigger", 0);
+      m_TimestampComparer.set_default_delta_timestamp(default_timeDiff);
+      m_TimestampComparer.set_DUT_active_time(90000);
+      m_TimestampComparer.set_Jitter_denominator(TLU_jitter * 8 / 10);
+      m_TimestampComparer.set_Jitter_offset(50);
+     
+      m_TimestampComparer.set_isSyncEventFunction(
+        [sync_trigger_mask](const Event & tlu)->bool
+        {
+          return (tlu.GetTag("trigger", sync_trigger_mask) == 1);
+        }
+      );
 
       m_boards = from_string(bore.GetTag("BOARDS"), 0);
       if( m_boards == 255 ) { m_boards = 6; }
@@ -344,6 +329,8 @@ namespace eudaq {
 
     mutable uint64_t m_dut_begin = 0, m_tlu_begin = 0,m_last_tlu=0;
     mutable int m_offset =0;
+
+    CompareTimeStampsWithJitter m_TimestampComparer;
 
   };
 

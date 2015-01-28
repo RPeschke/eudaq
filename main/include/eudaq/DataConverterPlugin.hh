@@ -19,11 +19,12 @@ using namespace IMPL;
 using namespace UTIL;
 #endif
 #include "TLUEvent.hh"
+#include <functional>
 
 #define NOTIMESTAMPSET (uint64_t)-1
 #define NOTIMEDURATIONSET 0
 
-
+#define PARAMETER_NOT_SET (uint64_t)-1
 
 //////////////////////////////////////////////////////////////////////////
 // Compare Time stamps
@@ -140,98 +141,41 @@ namespace eudaq{
 
   class CompareTimeStampsWithJitter{
   public:
-    CompareTimeStampsWithJitter(uint64_t jitter_denominator, uint64_t jitter_offset, uint64_t default_delta_timestamps,uint64_t DUT_active_time, bool use_sync_events) :
-      m_jitter_denominator(jitter_denominator), 
-      m_jitter_offset(jitter_offset), 
-      m_default_delta_timestamps(default_delta_timestamps),
-      m_DUT_active_time(DUT_active_time),
-      m_useSyncEvents(use_sync_events)
-    {
+
+
+    typedef bool(*isSyncEvent_F)(eudaq::Event const & ev);
+
+    CompareTimeStampsWithJitter(uint64_t jitter_denominator, uint64_t jitter_offset, uint64_t default_delta_timestamps, uint64_t DUT_active_time, isSyncEvent_F isSyncEvent);
+
+    CompareTimeStampsWithJitter() = default;
+
+
+    void set_Jitter_denominator(uint64_t jitterDenom);
+    void set_Jitter_offset(uint64_t jitter_offset);
+
+    void set_default_delta_timestamp(uint64_t deltaTimestamp);
+
+    void set_DUT_active_time(uint64_t DUT_active_time);
+
+  template <typename T>
+    void set_isSyncEventFunction(T isSyncEvent){
+    f_isSync_event=isSyncEvent;
     }
+    int compareDUT2TLU(eudaq::Event const & ev, const eudaq::Event  & tluEvent)const;
+  private:
+    bool isSetup() const;
+    void resync_jitter(eudaq::Event const & ev,const eudaq::Event  & tluEvent) const;
+    int compareDUT2TLU_normal_Event(eudaq::Event const & ev, const eudaq::Event  & tluEvent)const;
 
-    bool isSyncEvent(const eudaq::Event  & tluEvent) const{
-
-      return tluEvent.GetTag("trigger", 0) == 1;
-    }
-
-    int compareDUT2TLU(eudaq::Event const & ev, const eudaq::Event  & tluEvent)const{
-
-      if (m_useSyncEvents)
-      {
-
-        if (isSyncEvent(tluEvent))
-        {
-          return compareDUT2TLU_sync_event(ev, tluEvent);
-        }
-        else
-        {
-          return compareDUT2TLU_normal_Event(ev, tluEvent);
-        }
-
-
-      }
-
-      auto sync = compareDUT2TLU_normal_Event(ev, tluEvent);
-      if (sync==Event_IS_Sync)
-      {
-        resync(ev, tluEvent);
-      }
-      return sync;
-
-    }
-
-    void resync(eudaq::Event const & ev,const eudaq::Event  & tluEvent) const{
-    
-      auto TLU_TimeStamp = tluEvent.GetTimestamp() - m_tlu_begin;
-      m_last_tlu = TLU_TimeStamp;
-      m_dut_begin = ev.GetTimestamp() + m_default_delta_timestamps - TLU_TimeStamp;
-
-    }
-    int compareDUT2TLU_normal_Event(eudaq::Event const & ev, const eudaq::Event  & tluEvent)const{
-
-      auto DUT_TimeStamp = ev.GetTimestamp() - m_dut_begin;
-      auto TLU_TimeStamp = tluEvent.GetTimestamp() - m_tlu_begin;
-
-      return hasTimeOVerlaping(DUT_TimeStamp, DUT_TimeStamp + m_DUT_active_time, TLU_TimeStamp, TLU_TimeStamp + 10);//96000
-
-    }
-
-    int compareDUT2TLU_sync_event(eudaq::Event const & ev, const eudaq::Event  & tluEvent)const{
-
-      auto DUT_TimeStamp = ev.GetTimestamp() - m_dut_begin;
-      auto TLU_TimeStamp = tluEvent.GetTimestamp() - m_tlu_begin;
-
-      auto eventDiff = TLU_TimeStamp - m_last_tlu;
-      auto jitter = eventDiff /m_jitter_denominator + m_jitter_offset;
-      auto sync = hasTimeOVerlaping(DUT_TimeStamp + m_default_delta_timestamps-2*jitter, DUT_TimeStamp + m_default_delta_timestamps + 2* jitter, TLU_TimeStamp, TLU_TimeStamp + jitter);
-      auto diff = abs(static_cast<__int64>(ev.GetTimestamp() - m_dut_begin + m_default_delta_timestamps) - static_cast<__int64>(TLU_TimeStamp));
-      //std::cout << "event time diff: " << eventDiff << " Jitter_Expected: " <<jitter<< " jitter: " << diff << std::endl;
-
-      if (sync == Event_IS_Sync)
-      {
-        // recalibrate clocks 
-#ifdef  _DEBUG
-        if (ev.GetTimestamp() + m_default_delta_timestamps < TLU_TimeStamp)
-        {
-          EUDAQ_THROW("Timestamp offset is negative");
-        }
-
-        if (diff > jitter)
-        {
-          //   EUDAQ_THROW("Offset shift to big");
-        }
-#endif //  DEBUG
-        resync(ev,tluEvent);
-      }
-      return sync;
-
-    }
+    int compareDUT2TLU_sync_event(eudaq::Event const & ev, const eudaq::Event  & tluEvent)const;
 
   private:
 
     mutable uint64_t m_dut_begin = 0, m_tlu_begin = 0, m_last_tlu = 0;
-    const uint64_t m_jitter_denominator, m_jitter_offset,m_default_delta_timestamps,m_DUT_active_time;
-    const bool m_useSyncEvents;
+    uint64_t m_jitter_denominator = PARAMETER_NOT_SET, m_jitter_offset = PARAMETER_NOT_SET, m_default_delta_timestamps = PARAMETER_NOT_SET, m_DUT_active_time = PARAMETER_NOT_SET;
+//    bool m_useSyncEvents = false;
+    std::function<bool(eudaq::Event const &)> f_isSync_event;
+    mutable bool firstEvent = true;
 
   };
 
