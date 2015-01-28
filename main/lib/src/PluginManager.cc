@@ -49,9 +49,7 @@ namespace eudaq {
 	}
 
 	void PluginManager::Initialize(const DetectorEvent & dev) {
-    auto dev1 = std::dynamic_pointer_cast<DetectorEvent>(dev.GetEventPtr(0));
-		eudaq::Configuration conf(dev1->GetTag("CONFIG"));
-		conf.Set("timeDelay", dev.GetTag("longTimeDelay", "0"));
+		eudaq::Configuration conf(dev.GetTag("CONFIG"));
 		for (size_t i = 0; i < dev.NumEvents(); ++i) {
 			const eudaq::Event & subev = *dev.GetEvent(i);
       InitializeSubEvent(subev, conf);
