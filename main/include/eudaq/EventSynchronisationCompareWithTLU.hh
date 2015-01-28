@@ -100,7 +100,7 @@ namespace eudaq{
     
     int m_TLUs_found = 0;
 
-    bool isAsync_ = false;
+    bool isAsync_ = false ,m_firstConfig=true;
     size_t NumberOfEventsToSync_;
     uint64_t longTimeDiff_;
 

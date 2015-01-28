@@ -394,9 +394,6 @@ namespace eudaq{
 
   bool Sync2TLU::getNextEvent(Event_sp&   ev)
   {
-
-    
-
     if (!m_outPutQueue.empty()||SyncFirstEvent())
     {
 
@@ -404,7 +401,6 @@ namespace eudaq{
       m_outPutQueue.pop();
       return true;
     }
-
     return false;
   }
 
@@ -418,10 +414,19 @@ namespace eudaq{
     DetectorEvent* det = dynamic_cast<DetectorEvent*>(ev.get());
     while (!m_outPutQueue.empty())
     {
+      if (m_firstConfig)
+      {
+        auto con = m_outPutQueue.front()->GetTag("CONFIG");
+        if (con.size() > 0)
+        {
+          det->SetTag("CONFIG", con);
+          m_firstConfig = false;
+        }
+      }
       det->AddEvent(m_outPutQueue.front());
       m_outPutQueue.pop();
+    
     }
-
     return true;
   }
 
