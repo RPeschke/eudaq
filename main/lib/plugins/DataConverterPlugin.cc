@@ -33,8 +33,8 @@ namespace eudaq {
         EUDAQ_THROW("Parameter for the compare algoritm are not setup correctly");
       }
 
-      m_tlu_begin = tluEvent.GetTimestamp();
-      m_dut_begin = ev.GetTimestamp();
+      m_tlu_begin = tluEvent.GetTimestamp() - 2 * m_default_delta_timestamps;
+      m_dut_begin = ev.GetTimestamp() - 2 * m_default_delta_timestamps;
       m_last_tlu = 0; //would be tluEvent.GetTimestamp()- m_tlu_begin;
       firstEvent = false;
     }
@@ -119,7 +119,7 @@ namespace eudaq {
     auto DUT_TimeStamp = ev.GetTimestamp() - m_dut_begin;
     auto TLU_TimeStamp = tluEvent.GetTimestamp() - m_tlu_begin;
 
-    return hasTimeOVerlaping(DUT_TimeStamp, DUT_TimeStamp + m_DUT_active_time, TLU_TimeStamp, TLU_TimeStamp + 10);//96000
+    return hasTimeOVerlaping(DUT_TimeStamp, DUT_TimeStamp + m_DUT_active_time, TLU_TimeStamp, TLU_TimeStamp + m_jitter_offset);//96000
   }
 
   int CompareTimeStampsWithJitter::compareDUT2TLU_sync_event(eudaq::Event const & ev, const eudaq::Event & tluEvent) const
@@ -129,7 +129,7 @@ namespace eudaq {
 
     auto eventDiff = TLU_TimeStamp - m_last_tlu;
     auto jitter = eventDiff / m_jitter_denominator + m_jitter_offset;
-    auto sync = hasTimeOVerlaping(DUT_TimeStamp + m_default_delta_timestamps - 2 * jitter, DUT_TimeStamp + m_default_delta_timestamps + 2 * jitter, TLU_TimeStamp, TLU_TimeStamp + jitter);
+    auto sync = hasTimeOVerlaping(DUT_TimeStamp, DUT_TimeStamp + m_default_delta_timestamps + 2 * jitter, TLU_TimeStamp, TLU_TimeStamp + m_default_delta_timestamps + 2*jitter);
 
     if (sync == Event_IS_Sync)
     {
@@ -141,7 +141,7 @@ namespace eudaq {
 
       if (diff > jitter)
       {
-        EUDAQ_THROW("Offset shift to big");
+//        EUDAQ_THROW("Offset shift to big");
       }
 #endif //  DEBUG
       resync_jitter(ev, tluEvent);
