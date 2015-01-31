@@ -71,8 +71,8 @@ namespace eudaq {
         *m_out << "i_time_stamp;  TLU_trigger; DUT_time_stamp" << std::endl;
 
 
-      DUT_start_time = sev.GetTag("ni_time", (uint64_t) 0);
-      TLU_start_Time = sev.GetTimestamp();
+      DUT_start_time = sev.GetTag("ni_time", (uint64_t) 0) - 50000;
+      TLU_start_Time = sev.GetTimestamp()-50000;
       firstEvent = false;
     }
  
