@@ -34,8 +34,21 @@ namespace eudaq {
 
   private:
 
+    bool isSyncEvent(const eudaq::Event& ev) const{
+      
+      auto det = dynamic_cast<const DetectorEvent*>(&ev);
+      for (size_t i = 0; i < det->NumEvents(); ++i){
+        auto& ev = *det->GetEvent(i);
+        if (PluginManager::isTLU(ev)){
+            return (ev.GetTag("trigger", 0) == 1);
+        }
+      }
+
+      return false;
+    }
+
     FileDeserializer m_des;
-    std::shared_ptr<eudaq::Event> m_ev,mev1;
+    std::shared_ptr<eudaq::Event> m_ev,m_ev1;
     unsigned m_ver;
     size_t m_subevent_counter = 0;
 
@@ -66,10 +79,38 @@ namespace eudaq {
   bool FileReader_primarTLU::NextEvent(size_t skip) {
     std::shared_ptr<eudaq::Event> ev = nullptr;
 
-
+    if (!m_ev1)
+    {
+      // First Event
+      bool result = m_des.ReadEvent(m_ver, ev, skip);
+      m_ev = ev;
+      ev = nullptr;
+    }
+    else
+    {
+      // all other events 
+      m_ev = m_ev1;
+    }
     bool result = m_des.ReadEvent(m_ver, ev, skip);
+    
+    if (ev) {
+      if (!isSyncEvent(*ev))
+      {
+        // normal case 
+        m_ev1 = ev;
 
-    if (ev) m_ev = ev;
+      }
+      else
+      {
+        // sync events reverse order 
+
+        m_ev1 = m_ev;
+        m_ev = ev;
+      }
+    
+    
+    }
+
     return result;
   }
 
@@ -99,40 +140,6 @@ namespace eudaq {
 
 
   }
-
-
-
-//   std::shared_ptr<eudaq::Event> FileReader::GetNextROF()
-//   {
-// 
-// 
-//     if (GetEvent().IsPacket())
-//     {
-//       if (m_subevent_counter < PluginManager::GetNumberOfROF(GetEvent()))
-//       {
-//         return PluginManager::ExtractEventN(getEventPtr(), m_subevent_counter++);
-//       }
-//       else
-//       {
-//         m_subevent_counter = 0;
-//         if (NextEvent())
-//         {
-//           return GetNextROF();
-//         }
-//         else{
-//           return nullptr;
-//         }
-// 
-//       }
-// 
-//     }
-//     else
-//     {
-// 
-//       return getEventPtr();
-//     }
-//     return nullptr;
-//   }
 
   RegisterFileReader(FileReader_primarTLU, "primarTLU");
 
