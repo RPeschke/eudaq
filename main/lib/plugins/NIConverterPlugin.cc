@@ -66,22 +66,25 @@ namespace eudaq {
         return Event_IS_LATE;
       }
 
+#ifdef _DEBUG
       if (m_tlu_begin == 0 && m_dut_begin == 0)
       {
-        m_dut_begin = ev.GetTimestamp();
-        m_tlu_begin = tluEvent.GetTimestamp();
+        m_dut_begin = ev.GetTimestamp() -  4040;
+        m_tlu_begin = tluEvent.GetTimestamp() - 2 * 4040;
       }
       auto evnr = tluEvent.GetEventNumber();
       auto DUT_TimeStamp = ev.GetTimestamp() - m_dut_begin;
       auto TLU_TimeStamp = tluEvent.GetTimestamp() - m_tlu_begin;
 
-#ifdef _DEBUG
       auto diff1 = static_cast<__int64>(DUT_TimeStamp) -static_cast<__int64>(TLU_TimeStamp);
-
-#endif // _DEBUG
-
-      std::cout << "DUT Ev: " << ev.GetEventNumber() << " TLU Ev: "<< tluEvent.GetEventNumber() << " diff: "<< static_cast<__int64>(DUT_TimeStamp) -static_cast<__int64>(TLU_TimeStamp) << std::endl;
+      std::cout << "DUT Ev: " << ev.GetEventNumber() << " TLU Ev: "<< tluEvent.GetEventNumber() << " diff: "<< static_cast<__int64>(DUT_TimeStamp) -static_cast<__int64>(TLU_TimeStamp) ;
+       auto sync =m_TimestampComparer.compareDUT2TLU(ev, tluEvent);
+       std::cout << " sync: " << sync << std::endl;
+       return sync;
+#else 
+      //Release
       return m_TimestampComparer.compareDUT2TLU(ev, tluEvent);
+#endif // _DEBUG
 
 
     }
@@ -90,16 +93,17 @@ namespace eudaq {
       c.SetSection("DoubleTluSetup");
       auto default_timeDiff = c.Get("default_timeDiff", (uint64_t) 4040);
       auto TLU_jitter = c.Get("TLU_jitter", 160000);
-      auto sync_trigger_mask = c.Get("Sync_trigger", 0);
+      auto sync_trigger_mask = c.Get("Sync_trigger", 1);
       m_TimestampComparer.set_default_delta_timestamp(default_timeDiff);
-      m_TimestampComparer.set_DUT_active_time(90000);
+      m_TimestampComparer.set_DUT_active_time(680000 - 2 * default_timeDiff);
+                                                     // 90000 -50000   682861
       m_TimestampComparer.set_Jitter_denominator(TLU_jitter * 8 / 10);
       m_TimestampComparer.set_Jitter_offset(50);
      
       m_TimestampComparer.set_isSyncEventFunction(
         [sync_trigger_mask](const Event & tlu)->bool
         {
-          return (tlu.GetTag("trigger", sync_trigger_mask) == 1);
+          return (tlu.GetTag("trigger", 0) == sync_trigger_mask);
         }
       );
 
