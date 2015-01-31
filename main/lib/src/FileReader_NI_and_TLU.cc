@@ -73,11 +73,18 @@ namespace eudaq {
 
     bool result = m_des.ReadEvent(m_ver, ev, skip);
 
-    DetectorEvent* det = dynamic_cast<DetectorEvent*> (ev.get());
 
-    det->GetEventPtr(1)->setTimeStamp(det->GetEventPtr(0)->GetTimestamp());
 
-    if (ev) m_ev = det->GetEventPtr(1);
+    if (ev){
+      DetectorEvent* det = dynamic_cast<DetectorEvent*> (ev.get());
+      det->GetEventPtr(1)->setTimeStamp(det->GetEventPtr(0)->GetTimestamp());
+      m_ev = det->GetEventPtr(1);
+    }
+#ifdef _DEBUG
+    else{
+      std::cout << "end of file" << std::endl;
+    }
+#endif //_DEBUG
     return result;
   }
 
