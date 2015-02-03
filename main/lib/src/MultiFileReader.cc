@@ -48,30 +48,34 @@ bool  multiFileReader::readFiles()
 {
   for (size_t fileID = 0; fileID < m_fileReaders.size(); ++fileID)
   {
-    std::shared_ptr<eudaq::Event> ev;
-    if (m_firstEvent)
+    if (m_sync->InputIsEmpty(fileID))
     {
-      ev = m_fileReaders[fileID]->getEventPtr();
-      
-    }
-    else
-    {
-      ev = m_fileReaders[fileID]->GetNextEvent();
+
+      std::shared_ptr<eudaq::Event> ev;
+      if (m_firstEvent)
+      {
+        ev = m_fileReaders[fileID]->getEventPtr();
+
+      }
+      else
+      {
+        ev = m_fileReaders[fileID]->GetNextEvent();
+
+      }
+
+      if (!m_sync->pushEvent(ev, fileID))
+      {
+        return false;
+      }
 
     }
-    
-
-    if (!m_sync->pushEvent(ev,fileID))
-    {
-      return false;
-    }
-
   }
   if (m_firstEvent)
   {
     m_firstEvent = false;
 
   }
+
   return true;
 }
 

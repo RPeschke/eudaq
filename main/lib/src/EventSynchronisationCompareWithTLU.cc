@@ -160,9 +160,12 @@ namespace eudaq{
     return false;
   }
 
-  bool Sync2TLU::SubEventQueueIsEmpty(int FileID)
+  bool Sync2TLU::SubEventQueueIsEmpty(int FileID) const
   {
-
+    if (m_ProducerEventQueue.empty())
+    {
+      return true;
+    }
     for (auto& e : m_ProducerId2Eventqueue)
     {
       if (e.first >= getUniqueID(FileID, 0) && e.first < getUniqueID(FileID + 1, 0))
@@ -379,7 +382,7 @@ namespace eudaq{
 
   }
 
-  unsigned Sync2TLU::getUniqueID(unsigned fileIndex, unsigned eventIndex)
+  unsigned Sync2TLU::getUniqueID(unsigned fileIndex, unsigned eventIndex) const
   {
 
     return (fileIndex + 1)*FILEINDEX_OFFSET + eventIndex;
@@ -466,6 +469,11 @@ namespace eudaq{
   bool Sync2TLU::InputIsEmpty() const
   {
     return Event_Queue_Is_Empty();
+  }
+
+  bool Sync2TLU::InputIsEmpty(size_t fileId) const
+  {
+    return SubEventQueueIsEmpty(fileId);
   }
 
 }

@@ -34,6 +34,7 @@ namespace eudaq{
     virtual bool mergeBoreEvent(Event_sp& ev) = 0;
     virtual bool OutputIsEmpty() const = 0;
     virtual bool InputIsEmpty() const = 0;
+    virtual bool InputIsEmpty(size_t FileID) const = 0;
 
     Parameter_t getParameter();
   private:

@@ -40,8 +40,9 @@ namespace eudaq{
     virtual bool getNextEvent(Event_sp& ev) override;
     virtual bool OutputIsEmpty() const override;
     virtual bool InputIsEmpty() const override;
-    virtual bool mergeBoreEvent(Event_sp& ev);
+    virtual bool InputIsEmpty(size_t fileId) const override;
 
+    virtual bool mergeBoreEvent(Event_sp& ev);
     //////////////////////////////////////////////////////////////////////////
 
 
@@ -59,7 +60,7 @@ namespace eudaq{
     void addBORE_BaseEvent(int fileIndex, Event_sp BOREEvent);
     bool SyncNEvents(size_t N);
     void PrepareForEvents();
-    bool SubEventQueueIsEmpty(int i);
+    bool SubEventQueueIsEmpty(int i) const;
     bool SyncFirstEvent();
     bool outputQueueIsEmpty() const;
     
@@ -86,7 +87,7 @@ namespace eudaq{
     eventqueue_t& getQueuefromId(unsigned fileIndex, unsigned eventIndex);
 
     eventqueue_t& getFirstTLUQueue();
-    unsigned getUniqueID(unsigned fileIndex, unsigned eventIndex);
+    unsigned getUniqueID(unsigned fileIndex, unsigned eventIndex) const ;
     //unsigned getTLU_UniqueID(unsigned fileIndex);
     std::map<unsigned, size_t> m_ProducerId2Eventqueue;
     size_t m_registertProducer = 0;
