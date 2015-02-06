@@ -26,6 +26,8 @@ namespace eudaq{
     virtual void Process_Event_is_sync(std::shared_ptr<eudaq::Event>  ev, eudaq::Event const & tlu);
     virtual void makeDetectorEvent();
     
+  private:
+    bool m_first_event = true;
 
   };
 
