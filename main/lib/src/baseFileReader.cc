@@ -53,7 +53,7 @@ namespace eudaq {
   std::pair<std::string, std::string> split_name_identifier(const std::string& name){
   
     std::pair<std::string, std::string> ret;
-  
+    
 
     auto index_raute = name.find_last_of('#');
     if (index_raute == std::string::npos)
@@ -104,32 +104,35 @@ namespace eudaq {
   {
     // return nullptr;
     baseFileReader::Parameter_t m;
+    std::string type;
 
     if (filename.find_first_not_of("0123456789") == std::string::npos) {
       // filename is run number. using default file reader
 
       auto splitted_pattern = split_name_identifier(filepattern);
-      
+      type = splitted_pattern.first;
+      auto shorted_file_pattern = splitted_pattern.second;
       m.push_back(filename);
-
-      m.push_back(splitted_pattern.second);
-      return EUDAQ_Utilities::Factory<baseFileReader>::Create(splitted_pattern.first, m);
-
+      m.push_back(shorted_file_pattern);
     }
     else
     {
-
       auto splitted_filename = split_name_identifier(filename);
+      type = splitted_filename.first;
+      auto shorted_file_name = splitted_filename.second;
       m.push_back(splitted_filename.second);
-
       m.push_back(filepattern);
-      return EUDAQ_Utilities::Factory<baseFileReader>::Create(splitted_filename.first, m);
-
-
     }
 
+    auto params = split(type, "@");
+    if (params.size() > 1)
+    {
+      m.insert(m.end(), params.begin() + 1, params.end());
+      type = params.at(0);
+    }
+    return EUDAQ_Utilities::Factory<baseFileReader>::Create(type, m);
 
-    return nullptr;
+
 
   }
 
