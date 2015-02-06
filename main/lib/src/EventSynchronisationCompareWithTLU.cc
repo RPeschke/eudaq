@@ -397,7 +397,8 @@ namespace eudaq{
 
   bool Sync2TLU::getNextEvent(Event_sp&   ev)
   {
-    if (!m_outPutQueue.empty()||SyncFirstEvent())
+    SyncFirstEvent();
+    if (!m_outPutQueue.empty())
     {
 
       ev = m_outPutQueue.front();
