@@ -500,7 +500,7 @@ namespace eudaq {
         catch(lcio::DataNotAvailableException &)
         {
           // collection does not exist, create it and add it to the event
-          lcio::LCCollectionVec * explorerCollection = new lcio::LCCollectionVec(lcio::LCIO::TRACKERRAWDATA);
+          lcio::LCCollectionVec * explorerCollection = new lcio::LCCollectionVec(lcio::LCIO::TRACKERRAWDATA());
 
           // set the flags that cellID1 should be stored
           lcio::LCFlagImpl trkFlag(0) ;
