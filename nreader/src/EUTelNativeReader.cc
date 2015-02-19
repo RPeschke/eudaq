@@ -90,15 +90,15 @@ EUTelNativeReader::EUTelNativeReader ():
 
   // first the compulsory parameters
 
-  registerOutputCollection(LCIO::TRACKERRAWDATA, "EUBRDRawModeOutputCollection",
+  registerOutputCollection(LCIO::TRACKERRAWDATA(), "EUBRDRawModeOutputCollection",
                            "This is the eudrb producer output collection when read in RAW mode",
                            _eudrbRawModeOutputCollectionName, string("rawdata") );
 
-  registerOutputCollection(LCIO::TRACKERDATA, "EUDRBZSModeOutputCollection",
+  registerOutputCollection(LCIO::TRACKERDATA(), "EUDRBZSModeOutputCollection",
                            "This si the mimotel output collection when read in ZS mode",
                            _eudrbZSModeOutputCollectionName, string("zsdata") );
 
-  registerOutputCollection(LCIO::TRACKERDATA, "DEPFETOutputCollection",
+  registerOutputCollection(LCIO::TRACKERDATA(), "DEPFETOutputCollection",
                            "This is the depfet produced output collection",
                            _depfetOutputCollectionName, string("rawdata_dep"));
 
@@ -114,7 +114,7 @@ EUTelNativeReader * EUTelNativeReader::newProcessor () {
 void EUTelNativeReader::init () {
   printParameters ();
   ::eudaq::GetLogger().SetErrLevel("WARN"); // send only eudaq messages above (or equal?) "warn" level to stderr
-  streamlog_out(MESSAGE5) << "Initializing EUDAQ native reader Marlin library " << PACKAGE_VERSION << endl;
+  std::cout << "Initializing EUDAQ native reader Marlin library " << PACKAGE_VERSION << endl;
 }
 
 void EUTelNativeReader::readDataSource(int numEvents) {
@@ -127,11 +127,11 @@ void EUTelNativeReader::readDataSource(int numEvents) {
   _isFirstEvent = true;
 
   // this is to make the output messages nicer
-  streamlog::logscope scope(streamlog::out);
-  scope.setName(name());
+  //streamlog::logscope scope(streamlog::out);
+  //scope.setName(name());
 
   // print out a debug message
-  streamlog_out( DEBUG4 ) << "Reading " << _fileName << " with eudaq file deserializer " << endl;
+  std::cout << "Reading " << _fileName << " with eudaq file deserializer " << endl;
 
   eudaq::FileReader * reader = 0;
   // open the input file with the eudaq reader
@@ -139,7 +139,7 @@ void EUTelNativeReader::readDataSource(int numEvents) {
     reader = new eudaq::FileReader( _fileName, "");
   }
   catch(...){
-    streamlog_out( ERROR5 ) << "eudaq::FileReader could not read the input file ' " << _fileName << " '. Please verify that the path and file name are correct." << endl;
+    std::cout << "eudaq::FileReader could not read the input file ' " << _fileName << " '. Please verify that the path and file name are correct." << endl;
 //    exit(1);
      throw ParseException("Problems with reading file " + _fileName );
   }
@@ -158,8 +158,8 @@ void EUTelNativeReader::readDataSource(int numEvents) {
 
     if ( eudaqEvent.IsBORE() ) {
 
-      streamlog_out( WARNING9 ) << "Found another BORE event: This is a strange case but the event will be processed anyway" << endl;
-      streamlog_out( WARNING9 ) << eudaqEvent << endl;
+      std::cout << "Found another BORE event: This is a strange case but the event will be processed anyway" << endl;
+      std::cout << eudaqEvent << endl;
 
       // this is a very strange case, because there should be one and
       // one only BORE in a run and this should be processed already
@@ -170,8 +170,8 @@ void EUTelNativeReader::readDataSource(int numEvents) {
 
     } else if ( eudaqEvent.IsEORE() ) {
 
-      streamlog_out( DEBUG4 ) << "Found a EORE event " << endl;
-      streamlog_out( DEBUG4 ) << eudaqEvent << endl;
+      std::cout << "Found a EORE event " << endl;
+      std::cout << eudaqEvent << endl;
 
       processEORE( eudaqEvent );
 
@@ -180,9 +180,9 @@ void EUTelNativeReader::readDataSource(int numEvents) {
       LCEvent * lcEvent = eudaq::PluginManager::ConvertToLCIO( eudaqEvent );
 
       if ( lcEvent == NULL ) {
-	streamlog_out ( ERROR1 ) << "The eudaq plugin manager is not able to create a valid LCEvent" << endl
+        std::cout << "The eudaq plugin manager is not able to create a valid LCEvent" << endl
 				 << "Check that eudaq was compiled with LCIO and EUTELESCOPE active "<< endl;
-	throw MissingLibraryException( this, "eudaq" );
+	//throw MissingLibraryException( this, "eudaq" );
       }
       ProcessorMgr::instance()->processEvent( lcEvent );
       delete lcEvent;
@@ -195,7 +195,7 @@ void EUTelNativeReader::readDataSource(int numEvents) {
 }
 
 void EUTelNativeReader::processEORE( const eudaq::DetectorEvent & eore) {
-  streamlog_out( DEBUG4 ) << "Found a EORE, so adding an EORE to the LCIO file as well" << endl;
+  std::cout << "Found a EORE, so adding an EORE to the LCIO file as well" << endl;
   EUTelEventImpl * lcioEvent = new EUTelEventImpl;
   lcioEvent->setEventType(kEORE);
   lcioEvent->setTimeStamp  ( eore.GetTimestamp()   );
@@ -211,19 +211,19 @@ void EUTelNativeReader::processEORE( const eudaq::DetectorEvent & eore) {
 void EUTelNativeReader::end () {
 
   if ( _eudrbTotalOutOfSyncEvent != 0 ) {
-    streamlog_out ( MESSAGE5 ) << "Found " << _eudrbTotalOutOfSyncEvent << " events out of sync " << endl;
+    std::cout << "Found " << _eudrbTotalOutOfSyncEvent << " events out of sync " << endl;
   }
-  streamlog_out ( MESSAGE5 )  << "Successfully finished" << endl;
+  std::cout  << "Successfully finished" << endl;
 }
 
 
 void EUTelNativeReader::processBORE( const eudaq::DetectorEvent & bore ) {
-  streamlog_out( DEBUG4 ) << "Found a BORE, so processing the RunHeader" << endl;
+  std::cout << "Found a BORE, so processing the RunHeader" << endl;
 
   LCRunHeader * runHeader = eudaq::PluginManager::GetLCRunHeader( bore );
 
   if ( runHeader == NULL ) {
-    streamlog_out ( ERROR1 ) << "The eudaq plugin manager is not able to create a valid LCRunHeader" << endl
+    std::cout << "The eudaq plugin manager is not able to create a valid LCRunHeader" << endl
                              << "Check that eudaq was compiled with LCIO and EUTELESCOPE active "<< endl;
     throw MissingLibraryException( this, "eudaq" );
   }
