@@ -19,8 +19,8 @@ using namespace std;
 
 EUTelSetupDescription::EUTelSetupDescription(EUTelDetectorType type, EUTelReadoutMode mode) :
   IMPL::LCGenericObjectImpl(5,0,0) {
-  _typeName        = "Setup Description";
-  _dataDescription = "type:i,mode:i,spare1:i,spare2:i,spare3:i";
+  setTypeName("Setup Description");
+  setDataDescription("type:i,mode:i,spare1:i,spare2:i,spare3:i");
   _isFixedSize     = true;
   setIntVal( 0, static_cast< int > ( type ) );
   setIntVal( 1, static_cast< int > ( mode ) );
@@ -28,15 +28,15 @@ EUTelSetupDescription::EUTelSetupDescription(EUTelDetectorType type, EUTelReadou
 
 EUTelSetupDescription::EUTelSetupDescription() :
   IMPL::LCGenericObjectImpl(5,0,0) {
-  _typeName        = "Setup Description";
-  _dataDescription = "type:i,mode:i,spare1:i,spare2:i,spare3:i";
+  setTypeName("Setup Description");
+  setDataDescription("type:i,mode:i,spare1:i,spare2:i,spare3:i");
   _isFixedSize     = true;
 }
 
 EUTelSetupDescription::EUTelSetupDescription(EUTelPixelDetector * detector)  :
   IMPL::LCGenericObjectImpl(5,0,0) {
-  _typeName        = "Setup Description";
-  _dataDescription = "type:i,mode:i,spare1:i,spare2:i,spare3:i";
+  setTypeName("Setup Description");
+  setDataDescription("type:i,mode:i,spare1:i,spare2:i,spare3:i");
   _isFixedSize     = true;
 
   string typeS = detector->getDetectorName();
