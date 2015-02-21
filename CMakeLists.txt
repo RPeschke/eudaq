@@ -83,7 +83,7 @@ option(BUILD_nreader "Compile native reader shared library (requires LCIO/EUTele
 IF(BUILD_nreader)
   FIND_PACKAGE(LCIO REQUIRED)
   INCLUDE_DIRECTORIES(${LCIO_INCLUDE_DIRS})
-  FIND_PACKAGE(EUTelescope REQUIRED)
+  #FIND_PACKAGE(EUTelescope REQUIRED)
   INCLUDE_DIRECTORIES(${EUTELESCOPE_INCLUDE_DIRS} ${PROJECT_SOURCE_DIR}/nreader/include)
   add_definitions(${EUTELESCOPE_DEFINITIONS} ${LCIO_DEFINITIONS})
   AUX_SOURCE_DIRECTORY( ${PROJECT_SOURCE_DIR}/nreader/detdescription detdescr_library_sources )

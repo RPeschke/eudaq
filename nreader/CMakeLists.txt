@@ -2,29 +2,18 @@
 # and reconstruction using EUTelescope analysis framework
 SET( libname NativeReader )
 
-FIND_PACKAGE( ILCSOFTCMake REQUIRED)
-include (${ILCSOFT_CMAKE_PATH})
 
-FIND_PACKAGE( ILCUTIL COMPONENTS ILCSOFT_CMAKE_MODULES REQUIRED ILCTEST)
-
+#FIND_PACKAGE( ILCUTIL COMPONENTS ILCSOFT_CMAKE_MODULES REQUIRED ILCTEST)
+FIND_PACKAGE( ILCUTIL HINTS "C:/Program Files (x86)/ILCUTIL")
 # load default settings from ILCSOFT_CMAKE_MODULES
-INCLUDE( ilcsoft_default_settings )
 
-FIND_PACKAGE( Marlin 1.0 REQUIRED )
-FIND_PACKAGE( MarlinUtil 1.2 REQUIRED )
+
+#FIND_PACKAGE( Marlin 1.0 REQUIRED HINTS "C:/Program Files (x86)/Marlin")
+#FIND_PACKAGE( MarlinUtil 1.2 REQUIRED )
 
 LINK_LIBRARIES( EUDAQ )
 
-FOREACH( pkg Marlin MarlinUtil EUTELESCOPE)
-    IF( ${pkg}_FOUND )
-        # include as "system" libraries: gcc will be less verbose w.r.t. warnings
-        INCLUDE_DIRECTORIES(SYSTEM ${${pkg}_INCLUDE_DIRS} )
-        LINK_LIBRARIES( ${${pkg}_LIBRARIES} )
-        ADD_DEFINITIONS ( ${${pkg}_DEFINITIONS} )
-    ELSE()
-        MESSAGE( STATUS "${pkg} not found" )
-    ENDIF()
-ENDFOREACH()
+
 
 
 ### LIBRARY #################################################################
