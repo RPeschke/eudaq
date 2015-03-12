@@ -208,7 +208,7 @@ bool Mupix2ConverterPlugin::GetLCIOSubEvent(
             dest.getCollection(MUPIX2_COLLECTION_NAME));
         collection_exists = true;
     } catch(lcio::DataNotAvailableException & e) {
-        collection = new LCCollectionVec(lcio::LCIO::TRACKERDATA);
+        collection = new LCCollectionVec(lcio::LCIO::TRACKERDATA());
         collection_exists = false;
     }
     

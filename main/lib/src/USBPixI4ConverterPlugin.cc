@@ -474,7 +474,7 @@ class USBPixI4ConverterPlugin : public DataConverterPlugin , public USBPixI4Conv
 		}
 		catch( lcio::DataNotAvailableException& e )
 		{
-			zsDataCollection = new LCCollectionVec( lcio::LCIO::TRACKERDATA );
+			zsDataCollection = new LCCollectionVec( lcio::LCIO::TRACKERDATA() );
 		}
 
 		//create cell encoders to set sensorID and pixel type
