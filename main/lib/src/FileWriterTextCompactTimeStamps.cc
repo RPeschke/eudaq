@@ -71,9 +71,9 @@ namespace eudaq {
 		  {
 			  auto ts = devent.GetEventPtr(i)->GetTimestamp();
 			  m_start_time.push_back(ts);
-
+        *m_out << Event::id2str(devent.GetEventPtr(i)->get_id()) << "_" << devent.GetEventPtr(i)->GetSubType() << "; ";
 		  }
-		 
+      *m_out << '\n';
 		  firstEvent=false;
 	  }
 	
@@ -83,7 +83,7 @@ namespace eudaq {
 		  *m_out << ts - m_start_time.at(i) << "; " ;
 
 	  }
-	  *m_out << std::endl;
+	  *m_out << '\n';
 
 	  
   }
