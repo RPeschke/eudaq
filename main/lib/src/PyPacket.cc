@@ -5,8 +5,8 @@
 #include "jsoncons/json.hpp"
 #include "eudaq/JSON.hh"
 #include "eudaq/BufferSerializer.hh"
-#include "eudaq/MetaData.hh"
-#include "eudaq/AidaPacket.hh"
+//#include "eudaq/MetaData.hh"
+//#include "eudaq/AidaPacket.hh"
 #include "eudaq/PyPacket.hh"
 
 using jsoncons::json;
