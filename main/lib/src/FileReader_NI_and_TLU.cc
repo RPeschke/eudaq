@@ -77,7 +77,9 @@ namespace eudaq {
 
     if (ev){
       DetectorEvent* det = dynamic_cast<DetectorEvent*> (ev.get());
+      auto buf = det->GetEventPtr(1)->GetTimestamp();
       det->GetEventPtr(1)->setTimeStamp(det->GetEventPtr(0)->GetTimestamp());
+      det->GetEventPtr(1)->pushTimeStamp(buf);
       m_ev = det->GetEventPtr(1);
     }
 #ifdef _DEBUG
