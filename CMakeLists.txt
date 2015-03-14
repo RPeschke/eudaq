@@ -166,6 +166,11 @@ IF(BUILD_offlinemon)
   add_subdirectory(monitors/offlinemon)
 ENDIF()
 
+# build resender Producer
+option(BUILD_resender "Compile resender Producer?" OFF)
+IF(BUILD_resender)
+  add_subdirectory(reSendProducer)
+ENDIF()
 
 
 ###############################################
