@@ -1,11 +1,12 @@
+#include <list>
 #include "eudaq/FileReader.hh"
 #include "eudaq/FileNamer.hh"
 #include "eudaq/PluginManager.hh"
 #include "eudaq/Event.hh"
 #include "eudaq/Logger.hh"
-#include <list>
 #include "eudaq/FileSerializer.hh"
 #include "eudaq/Configuration.hh"
+#include "eudaq/factory.hh"
 
 namespace eudaq {
 
@@ -14,36 +15,21 @@ namespace eudaq {
 
 
   FileReader::FileReader(const std::string & file, const std::string & filepattern)
-    : m_filename(FileNamer(filepattern).Set('X', ".raw").SetReplace('R', file)),
-    m_des(m_filename),
+    : baseFileReader(FileNamer(filepattern).Set('X', ".raw").SetReplace('R', file)),
+    m_des(Filename()),
     m_ev(EventFactory::Create(m_des)),
     m_ver(1)
-    {
+  {
 
-// 		m_ev->SetTag("longTimeDelay",longTimeDelay);
-// 		m_ev->SetTag("NumberOfEvents",syncEvents);
+  }
 
-		eudaq::Configuration conf(GetDetectorEvent().GetTag("CONFIG"));
-		conf.SetSection("EventStruct");
+  FileReader::FileReader(Parameter_ref param) :FileReader(param[File_name], param[Input_pattern])
+  {
 
+  }
 
-
-		
-//       if (synctriggerid) {
-// 
-// 	// saves this information in the BOR event. the DataConverterPlugins can extract this information during initializing.
-// 		m_sync =std::make_shared<eudaq::SyncBase>(GetDetectorEvent());
-// 
-// 
-//       }
-    }
-//   FileReader::FileReader(FileReader&& fileR):m_filename(fileR.Filename()),
-// 	  m_des(m_filename){
-// 
-// 
-//   }
   FileReader::~FileReader() {
-    
+
   }
 
   bool FileReader::NextEvent(size_t skip) {
@@ -51,7 +37,7 @@ namespace eudaq {
 
 
     bool result = m_des.ReadEvent(m_ver, ev, skip);
-    if (ev) m_ev =  ev;
+    if (ev) m_ev = ev;
     return result;
   }
 
@@ -71,6 +57,51 @@ namespace eudaq {
     return dynamic_cast<const StandardEvent &>(*m_ev);
   }
 
- 
+  std::shared_ptr<eudaq::Event> FileReader::GetNextEvent(){
+
+    if (!NextEvent()) {
+      return nullptr;
+    }
+
+    return m_ev;
+
+
+  }
+
+
+
+//   std::shared_ptr<eudaq::Event> FileReader::GetNextROF()
+//   {
+// 
+// 
+//     if (GetEvent().IsPacket())
+//     {
+//       if (m_subevent_counter < PluginManager::GetNumberOfROF(GetEvent()))
+//       {
+//         return PluginManager::ExtractEventN(getEventPtr(), m_subevent_counter++);
+//       }
+//       else
+//       {
+//         m_subevent_counter = 0;
+//         if (NextEvent())
+//         {
+//           return GetNextROF();
+//         }
+//         else{
+//           return nullptr;
+//         }
+// 
+//       }
+// 
+//     }
+//     else
+//     {
+// 
+//       return getEventPtr();
+//     }
+//     return nullptr;
+//   }
+
+  RegisterFileReader(FileReader, "raw");
 
 }
