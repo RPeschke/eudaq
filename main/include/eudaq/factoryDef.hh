@@ -1,9 +1,9 @@
-#ifndef factoryDev_h__
-#define factoryDev_h__
+#ifndef factoryDefinitionen_h__
+#define factoryDefinitionen_h__
 
 #include "factory.hh"
 
-#define registerBaseClassDev(BaseClass) namespace{\
+#define registerBaseClassDef(BaseClass) namespace{\
                                          void dummy_register_function_##BaseClass(){\
                                            BaseClass::MainType mType{};\
                                            BaseClass::Parameter_ref pType{};\
@@ -44,4 +44,4 @@ namespace EUDAQ_Utilities{
 //   }
 
 }
-#endif // factoryDev_h__
+#endif // factoryDefinitionen_h__
