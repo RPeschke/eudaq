@@ -33,10 +33,8 @@ namespace eudaq {
       uint64_t i_time_stamp; // the time stamp
   };
 
-  namespace {
-    static RegisterFileWriter<FileWriterRoot> reg("root");
-  }
-
+ 
+  registerFileWriter(FileWriterRoot, "root");
   FileWriterRoot::FileWriterRoot(const std::string & /*param*/)
     : m_tfile(0), m_ttree(0),
     id_plane(0), id_hit(0),
@@ -99,7 +97,7 @@ namespace eudaq {
   }
 
   FileWriterRoot::~FileWriterRoot() {
-
+    m_tfile->Write();
 	  m_tfile->Close();
 	  delete m_tfile;
   }
