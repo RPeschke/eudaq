@@ -1,6 +1,6 @@
 #include <list>
 #include "eudaq/baseFileReader.hh"
-#include "eudaq/factoryDev.hh"
+#include "eudaq/factoryDef.hh"
 #include "eudaq/Exception.hh"
 #include "eudaq/OptionParser.hh"
 
@@ -46,7 +46,7 @@ namespace eudaq {
   }
 
 
-  registerBaseClassDev(baseFileReader);
+  registerBaseClassDef(baseFileReader);
 
 
 

@@ -1,7 +1,7 @@
 #include "eudaq/FileWriter.hh"
 #include "eudaq/FileNamer.hh"
 #include "eudaq/Exception.hh"
-#include "eudaq/factoryDev.hh"
+#include "eudaq/factoryDef.hh"
 #include "eudaq/OptionParser.hh"
 
 
@@ -23,7 +23,7 @@ namespace eudaq {
   }
 
 
-  registerBaseClassDev(FileWriter);
+  registerBaseClassDef(FileWriter);
 
   class FileWriterFactory::Impl{
   public:

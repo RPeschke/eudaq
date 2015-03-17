@@ -7,7 +7,7 @@
 #include "eudaq/EventSynchronisationBase.hh"
 #include "eudaq/PluginManager.hh"
 #include "eudaq/Configuration.hh"
-#include "eudaq/factoryDev.hh"
+#include "eudaq/factoryDef.hh"
 #include "eudaq/OptionParser.hh"
 
 
@@ -32,7 +32,7 @@ namespace eudaq{
 
   }
 
-  registerBaseClassDev(SyncBase);
+  registerBaseClassDef(SyncBase);
 
   class EventSyncFactory::Impl{
   public:
