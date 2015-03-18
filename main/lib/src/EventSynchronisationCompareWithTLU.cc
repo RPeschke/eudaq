@@ -6,7 +6,6 @@
 #include "eudaq/Event.hh"
 #include "eudaq/PluginManager.hh"
 #include "eudaq/Configuration.hh"
-#include "eudaq/factoryDev.hh"
 #include "eudaq/OptionParser.hh"
 #include "eudaq/EventSynchronisationCompareWithTLU.hh"
 
