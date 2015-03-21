@@ -70,7 +70,7 @@ namespace eudaq{
     {
       return getImpl().m_default_sync->Value();
     }
-    return "non";  // any keyword that is not used by an existing sync class is good. it will return a Nullptr from the create function
+    return "DetectorEvents";  
   }
 
   void EventSyncFactory::addComandLineOptions(eudaq::OptionParser & op)
