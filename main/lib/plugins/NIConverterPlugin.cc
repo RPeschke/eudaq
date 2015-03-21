@@ -55,7 +55,7 @@ namespace eudaq {
     virtual int IsSyncWithTLU(eudaq::Event const & ev, const eudaq::Event  & tluEvent) const {
         
 
-
+#ifdef TWOTLUSETUP
       if (m_offset>0)
       {
         --m_offset;
@@ -85,7 +85,11 @@ namespace eudaq {
       //Release
       return m_TimestampComparer.compareDUT2TLU(ev, tluEvent);
 #endif // _DEBUG
-
+#endif
+      auto trigID = GetTriggerID(ev);
+      auto evNR = ev.GetEventNumber();
+     // std::cout << "event nr: " << evNR << "  trig nr: " << trigID << std::endl;
+      return compareTLU2DUT(tluEvent.GetEventNumber(), trigID);
 
     }
     virtual void Initialize(const Event & bore, const Configuration & c) {
