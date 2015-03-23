@@ -426,7 +426,9 @@ namespace eudaq{
           m_firstConfig = false;
         }
       }
-      det->AddEvent(m_outPutQueue.front());
+      else{
+        det->AddEvent(m_outPutQueue.front());
+      }
       m_outPutQueue.pop();
     
     }
