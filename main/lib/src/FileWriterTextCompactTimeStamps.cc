@@ -73,6 +73,10 @@ namespace eudaq {
 			  auto ts = devent.GetEventPtr(i)->GetTimestamp();
 			  m_start_time.push_back(ts);
         *m_out << Event::id2str(devent.GetEventPtr(i)->get_id()) << "_" << devent.GetEventPtr(i)->GetSubType() << "; ";
+        if (PluginManager::isTLU(*devent.GetEvent(i)))
+        {
+          *m_out << "TLU_trigger; ";
+        }
 		  }
       *m_out << '\n';
 		  firstEvent=false;
@@ -82,7 +86,10 @@ namespace eudaq {
 	  {
 		  auto ts = devent.GetEventPtr(i)->GetTimestamp();
 		  *m_out << ts - m_start_time.at(i) << "; " ;
-
+      if (PluginManager::isTLU(*devent.GetEvent(i)))
+      {
+        *m_out << devent.GetEvent(i)->GetTag("trigger", 0) << "; ";
+      }
 	  }
 	  *m_out << '\n';
 
