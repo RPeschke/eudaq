@@ -24,7 +24,7 @@ using namespace UTIL;
 #define NOTIMESTAMPSET (uint64_t)-1
 #define NOTIMEDURATIONSET 0
 
-#define PARAMETER_NOT_SET (uint64_t)-1
+#define PARAMETER_NOT_SET -1000000000000
 
 //////////////////////////////////////////////////////////////////////////
 // Compare Time stamps
@@ -140,23 +140,26 @@ namespace eudaq{
   }
 
   class CompareTimeStampsWithJitter{
+    using timeStamp_t = int64_t;
   public:
 
 
     typedef bool(*isSyncEvent_F)(eudaq::Event const & ev);
 
-    CompareTimeStampsWithJitter(uint64_t jitter_denominator, uint64_t jitter_offset, uint64_t default_delta_timestamps, uint64_t DUT_active_time, isSyncEvent_F isSyncEvent);
+    CompareTimeStampsWithJitter(timeStamp_t jitter_denominator, timeStamp_t jitter_offset, timeStamp_t default_delta_timestamps, timeStamp_t DUT_active_time, isSyncEvent_F isSyncEvent);
 
     CompareTimeStampsWithJitter() = default;
 
 
-    void set_Jitter_denominator(uint64_t jitterDenom);
-    void set_Jitter_offset(uint64_t jitter_offset);
 
-    void set_default_delta_timestamp(uint64_t deltaTimestamp);
+    void set_Jitter_offset(timeStamp_t jitter_offset);
 
-    void set_DUT_active_time(uint64_t DUT_active_time);
+    void set_default_delta_timestamp(timeStamp_t deltaTimestamp);
 
+    void set_DUT_active_time(timeStamp_t DUT_active_time);
+    void set_Clock_diff(timeStamp_t clock_diff){ m_Clock_diff = clock_diff; }
+    timeStamp_t get_DUT_begin() const { return m_dut_begin; }
+    double get_CLock_diff() const { return m_Clock_diff; }
   template <typename T>
     void set_isSyncEventFunction(T isSyncEvent){
     f_isSync_event=isSyncEvent;
@@ -169,10 +172,14 @@ namespace eudaq{
 
     int compareDUT2TLU_sync_event(eudaq::Event const & ev, const eudaq::Event  & tluEvent)const;
 
+    timeStamp_t calc_Corrected_DUT_TIME(timeStamp_t DUT_time) const;
+    timeStamp_t calc_Corrected_TLU_TIME_sync_event(timeStamp_t TLU_time) const;
+    timeStamp_t calc_Corrected_TLU_TIME_normal_event(timeStamp_t TLU_time) const;
   private:
 
-    mutable uint64_t m_dut_begin = 0, m_tlu_begin = 0, m_last_tlu = 0;
-    uint64_t m_jitter_denominator = PARAMETER_NOT_SET, m_jitter_offset = PARAMETER_NOT_SET, m_default_delta_timestamps = PARAMETER_NOT_SET, m_DUT_active_time = PARAMETER_NOT_SET;
+    mutable  timeStamp_t m_dut_begin = 0, m_tlu_begin = 0, m_last_tlu = 0, m_dut_begin_const = 0, m_event = 1;
+    mutable double m_Clock_diff = 0;
+    timeStamp_t m_jitter_offset = PARAMETER_NOT_SET, m_default_delta_timestamps = PARAMETER_NOT_SET, m_DUT_active_time = PARAMETER_NOT_SET;
 //    bool m_useSyncEvents = false;
     std::function<bool(eudaq::Event const &)> f_isSync_event;
     mutable bool firstEvent = true;
