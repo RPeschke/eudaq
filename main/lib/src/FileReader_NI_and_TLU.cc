@@ -38,7 +38,7 @@ namespace eudaq {
     std::shared_ptr<eudaq::Event> m_ev;
     unsigned m_ver;
     size_t m_subevent_counter = 0;
-
+    size_t m_tlu = (size_t) -1, m_ni = (size_t) -1;
   };
 
 
@@ -50,12 +50,20 @@ namespace eudaq {
     m_ev(EventFactory::Create(m_des)),
     m_ver(1)
   {
-
+ 
     DetectorEvent* det = dynamic_cast<DetectorEvent*> (m_ev.get());
+    for (size_t i = 0; i < det->NumEvents(); ++i){
+      if (PluginManager::isTLU(*det->GetEvent(i))){
+        m_tlu = i;
 
-    det->GetEventPtr(1)->setTimeStamp(det->GetEventPtr(0)->GetTimestamp());
+      }
+      if (det->GetEvent(i)->GetSubType().compare("NI") == 0){
+        m_ni = i;
+      }
+    }
+    det->GetEventPtr(m_ni)->setTimeStamp(det->GetEventPtr(m_tlu)->GetTimestamp());
 
-     m_ev = det->GetEventPtr(1);
+     m_ev = det->GetEventPtr(m_ni);
   }
 
   FileReaderTLU_NI::FileReaderTLU_NI(Parameter_ref param) :FileReaderTLU_NI(param[File_name], param[Input_pattern])
@@ -77,10 +85,10 @@ namespace eudaq {
 
     if (ev){
       DetectorEvent* det = dynamic_cast<DetectorEvent*> (ev.get());
-      auto buf = det->GetEventPtr(1)->GetTimestamp();
-      det->GetEventPtr(1)->setTimeStamp(det->GetEventPtr(0)->GetTimestamp());
-      det->GetEventPtr(1)->pushTimeStamp(buf);
-      m_ev = det->GetEventPtr(1);
+      auto buf = det->GetEventPtr(m_ni)->GetTimestamp();
+      det->GetEventPtr(m_ni)->setTimeStamp(det->GetEventPtr(m_tlu)->GetTimestamp());
+      det->GetEventPtr(m_ni)->pushTimeStamp(buf);
+      m_ev = det->GetEventPtr(m_ni);
     }
 #ifdef _DEBUG
     else{
