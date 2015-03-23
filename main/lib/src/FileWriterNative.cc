@@ -1,6 +1,7 @@
 #include "eudaq/FileNamer.hh"
 #include "eudaq/FileWriter.hh"
 #include "eudaq/FileSerializer.hh"
+#include "eudaq/PluginManager.hh"
 //#include "eudaq/Logger.hh"
 
 namespace eudaq {
@@ -31,11 +32,24 @@ namespace eudaq {
   }
 
   void FileWriterNative::WriteEvent(const DetectorEvent & ev) {
+    if (ev.IsBORE()) {
+      eudaq::PluginManager::Initialize(ev);
+    }
     if (!m_ser) EUDAQ_THROW("FileWriterNative: Attempt to write unopened file");
     m_ser->write(ev);
     m_ser->Flush();
   }
   void FileWriterNative::WriteBaseEvent(const Event& ev){
+    
+    if (ev.IsBORE()) {
+      auto det = dynamic_cast<const DetectorEvent*>(&ev);
+      if (det)
+      {
+        eudaq::PluginManager::Initialize(*det);
+
+      }
+
+    }
     if (!m_ser) EUDAQ_THROW("FileWriterNative: Attempt to write unopened file");
     m_ser->write(ev);
     m_ser->Flush();
