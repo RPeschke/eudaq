@@ -40,10 +40,23 @@ namespace eudaq {
 
   void Event::Serialize(Serializer & ser) const {
     //std::cout << "Serialize id = " << std::hex << get_id() << std::endl;
+
+
     ser.write(get_id());
+#ifdef __FORCE_EUDAQ1_FILES___
+    auto dummy = m_flags & ~Event::FLAG_EUDAQ2;
+    ser.write(m_flags & ~Event::FLAG_EUDAQ2);
+#else
     ser.write(m_flags);
+#endif
+    
     ser.write(m_runnumber);
     ser.write(m_eventnumber);
+#ifdef __FORCE_EUDAQ1_FILES___
+
+    ser.write(m_timestamp.at(0));
+#else
+
     if (IsEUDAQ2())
     {
       ser.write(m_timestamp);
@@ -52,7 +65,7 @@ namespace eudaq {
     {
       ser.write(m_timestamp.at(0));
     }
-    
+#endif
     ser.write(m_tags);
   }
 
