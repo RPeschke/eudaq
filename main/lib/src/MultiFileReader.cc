@@ -129,9 +129,9 @@ const  Event &  multiFileReader::GetEvent() const
  multiFileReader::multiFileReader(baseFileReader::Parameter_ref parameterList) :baseFileReader(parameterList)
  {
 
-   if (userParameterSize()>0)
+   if (parameterList.Get("sync","").size()>1 )
    {
-     m_sync = EventSyncFactory::create(UserParameter(0),"");
+     m_sync = EventSyncFactory::create(parameterList.Get("sync",""),"");
    }
    else
    {
