@@ -4,7 +4,7 @@
 #include <memory>
 #include "Platform.hh"
 #include "eudaq/factory.hh"
-
+#include "eudaq/Configuration.hh"
 
 #define RegisterFileReader(derivedClass,ID) registerClass(eudaq::baseFileReader,derivedClass,ID)
 
@@ -14,20 +14,19 @@ namespace eudaq{
   class OptionParser;
   class DLLEXPORT baseFileReader{
   public:
-    enum parameterName{
-      File_name ,
-      Input_pattern,
-      first_users_index
-    };
+
+    static const char* getKeyFileName();
+    static const char* getKeyInputPattern();
+    static const char* getKeySectionName();
     using MainType = std::string;
-    using Parameter_t = std::vector<std::string>;
+    using Parameter_t = eudaq::Configuration;
     using Parameter_ref = const Parameter_t&;
     baseFileReader(Parameter_ref fileName);
     baseFileReader(const std::string&  fileName);
     std::string Filename()const;
     std::string InputPattern() const;
-    std::string UserParameter(size_t ID)const;
-    size_t userParameterSize() const;
+    Parameter_ref getConfiguration()const;
+    Parameter_t&  getConfiguration();
     virtual unsigned RunNumber() const = 0;
     virtual bool NextEvent(size_t skip = 0) = 0;
     virtual std::shared_ptr<eudaq::Event> GetNextEvent() = 0;
@@ -36,7 +35,7 @@ namespace eudaq{
     virtual void Interrupt();
 
   private:
-    Parameter_t m_fileName;
+    Parameter_t m_config;
     
 
   };

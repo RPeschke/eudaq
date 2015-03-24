@@ -67,7 +67,7 @@ namespace eudaq {
 
   }
 
-  FileReader_primarTLU::FileReader_primarTLU(Parameter_ref param) :FileReader_primarTLU(param[File_name], param[Input_pattern])
+  FileReader_primarTLU::FileReader_primarTLU(Parameter_ref param) :FileReader_primarTLU(param.Get(getKeyFileName(),""), param.Get(getKeyInputPattern(),""))
   {
 
   }

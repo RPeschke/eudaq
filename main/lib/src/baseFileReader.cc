@@ -10,19 +10,20 @@ namespace eudaq {
 
 
 
-  baseFileReader::baseFileReader(Parameter_ref fileName) :m_fileName(fileName)
+  baseFileReader::baseFileReader(Parameter_ref fileName) :
+    m_fileName(fileName)
   {
     
   }
 
   baseFileReader::baseFileReader(const std::string& fileName)  
   {
-    m_fileName.push_back(fileName);
+    m_fileName.Set(getKeyFileName(), fileName);
   }
 
   std::string baseFileReader::Filename() const
   {
-    return m_fileName[File_name];
+    return m_fileName.Get(getKeyFileName(), "");
   }
 
   void baseFileReader::Interrupt()
@@ -32,18 +33,35 @@ namespace eudaq {
 
   std::string baseFileReader::InputPattern() const
   {
-    return m_fileName[Input_pattern];
+    return m_fileName.Get(getKeyInputPattern(),"");
   }
 
-  std::string baseFileReader::UserParameter(size_t ID) const
+  const char* baseFileReader::getKeyFileName()
   {
-    return m_fileName.at(ID + first_users_index);
+    return "InputFileName__";
   }
 
-  size_t baseFileReader::userParameterSize() const
+  const char* baseFileReader::getKeyInputPattern()
   {
-    return m_fileName.size() - first_users_index;
+    return "InputPattern__";
   }
+
+  const char* baseFileReader::getKeySectionName()
+  {
+    return "FileReaderConfig";
+  }
+
+  baseFileReader::Parameter_ref baseFileReader::getParameter() const
+  {
+    return m_fileName;
+  }
+
+  baseFileReader::Parameter_t& baseFileReader::getParameter()
+  {
+    return m_fileName;
+  }
+
+
 
 
   registerBaseClassDef(baseFileReader);
@@ -55,7 +73,7 @@ namespace eudaq {
     std::pair<std::string, std::string> ret;
     
 
-    auto index_raute = name.find_last_of('#');
+    auto index_raute = name.find_last_of('$');
     if (index_raute == std::string::npos)
     {
       // no explicit type definition 
@@ -103,8 +121,9 @@ namespace eudaq {
   std::unique_ptr<baseFileReader> FileReaderFactory::create(const std::string & filename, const std::string & filepattern)
   {
     // return nullptr;
-    baseFileReader::Parameter_t m;
-    std::string type;
+   
+    std::string type,inFileName,inFilePattern;
+
 
     if (filename.find_first_not_of("0123456789") == std::string::npos) {
       // filename is run number. using default file reader
@@ -112,24 +131,34 @@ namespace eudaq {
       auto splitted_pattern = split_name_identifier(filepattern);
       type = splitted_pattern.first;
       auto shorted_file_pattern = splitted_pattern.second;
-      m.push_back(filename);
-      m.push_back(shorted_file_pattern);
+      inFileName =filename;
+      inFilePattern=shorted_file_pattern;
     }
     else
     {
       auto splitted_filename = split_name_identifier(filename);
       type = splitted_filename.first;
       auto shorted_file_name = splitted_filename.second;
-      m.push_back(splitted_filename.second);
-      m.push_back(filepattern);
+      inFileName = splitted_filename.second;
+      inFilePattern =filepattern;
     }
 
     auto params = split(type, "@");
-    if (params.size() > 1)
+    type = params[0];
+    params.erase(params.begin());
+    
+    std::stringstream ss;
+    ss <<"["<< baseFileReader::getKeySectionName() << "] \n ";
+    for (auto& e:params)
     {
-      m.insert(m.end(), params.begin() + 1, params.end());
-      type = params.at(0);
+      ss << e;
+      ss << '\n';
     }
+    ss << baseFileReader::getKeyFileName() << " = " << inFileName << " \n ";
+    ss << baseFileReader::getKeyInputPattern() << " = " << inFilePattern << " \n ";
+   
+   // std::cout << ss << std::endl;
+    baseFileReader::Parameter_t m(ss, baseFileReader::getKeySectionName());
     return EUDAQ_Utilities::Factory<baseFileReader>::Create(type, m);
 
 
@@ -159,7 +188,7 @@ namespace eudaq {
           combinedFiles += ',';
           
         }
-        combinedFiles += "#multi";
+        combinedFiles += "$multi";
 
         return eudaq::FileReaderFactory::create(combinedFiles);
     }

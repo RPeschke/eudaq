@@ -98,9 +98,9 @@ namespace eudaq {
 
   }
 
-  FileReaderSCT::FileReaderSCT(Parameter_ref param) :FileReaderSCT(param[File_name], param[Input_pattern])
+  FileReaderSCT::FileReaderSCT(Parameter_ref param) :FileReaderSCT(param.Get(getKeyFileName(), ""), param.Get(getKeyFileName(),""))
   {
-    std::cout << param[2] << std::endl;
+    std::cout << param.Get("offset",(int)-1) << std::endl;
   }
 
   FileReaderSCT::~FileReaderSCT() {

@@ -66,7 +66,7 @@ namespace eudaq {
      m_ev = det->GetEventPtr(m_ni);
   }
 
-  FileReaderTLU_NI::FileReaderTLU_NI(Parameter_ref param) :FileReaderTLU_NI(param[File_name], param[Input_pattern])
+  FileReaderTLU_NI::FileReaderTLU_NI(Parameter_ref param) :FileReaderTLU_NI(param.Get(getKeyFileName(),""), param.Get(getKeyInputPattern(),""))
   {
 
   }
