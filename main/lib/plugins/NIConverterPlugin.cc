@@ -51,9 +51,25 @@ namespace eudaq {
   public:
     virtual ~NIConverterPlugin(){ }
 
+    virtual timeStamp_t GetTimeStamp(const Event& ev, size_t index) const{
+      
+      switch (index)
+      {
+      case 0:
+        return ev.GetTimestamp(0);
+        break;
+      case 1:
+        return m_comparer_no_sync_events.calc_Corrected_DUT_TIME(ev.GetTimestamp(0));
+        break;
+      default:
+        return 0;
+      }
 
+    }
+    virtual size_t GetTimeStamp_size(const Event & ev) const {
+      return 2;
+    }
     virtual int IsSyncWithTLU(eudaq::Event const & ev, const eudaq::Event  & tluEvent) const {
-
 
 #ifndef TWOTLUSETUP
       if (m_offset > 0)
@@ -93,10 +109,10 @@ namespace eudaq {
       {
         m_syncEvent = 0;
       }
-       if (dummy==1&&sync2==Event_IS_Sync)
-       {
-         sync2 = Event_IS_EARLY; //skip sync events
-       }
+//        if (dummy==1&&sync2==Event_IS_Sync)
+//        {
+//          sync2 = Event_IS_EARLY; //skip sync events
+//        }
       //  std::cout << " sync: " << sync << std::endl;
       if (sync2 == Event_IS_Sync)
       {
