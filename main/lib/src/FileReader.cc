@@ -70,37 +70,7 @@ namespace eudaq {
 
 
 
-//   std::shared_ptr<eudaq::Event> FileReader::GetNextROF()
-//   {
-// 
-// 
-//     if (GetEvent().IsPacket())
-//     {
-//       if (m_subevent_counter < PluginManager::GetNumberOfROF(GetEvent()))
-//       {
-//         return PluginManager::ExtractEventN(getEventPtr(), m_subevent_counter++);
-//       }
-//       else
-//       {
-//         m_subevent_counter = 0;
-//         if (NextEvent())
-//         {
-//           return GetNextROF();
-//         }
-//         else{
-//           return nullptr;
-//         }
-// 
-//       }
-// 
-//     }
-//     else
-//     {
-// 
-//       return getEventPtr();
-//     }
-//     return nullptr;
-//   }
+
 
   RegisterFileReader(FileReader, "raw");
 

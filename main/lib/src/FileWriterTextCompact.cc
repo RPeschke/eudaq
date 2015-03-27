@@ -17,16 +17,15 @@ namespace eudaq {
     virtual ~FileWriterTextCompact();
   private:
     //  std::FILE * m_file;
-    std::ofstream *m_out;
-    bool firstEvent;
-    uint64_t DUT_start_time,TLU_start_Time;
+    std::ofstream *m_out=nullptr;
+    bool firstEvent=false;
+    uint64_t DUT_start_time = 0,TLU_start_Time=0;
   };
 
   
   registerFileWriter(FileWriterTextCompact, "textc");
   
   FileWriterTextCompact::FileWriterTextCompact(const std::string & param)
-    :firstEvent(false), m_out(nullptr), DUT_start_time(0)
   {
     std::cout << "EUDAQ_DEBUG: This is FileWriterTextCompact::FileWriterTextCompact(" << param << ")" << std::endl;
   }
@@ -37,6 +36,7 @@ namespace eudaq {
     if (m_out)
     {
       m_out->close();
+      delete m_out;
       m_out = nullptr;
 
     }
@@ -104,7 +104,7 @@ namespace eudaq {
   FileWriterTextCompact::~FileWriterTextCompact() {
     if (m_out) {
       m_out->close();
-
+      delete m_out;
       m_out = nullptr;
     }
   }

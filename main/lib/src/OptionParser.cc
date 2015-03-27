@@ -4,7 +4,6 @@
 #include <ostream>
 #include <sstream>
 #include <fstream>
-#include <memory>
 namespace eudaq {
 
   inline std::ostream & operator << (std::ostream & os, const OptionBase & opt) {

@@ -109,7 +109,7 @@ namespace eudaq {
   FileWriterTextTimeStamps::~FileWriterTextTimeStamps() {
     if (m_out) {
 		m_out->close();
-      
+      delete m_out;
       m_out=nullptr;
     }
   }

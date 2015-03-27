@@ -424,7 +424,6 @@ namespace eudaq {
     Time t_start = Time::Current(); /*t_curr = t_start,*/
 #endif
     Time t_remain = Time(0, timeout);
-	
     bool done = false;
     do {
       fd_set tempset;
@@ -477,7 +476,6 @@ namespace eudaq {
             } while (result == EUDAQ_ERROR_NO_DATA_RECEIVED && LastSockError() == EUDAQ_ERROR_Interrupted_function_call);
 
             if (result > 0) {
-				
               buffer[result] = 0;
               ConnectionInfoTCP & m = GetInfo(j);
               m.append(result, buffer);
@@ -500,9 +498,6 @@ namespace eudaq {
 			}
             else if (result == EUDAQ_ERROR_NO_DATA_RECEIVED ){
               debug_transport( "Server #%d, return=%d, WSAError:%d (%s) No Data Received.\n", j, result, errno, strerror(errno));
-			  
-			  
-
             }
 	    else {
 	      debug_transport( "Server #%d, return=%d, WSAError:%d (%s) \n", j, result, errno, strerror(errno));
@@ -587,7 +582,6 @@ namespace eudaq {
       Time t_start = Time::Current(); /*t_curr = t_start,*/
 #endif
       Time t_remain = Time(0, timeout);
-	
       bool done = false;
       do {
         fd_set tempset;
@@ -620,7 +614,6 @@ namespace eudaq {
 		  }
           else if (result == EUDAQ_ERROR_NO_DATA_RECEIVED) {
             debug_transport("Client, return=%d, WSAError:%d (%s) Time Out\n",result,errno,strerror(errno));
-		  
           }
           else if (result == 0) {
             debug_transport("Client, return=%d, WSAError:%d (%s) Disconnect (?)\n",result,errno,strerror(errno));
@@ -628,7 +621,6 @@ namespace eudaq {
             EUDAQ_THROW_NOLOG(LastSockErrorString("SocketClient Error (" + to_string(LastSockError()) + ")"));
           }
           else if (result > 0){
-			
             m_buf.append(result, buffer);
             while (m_buf.havepacket()) {
               m_events.push(TransportEvent(TransportEvent::RECEIVE, m_buf, m_buf.getpacket()));

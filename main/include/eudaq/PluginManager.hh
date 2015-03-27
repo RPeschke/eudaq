@@ -21,7 +21,7 @@ namespace eudaq {
 
     public:
       typedef DataConverterPlugin::t_eventid t_eventid;
-      using timeStamp_t = int64_t;
+      using timeStamp_t = DataConverterPlugin::timeStamp_t;
       /** Register a new plugin to the plugin manager.
        */
       void RegisterPlugin(DataConverterPlugin * plugin);
