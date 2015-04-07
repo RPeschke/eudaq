@@ -1,17 +1,33 @@
 option(USE_ROOT "Compiling main library using ROOT" OFF)
 if (USE_ROOT)
    FIND_PACKAGE( ROOT REQUIRED )
-   if (ROOT_FOUND)
-     INCLUDE_DIRECTORIES( ${ROOT_INCLUDE_DIR} )
-     SET(ADDITIONAL_LIBRARIES ${ADDITIONAL_LIBRARIES}  ${ROOT_LIBRARIES})
-     ADD_DEFINITIONS(-DROOT_FOUND)
-   endif (ROOT_FOUND)
+else (USE_ROOT)
+   FIND_PACKAGE( ROOT REQUIRED )
 endif (USE_ROOT)
+
+if (ROOT_FOUND)
+  INCLUDE_DIRECTORIES( ${ROOT_INCLUDE_DIR} )
+  SET(ADDITIONAL_LIBRARIES ${ADDITIONAL_LIBRARIES}  ${ROOT_LIBRARIES})
+  ADD_DEFINITIONS(-DROOT_FOUND)
+endif (ROOT_FOUND)
 
 AUX_SOURCE_DIRECTORY( src library_sources )
 AUX_SOURCE_DIRECTORY( plugins plugins_sources )
 
 list(REMOVE_ITEM plugins_sources plugins/GenericConverterPlugin.cc)
+
+FIND_PACKAGE(PXAR)
+IF(PXARCORE_FOUND)
+  INCLUDE_DIRECTORIES(${PXARCORE_INCLUDE_DIRS})
+  SET(ADDITIONAL_LIBRARIES ${ADDITIONAL_LIBRARIES}  ${PXARCORE_LIBRARIES})
+ELSE(PXARCORE_FOUND)
+  MESSAGE(STATUS "NOT building converter plugin for CMSPixel.")
+  list(REMOVE_ITEM plugins_sources plugins/CMSPixelDecoder.cc)
+  list(REMOVE_ITEM plugins_sources plugins/CMSPixelConverterPlugin.cc)
+  list(REMOVE_ITEM plugins_sources plugins/CMSPixelTRPConverterPlugin.cc)
+  list(REMOVE_ITEM plugins_sources plugins/CMSPixelREFConverterPlugin.cc)
+  list(REMOVE_ITEM plugins_sources plugins/CMSPixelDUTConverterPlugin.cc)
+ENDIF(PXARCORE_FOUND)
 
 if (PROTOBUF_FOUND AND GEN_proto)
     FILE(MAKE_DIRECTORY ${CMAKE_BINARY_DIR}/pb_gen )
@@ -42,7 +58,6 @@ SOURCE_GROUP(Event .*Event.*cc)
 SOURCE_GROUP(Utilities FILES src\\Utils.cc src\\Time.cc src\\Mutex.cc src\\EudaqThread.cc)
 
 target_link_libraries( ${PROJECT_NAME} ${EUDAQ_THREADS_LIB} ${ADDITIONAL_LIBRARIES})
-
 
 INSTALL(TARGETS ${PROJECT_NAME}
   RUNTIME DESTINATION bin
