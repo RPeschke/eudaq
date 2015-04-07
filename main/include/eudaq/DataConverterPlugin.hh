@@ -11,7 +11,6 @@
 #  include "IMPL/LCCollectionVec.h"
 #  include "IMPL/LCGenericObjectImpl.h"
 #  include "UTIL/CellIDEncoder.h"
-#include "EUTelTrackerDataInterfacerImpl.h"
 #  include "lcio.h"
 using namespace IMPL;
 using namespace UTIL;

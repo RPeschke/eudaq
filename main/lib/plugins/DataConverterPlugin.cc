@@ -3,6 +3,11 @@
 
 #include <iostream>
 
+
+#ifdef  USE_LCIO
+#include "EUTelTrackerDataInterfacerImpl.h"
+#endif //  USE_LCIO
+
 namespace eudaq {
 
   unsigned DataConverterPlugin::GetTriggerID(eudaq::Event const &) const {
