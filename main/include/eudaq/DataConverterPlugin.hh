@@ -11,6 +11,7 @@
 #  include "IMPL/LCCollectionVec.h"
 #  include "IMPL/LCGenericObjectImpl.h"
 #  include "UTIL/CellIDEncoder.h"
+#include "EUTelTrackerDataInterfacerImpl.h"
 #  include "lcio.h"
 using namespace IMPL;
 using namespace UTIL;
@@ -39,6 +40,12 @@ namespace lcio { using namespace EVENT; }
 #include <algorithm>
 
 namespace eudaq{
+
+#ifdef USE_LCIO
+
+  std::shared_ptr<eutelescope::EUTelTrackerDataInterfacerImpl<eutelescope::EUTelGenericSparsePixel>> ConverPlaneToLCIOGenericPixel(StandardPlane & plane, lcio::TrackerDataImpl& zsFrame);
+#endif // USE_LCIO
+
 
 	  inline int compareTLU2DUT(unsigned TLU_Trigger_Number, unsigned DUT_Trigger_number){
 	  if (DUT_Trigger_number==TLU_Trigger_Number)
