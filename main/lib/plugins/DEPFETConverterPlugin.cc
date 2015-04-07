@@ -402,8 +402,8 @@ namespace eudaq {
     // If we get here it must be a data event
 
     // prepare the collections for the rawdata and the zs ones
-    std::auto_ptr< lcio::LCCollectionVec > rawDataCollection ( new lcio::LCCollectionVec (lcio::LCIO::TRACKERRAWDATA()) ) ;
-    std::auto_ptr< lcio::LCCollectionVec > zsDataCollection ( new lcio::LCCollectionVec (lcio::LCIO::TRACKERDATA()) ) ;
+    std::auto_ptr< lcio::LCCollectionVec > rawDataCollection ( new lcio::LCCollectionVec (lcio::LCIO::TRACKERRAWDATA) ) ;
+    std::auto_ptr< lcio::LCCollectionVec > zsDataCollection ( new lcio::LCCollectionVec (lcio::LCIO::TRACKERDATA) ) ;
 
     // set the proper cell encoder
     CellIDEncoder< TrackerRawDataImpl > rawDataEncoder ( eutelescope::EUTELESCOPE::MATRIXDEFAULTENCODING, rawDataCollection.get() );
@@ -505,7 +505,7 @@ namespace eudaq {
         depfetSetupCollection = static_cast< LCCollectionVec* > ( result.getCollection( "depfetSetup" ) ) ;
         depfetSetupExists = true;
       } catch (...) {
-        depfetSetupCollection = new LCCollectionVec( lcio::LCIO::LCGENERICOBJECT ());
+        depfetSetupCollection = new LCCollectionVec( lcio::LCIO::LCGENERICOBJECT );
       }
 
       for ( size_t iPlane = 0 ; iPlane < setupDescription.size() ; ++iPlane ) {

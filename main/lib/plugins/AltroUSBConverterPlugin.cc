@@ -180,7 +180,7 @@ namespace eudaq
     //try to cast the eudaq event to RawDataEvent
     eudaq::RawDataEvent const & rawdataevent = dynamic_cast<eudaq::RawDataEvent const &>(eudaqevent);
 
-    lcio::LCCollectionVec * altrocollection = new lcio::LCCollectionVec(lcio::LCIO::TRACKERRAWDATA());
+    lcio::LCCollectionVec * altrocollection = new lcio::LCCollectionVec(lcio::LCIO::TRACKERRAWDATA);
 
     // set the flags that cellID1 should be stored
     lcio::LCFlagImpl trkFlag(0) ;

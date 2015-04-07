@@ -252,7 +252,7 @@ namespace eudaq {
           zsDataCollection = static_cast< LCCollectionVec* > ( lcioEvent.getCollection( "zsdata_apix" ) );
           zsDataCollectionExists = true;
         } catch ( lcio::DataNotAvailableException& e ) {
-          zsDataCollection = new LCCollectionVec( lcio::LCIO::TRACKERDATA() );
+          zsDataCollection = new LCCollectionVec( lcio::LCIO::TRACKERDATA );
         }
 
         //	create cell encoders to set sensorID and pixel type
@@ -327,7 +327,7 @@ namespace eudaq {
             apixSetupCollection = static_cast< LCCollectionVec* > ( lcioEvent.getCollection( "apix_setup" ) ) ;
             apixSetupExists = true;
           } catch (...) {
-            apixSetupCollection = new LCCollectionVec( lcio::LCIO::LCGENERICOBJECT() );
+            apixSetupCollection = new LCCollectionVec( lcio::LCIO::LCGENERICOBJECT );
           }
 
           for ( size_t iPlane = 0 ; iPlane < setupDescription.size() ; ++iPlane ) {

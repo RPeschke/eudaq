@@ -523,21 +523,21 @@ namespace eudaq {
       rawDataCollection = static_cast< LCCollectionVec* > ( result.getCollection( "rawdata" ) );
       rawDataCollectionExists = true;
     } catch ( lcio::DataNotAvailableException& e ) {
-      rawDataCollection = new LCCollectionVec( lcio::LCIO::TRACKERRAWDATA() );
+      rawDataCollection = new LCCollectionVec( lcio::LCIO::TRACKERRAWDATA );
     }
 
     try {
       zsDataCollection = static_cast< LCCollectionVec* > ( result.getCollection( "zsdata" ) );
       zsDataCollectionExists = true;
     } catch ( lcio::DataNotAvailableException& e ) {
-      zsDataCollection = new LCCollectionVec( lcio::LCIO::TRACKERDATA() );
+      zsDataCollection = new LCCollectionVec( lcio::LCIO::TRACKERDATA );
     }
 
     try {
       zs2DataCollection = static_cast< LCCollectionVec* > ( result.getCollection( "zsdata_m26" ) );
       zs2DataCollectionExists = true;
     } catch ( lcio::DataNotAvailableException& e ) {
-      zs2DataCollection = new LCCollectionVec( lcio::LCIO::TRACKERDATA() );
+      zs2DataCollection = new LCCollectionVec( lcio::LCIO::TRACKERDATA );
     }
 
     // set the proper cell encoder
@@ -752,7 +752,7 @@ namespace eudaq {
         eudrbSetupCollection = static_cast< LCCollectionVec* > ( result.getCollection( "eudrbSetup" ) ) ;
         eudrbSetupExists = true;
       } catch ( lcio::DataNotAvailableException& e) {
-        eudrbSetupCollection = new LCCollectionVec( lcio::LCIO::LCGENERICOBJECT() );
+        eudrbSetupCollection = new LCCollectionVec( lcio::LCIO::LCGENERICOBJECT );
       }
 
       for ( size_t iPlane = 0 ; iPlane < setupDescription.size() ; ++iPlane ) {

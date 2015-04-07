@@ -90,7 +90,7 @@ namespace eudaq {
       result.parameters().setValue( eutelescope::EUTELESCOPE::EVENTTYPE, eutelescope::kDE );
 
       // prepare the collections for the rawdata and the zs ones
-      std::auto_ptr< lcio::LCCollectionVec > rawDataCollection ( new lcio::LCCollectionVec (lcio::LCIO::TRACKERRAWDATA()) ) ;
+      std::auto_ptr< lcio::LCCollectionVec > rawDataCollection ( new lcio::LCCollectionVec (lcio::LCIO::TRACKERRAWDATA) ) ;
 
       // set the proper cell encoder
       CellIDEncoder< TrackerRawDataImpl > rawDataEncoder ( eutelescope::EUTELESCOPE::MATRIXDEFAULTENCODING, rawDataCollection.get() );
@@ -178,7 +178,7 @@ namespace eudaq {
           fortisSetupCollection = static_cast< LCCollectionVec* > ( result.getCollection( "FortisSetup" ) ) ;
           fortisSetupExists = true;
         } catch (...) {
-          fortisSetupCollection = new LCCollectionVec( lcio::LCIO::LCGENERICOBJECT() );
+          fortisSetupCollection = new LCCollectionVec( lcio::LCIO::LCGENERICOBJECT );
         }
 
         for ( size_t iPlane = 0 ; iPlane < setupDescription.size() ; ++iPlane ) {

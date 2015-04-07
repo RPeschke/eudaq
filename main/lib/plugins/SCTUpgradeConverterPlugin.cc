@@ -66,7 +66,7 @@ namespace eudaq {
     }
     catch (lcio::DataNotAvailableException& e)
     {
-      *zsDataCollection = new LCCollectionVec(lcio::LCIO::TRACKERDATA());
+      *zsDataCollection = new LCCollectionVec(lcio::LCIO::TRACKERDATA);
     }
 
     return zsDataCollectionExists;
