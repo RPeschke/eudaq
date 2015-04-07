@@ -43,7 +43,7 @@ namespace eudaq{
 
 #ifdef USE_LCIO
 
-  std::shared_ptr<eutelescope::EUTelTrackerDataInterfacerImpl<eutelescope::EUTelGenericSparsePixel>> ConverPlaneToLCIOGenericPixel(StandardPlane & plane, lcio::TrackerDataImpl& zsFrame);
+  void ConvertPlaneToLCIOGenericPixel(StandardPlane & plane, lcio::TrackerDataImpl& zsFrame);
 #endif // USE_LCIO
 
 

@@ -23,22 +23,22 @@ namespace eudaq {
     PluginManager::GetInstance().RegisterPlugin(this);
   }
 
-  std::shared_ptr<eutelescope::EUTelTrackerDataInterfacerImpl<eutelescope::EUTelGenericSparsePixel>> ConverPlaneToLCIOGenericPixel(StandardPlane & plane, lcio::TrackerDataImpl& zsFrame)
+  void ConvertPlaneToLCIOGenericPixel(StandardPlane & plane, lcio::TrackerDataImpl& zsFrame)
   {
-    // this is the structure that will host the sparse pixel
-    auto sparseFrame = std::make_shared<eutelescope::EUTelTrackerDataInterfacerImpl<eutelescope::EUTelGenericSparsePixel>>(&zsFrame);
+     // helper object to fill the TrakerDater object 
+    auto sparseFrame =eutelescope::EUTelTrackerDataInterfacerImpl<eutelescope::EUTelGenericSparsePixel>(&zsFrame);
 
 #ifdef _DEBUG
 
     eutelescope::EUTelGenericSparsePixel thisHit(0, 0, 0, 0); //empty pixel so that the collection is never empty. LCIO crashes in debug mode when the collection is empty 
-    sparseFrame->addSparsePixel(&thisHit);
+    sparseFrame.addSparsePixel(&thisHit);
 #endif // _DEBUG
 
     for (size_t iPixel = 0; iPixel < plane.HitPixels(); ++iPixel) {
       eutelescope::EUTelGenericSparsePixel thisHit1(plane.GetX(iPixel), plane.GetY(iPixel), plane.GetPixel(iPixel), 0);
-      sparseFrame->addSparsePixel(&thisHit1);
+      sparseFrame.addSparsePixel(&thisHit1);
     }
-    return sparseFrame;
+  
   }
 
 }//namespace eudaq

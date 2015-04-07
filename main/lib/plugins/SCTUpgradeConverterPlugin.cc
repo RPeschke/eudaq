@@ -145,6 +145,8 @@ namespace eudaq {
   // The event type for which this converter plugin will be registered
   // Modify this to match your actual event type (from the Producer)
   static const char* EVENT_TYPE = "SCTupgrade";
+  static const char* LCIO_collection_name= "zsdata_strip";
+
 
   // Declare a new class that inherits from DataConverterPlugin
   class SCTupgradeConverterPlugin : public DataConverterPlugin {
@@ -283,7 +285,7 @@ namespace eudaq {
       // introduction of the BUI. Now all these parameters shouldn't be
       // used anymore but they are left here for backward compatibility.
 
-      runHeader.setEUDRBMode("ZS2");
+      runHeader.setEUDRBMode("ZS");
       runHeader.setEUDRBDet("SCT");
       runHeader.setNoOfDetector(m_boards);
       std::vector<int> xMin(m_boards, 0), xMax(m_boards, 1280), yMin(m_boards, 0), yMax(m_boards, 4);
@@ -314,17 +316,12 @@ namespace eudaq {
 
 
       LCCollectionVec *zsDataCollection = nullptr;
+      auto zsDataCollectionExists = Collection_createIfNotExist(&zsDataCollection, result, LCIO_collection_name);
 
-
-      auto zsDataCollectionExists = Collection_createIfNotExist(&zsDataCollection, result, "zsdata_strip");
-
-
-
-      auto rawDataEvent = dynamic_cast<const RawDataEvent &> (source);
 
 
       StandardEvent tmp_evt;
-      GetStandardSubEvent(tmp_evt, rawDataEvent);
+      GetStandardSubEvent(tmp_evt,source);
       auto plane = tmp_evt.GetPlane(0);
 
 
@@ -338,8 +335,8 @@ namespace eudaq {
       auto zsFrame = std::unique_ptr<lcio::TrackerDataImpl>(new lcio::TrackerDataImpl());
       zsDataEncoder.setCellID(zsFrame.get());
 
-      // this is the structure that will host the sparse pixel
-      auto sparseFrame = ConverPlaneToLCIOGenericPixel(plane, *zsFrame);
+      
+      ConvertPlaneToLCIOGenericPixel(plane, *zsFrame);
 
       // perfect! Now add the TrackerData to the collection
       zsDataCollection->push_back(zsFrame.release());
@@ -347,7 +344,7 @@ namespace eudaq {
 
       if (!zsDataCollectionExists){
         if (zsDataCollection->size() != 0)
-          result.addCollection(zsDataCollection, "zsdata_strip");
+          result.addCollection(zsDataCollection, LCIO_collection_name);
         else
           delete zsDataCollection; // clean up if not storing the collection here
       }
