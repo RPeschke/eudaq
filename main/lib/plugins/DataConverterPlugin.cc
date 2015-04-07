@@ -33,12 +33,6 @@ namespace eudaq {
      // helper object to fill the TrakerDater object 
     auto sparseFrame =eutelescope::EUTelTrackerDataInterfacerImpl<eutelescope::EUTelGenericSparsePixel>(&zsFrame);
 
-#ifdef _DEBUG
-
-    eutelescope::EUTelGenericSparsePixel thisHit(0, 0, 0, 0); //empty pixel so that the collection is never empty. LCIO crashes in debug mode when the collection is empty 
-    sparseFrame.addSparsePixel(&thisHit);
-#endif // _DEBUG
-
     for (size_t iPixel = 0; iPixel < plane.HitPixels(); ++iPixel) {
       eutelescope::EUTelGenericSparsePixel thisHit1(plane.GetX(iPixel), plane.GetY(iPixel), plane.GetPixel(iPixel), 0);
       sparseFrame.addSparsePixel(&thisHit1);
