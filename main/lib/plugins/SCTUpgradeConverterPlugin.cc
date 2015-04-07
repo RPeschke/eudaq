@@ -133,7 +133,7 @@ namespace eudaq {
     int y_pos = 0;
 
     int width = 1280, height = noModules * 2;
-    plane.SetSizeZS(width, height,0);
+    plane.SetSizeZS(width, height, 0);
 
     for (size_t k = 1; k <= noModules; ++k)
     {
@@ -183,7 +183,7 @@ namespace eudaq {
 
       }
       longPause_time = longPause_time_from_command_line;
-     // std::cout << "longPause_time: " << longPause_time << std::endl;
+      // std::cout << "longPause_time: " << longPause_time << std::endl;
 #ifndef WIN32  //some linux Stuff //$$change
       (void)cnf; // just to suppress a warning about unused parameter cnf
 #endif
@@ -295,8 +295,8 @@ namespace eudaq {
 
 
     bool GetLCIOSubEvent(lcio::LCEvent & result, const Event & source) const {
-      
-      
+
+
       if (source.IsBORE()) {
         if (dbg > 0) std::cout << "SCTUpgradeConverterPlugin::GetLCIOSubEvent BORE " << std::endl;
         // shouldn't happen
@@ -313,16 +313,16 @@ namespace eudaq {
       result.parameters().setValue(eutelescope::EUTELESCOPE::EVENTTYPE, eutelescope::kDE);
 
 
-      LCCollectionVec *zsDataCollection=nullptr;
- 
+      LCCollectionVec *zsDataCollection = nullptr;
 
-      auto zsDataCollectionExists= Collection_createIfNotExist( &zsDataCollection, result, "zsdata_strip");
-      
+
+      auto zsDataCollectionExists = Collection_createIfNotExist(&zsDataCollection, result, "zsdata_strip");
+
 
 
       auto rawDataEvent = dynamic_cast<const RawDataEvent &> (source);
 
-      
+
       StandardEvent tmp_evt;
       GetStandardSubEvent(tmp_evt, rawDataEvent);
       auto plane = tmp_evt.GetPlane(0);
@@ -332,17 +332,17 @@ namespace eudaq {
       auto  zsDataEncoder = CellIDEncoder<TrackerDataImpl>(eutelescope::EUTELESCOPE::ZSDATADEFAULTENCODING, zsDataCollection);
       zsDataEncoder["sensorID"] = plane.ID();
       zsDataEncoder["sparsePixelType"] = eutelescope::kEUTelGenericSparsePixel;
-               
 
-        // prepare a new TrackerData for the ZS data
+
+      // prepare a new TrackerData for the ZS data
       auto zsFrame = std::unique_ptr<lcio::TrackerDataImpl>(new lcio::TrackerDataImpl());
-        zsDataEncoder.setCellID(zsFrame.get());
+      zsDataEncoder.setCellID(zsFrame.get());
 
-        // this is the structure that will host the sparse pixel
-        auto sparseFrame = ConverPlaneToLCIOGenericPixel(plane,*zsFrame);
+      // this is the structure that will host the sparse pixel
+      auto sparseFrame = ConverPlaneToLCIOGenericPixel(plane, *zsFrame);
 
-        // perfect! Now add the TrackerData to the collection
-        zsDataCollection->push_back(zsFrame.release());
+      // perfect! Now add the TrackerData to the collection
+      zsDataCollection->push_back(zsFrame.release());
 
 
       if (!zsDataCollectionExists){
