@@ -52,7 +52,8 @@ CMSPixelProducer::CMSPixelProducer(const std::string & name, const std::string &
     m_usbId(""),
     m_producerName(name),
     m_detector(""),
-    m_event_type("")
+    m_event_type(""),
+    m_alldacs("")
 {
   m_t = new eudaq::Timer;
   if(m_producerName.find("REF") != std::string::npos) {
@@ -120,21 +121,24 @@ void CMSPixelProducer::OnConfigure(const eudaq::Configuration & config) {
     m_pattern_delay = config.Get("patternDelay", 100);
   }
 
-  // Read DACs and trimming from config
-  std::string trimFile;
-  if(config.Get("trimFile", "") != "") { trimFile = config.Get("trimFile", ""); }
-  else { trimFile = config.Get("trimDir", "") + string("/trimParameters.dat"); }
-
-  rocDACs.push_back(GetConfDACs());
-  rocPixels.push_back(GetConfTrimming(trimFile));
-
-  // Set the type of the ROC correctly:
-  m_roctype = config.Get("roctype","psi46digv2");  
-
-  // Read the type of carrier PCB used ("desytb", "desytb-rot"):
-  m_pcbtype = config.Get("pcbtype","desytb");
-
   try {
+    // Read DACs and trimming from config
+    std::string trimFile;
+    if(config.Get("trimFile", "") != "") { trimFile = config.Get("trimFile", ""); }
+    else { trimFile = config.Get("trimDir", "") + string("/trimParameters.dat"); }
+    rocPixels.push_back(GetConfTrimming(trimFile));
+
+    // If a DAC file is provided we read the DAC settings from there:
+    if(config.Get("dacFile", "") != "") { rocDACs.push_back(GetConfDACs(config.Get("dacFile", ""))); }
+    // If no file is provided, we try to use the DACs defined in the config file directly:
+    else { rocDACs.push_back(GetConfDACs()); }
+
+    // Set the type of the ROC correctly:
+    m_roctype = config.Get("roctype","psi46digv2");
+
+    // Read the type of carrier PCB used ("desytb", "desytb-rot"):
+    m_pcbtype = config.Get("pcbtype","desytb");
+
     // create api
     if(m_api != NULL) { delete m_api; }
       
@@ -261,6 +265,9 @@ void CMSPixelProducer::OnStartRun(unsigned runnumber) {
     eudaq::RawDataEvent bore(eudaq::RawDataEvent::BORE(m_event_type, m_run));
     // Set the ROC type for decoding:
     bore.SetTag("ROCTYPE", m_roctype);
+
+    // Store all DAC settings in one BORE tag:
+    bore.SetTag("DACS", m_alldacs);
 
     // Set the PCB mount type for correct coordinate transformation:
     bore.SetTag("PCBTYPE", m_pcbtype);
