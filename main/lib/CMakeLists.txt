@@ -8,6 +8,17 @@ if (USE_ROOT)
    endif (ROOT_FOUND)
 endif (USE_ROOT)
 
+option(USE_LCIO "Compiling main library using LCIO" OFF)
+if (USE_LCIO)
+   FIND_PACKAGE(LCIO REQUIRED )
+   if (LCIO_FOUND)
+     INCLUDE_DIRECTORIES( ${LCIO_INCLUDE_DIR} )
+     SET(ADDITIONAL_LIBRARIES ${ADDITIONAL_LIBRARIES}  ${LCIO_LIBRARIES})
+     ADD_DEFINITIONS(-DUSE_ROOT)
+   endif (LCIO_FOUND)
+endif (USE_LCIO)
+
+
 AUX_SOURCE_DIRECTORY( src library_sources )
 AUX_SOURCE_DIRECTORY( plugins plugins_sources )
 
