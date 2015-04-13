@@ -5,6 +5,7 @@
 #include <string>
 #include <ostream>
 #include "eudaq/Platform.hh"
+#include <map>
 
 namespace eudaq {
 
