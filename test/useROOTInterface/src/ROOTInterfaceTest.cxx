@@ -78,3 +78,11 @@ public:
   SCTDummy *e;
   ClassDef(runSCTClass, 1);
 };
+void ROOTInterfaceTest(const char* name){
+  gSystem->Load("ROOTProducer.dll");
+  runSCTClass rSCT(name);
+
+  rSCT.readoutloop();
+
+
+}
