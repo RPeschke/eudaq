@@ -1,3 +1,12 @@
+#include "TSystem.h"
+#include "RQ_OBJECT.h"
+#include "Rtypes.h"
+#include <iostream>
+#include <ostream>
+#include <vector>
+#include <memory>
+#include <string>
+#include <fstream>
 class TSignals;
 class ROOTProducer;
 
