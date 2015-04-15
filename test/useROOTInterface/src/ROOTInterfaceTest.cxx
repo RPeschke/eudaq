@@ -2,15 +2,21 @@
 #include "RQ_OBJECT.h"
 #include "Rtypes.h"
 #include "TSignals.h"
+
+
+
 #include <iostream>
 #include <ostream>
 #include <vector>
 #include <memory>
 #include <string>
 #include <fstream>
+
+
+
+
 class TSignals;
 class ROOTProducer;
-
 //////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////
 // SCT DUMMY /////////////////////////////////////////////////////////////
@@ -40,6 +46,9 @@ private:
 
   std::vector < std::string > m_data_vec;
 };
+
+
+
 
 //////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////
@@ -262,11 +271,17 @@ SCTDummy::SCTDummy()
   }
 }
 
+
 void ROOTInterfaceTest(const char* name){
+
   gSystem->Load("ROOTProducer.dll");
+
   runSCTClass rSCT(name);
 
   rSCT.readoutloop();
 
 
 }
+
+
+
