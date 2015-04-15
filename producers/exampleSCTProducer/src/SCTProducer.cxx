@@ -22,7 +22,10 @@ class SCTProducer : public eudaq::Producer {
     // and the runcontrol connection string, and initialize any member variables.
     SCTProducer(const std::string & name, const std::string & runcontrol)
       : eudaq::Producer(name, runcontrol),
-      m_run(0), m_ev(0), stopping(false), done(false),started(0) {}
+      m_run(0), m_ev(0), stopping(false), done(false),started(0) {
+    
+      m_name = name;
+    }
 
     // This gets called whenever the DAQ is configured
     virtual void OnConfigure(const eudaq::Configuration & config) {
@@ -47,7 +50,7 @@ class SCTProducer : public eudaq::Producer {
       std::cout << "Start Run: " << m_run << std::endl;
 
       // It must send a BORE to the Data Collector
-      eudaq::RawDataEvent bore(eudaq::RawDataEvent::BORE(EVENT_TYPE, m_run));
+      eudaq::RawDataEvent bore(eudaq::RawDataEvent::BORE(m_name, m_run));
       // You can set tags on the BORE that will be saved in the data file
       // and can be used later to help decoding
       bore.SetTag("EXAMPLE", eudaq::to_string(m_exampleparam));
@@ -73,7 +76,7 @@ class SCTProducer : public eudaq::Producer {
 
       // Send an EORE after all the real events have been sent
       // You can also set tags on it (as with the BORE) if necessary
-      SendEvent(eudaq::RawDataEvent::EORE("Test", m_run, ++m_ev));
+      SendEvent(eudaq::RawDataEvent::EORE(m_name, m_run, ++m_ev));
     }
 
     // This gets called when the Run Control is terminating,
@@ -107,7 +110,7 @@ class SCTProducer : public eudaq::Producer {
 		}
         // If we get here, there must be data to read out
         // Create a RawDataEvent to contain the event data to be sent
-        eudaq::RawDataEvent ev(EVENT_TYPE, m_run, m_ev);
+        eudaq::RawDataEvent ev(m_name, m_run, m_ev);
 
         std::vector<unsigned char> buffer;
         eudaq::bool2uchar(m_sct.data, m_sct.data + m_sct.size, buffer);
@@ -126,6 +129,7 @@ class SCTProducer : public eudaq::Producer {
     // It here basically that the example code will compile
     // but it also generates example raw data to help illustrate the decoder
     SCTDummy m_sct;
+    std::string m_name;
     unsigned m_run, m_ev, m_exampleparam;
     bool stopping, done,started;
 };
