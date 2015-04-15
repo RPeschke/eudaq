@@ -61,3 +61,7 @@ debug/*
 # ignore OS files
 Thumbs.db
 *.lnk
+*.obj
+*.tlog
+*.idb
+*.pdb
