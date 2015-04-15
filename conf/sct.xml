@@ -1,0 +1,42 @@
+<configuration>
+  <events>
+    <CalibrationEvents No="10"/>
+    <numberOfEvents No="500"/>
+  </events>
+  
+  <planes>
+ 
+    <plane id="8">
+      <Binning>
+        <PixelX LowerBin="0" upperBin="256" binSize="1"/>
+        <PixelY LowerBin="0" upperBin="4" binSize="1"/>
+      </Binning>
+    </plane>
+    <plane id="9">
+      <Binning>
+        <PixelX LowerBin="0" upperBin="256" binSize="1"/>
+        <PixelY LowerBin="0" upperBin="4" binSize="1"/>
+      </Binning>
+    </plane>
+
+  </planes>
+  
+
+  <Correlations>
+    <Correlation>
+      <CorrX planeId="9" plane_axis="x"/>
+      <CorrY planeId="8" plane_axis="x"/>
+      <cutOffCondition>
+        <!--x*A+y*B+C < D-->
+      </cutOffCondition>
+    </Correlation>
+     <CorrelationVSTime>
+      <CorrX planeId="9" plane_axis="x"/>
+      <CorrY planeId="8" plane_axis="x"/>
+      <CorrectionFactors x="1" y="1" const="0"/>
+    </CorrelationVSTime>
+  </Correlations>
+  
+  
+  
+</configuration>
