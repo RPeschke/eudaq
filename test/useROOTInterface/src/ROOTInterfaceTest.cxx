@@ -1,6 +1,7 @@
 #include "TSystem.h"
 #include "RQ_OBJECT.h"
 #include "Rtypes.h"
+#include "TSignals.h"
 #include <iostream>
 #include <ostream>
 #include <vector>
