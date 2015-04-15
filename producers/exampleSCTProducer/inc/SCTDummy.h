@@ -8,11 +8,11 @@
 
 
 class SCTDummy{
-public
+public:
   SCTDummy();
   ~SCTDummy();
 
-  void openfile(stdstring& name);
+  void openfile(std::string& name);
 
   void setReadoutSpeed(int speed);
   int getTimestamp();
@@ -22,7 +22,7 @@ public
   bool hasData();
   static const size_t size = 256;
   bool data[size];
-private
+private:
   std::ifstream in;
   int _readoutSpeed = 1, m_first = 1,m_end=0;
   bool nm_newData = false;
