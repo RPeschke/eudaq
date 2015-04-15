@@ -68,6 +68,8 @@ namespace eudaq {
 
 
 
+  // Instantiate the converter plugin instance
+  SCTupgradeConverterPlugin_sct1 SCTupgradeConverterPlugin_sct1::m_instance;
 
 
 
@@ -137,7 +139,5 @@ namespace eudaq {
     return true;
   }
 
-  // Instantiate the converter plugin instance
-  SCTupgradeConverterPlugin_sct1 SCTupgradeConverterPlugin_sct1::m_instance;
 
 } // namespace eudaq
