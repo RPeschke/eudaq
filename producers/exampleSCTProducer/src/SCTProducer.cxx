@@ -145,7 +145,7 @@ int main(int /*argc*/, const char ** argv) {
       "The address of the RunControl.");
   eudaq::Option<std::string> level(op, "l", "log-level", "NONE", "level",
       "The minimum level for displaying log messages locally");
-  eudaq::Option<std::string> name (op, "n", "name", "Example", "string",
+  eudaq::Option<std::string> name (op, "n", "name", "sct", "string",
       "The name of this Producer");
   try {
     // This will look through the command-line arguments and set the options
