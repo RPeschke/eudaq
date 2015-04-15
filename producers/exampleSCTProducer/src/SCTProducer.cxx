@@ -5,7 +5,7 @@
 #include "eudaq/Timer.hh"
 #include "eudaq/Utils.hh"
 #include "eudaq/OptionParser.hh"
-#include "eudaq/ExampleHardware.hh"
+#include "SCTDummy.h"
 #include <iostream>
 #include <ostream>
 #include <vector>
@@ -32,7 +32,7 @@ class SCTProducer : public eudaq::Producer {
       // Configuration file values are accessible as config.Get(name, default)
       m_exampleparam = config.Get("Parameter", 0);
       std::cout << "Example Parameter = " << m_exampleparam << std::endl;
-      hardware.Setup(m_exampleparam);
+      m_sct.openfile(config.Get("infile", "c:/slac/EventData_288_75.dat"));
 
       // At the end, set the status that will be displayed in the Run Control.
       SetStatus(eudaq::Status::LVL_OK, "Configured (" + config.Name() + ")");
@@ -87,7 +87,7 @@ class SCTProducer : public eudaq::Producer {
     void ReadoutLoop() {
       // Loop until Run Control tells us to terminate
       while (!done) {
-        if (!hardware.EventsPending()) {
+        if (!m_sct.hasData()) {
           // No events are pending, so check if the run is stopping
           if (stopping) {
             // if so, signal that there are no events left
@@ -109,16 +109,11 @@ class SCTProducer : public eudaq::Producer {
         // Create a RawDataEvent to contain the event data to be sent
         eudaq::RawDataEvent ev(EVENT_TYPE, m_run, m_ev);
 
-        for (unsigned plane = 0; plane < hardware.NumSensors(); ++plane) {
-          // Read out a block of raw data from the hardware
-          std::vector<unsigned char> buffer = hardware.ReadSensor(plane);
-          // Each data block has an ID that is used for ordering the planes later
-          // If there are multiple sensors, they should be numbered incrementally
-
-          // Add the block of raw data to the event
-          ev.AddBlock(plane, buffer);
-        }
-        hardware.CompletedEvent();
+        std::vector<unsigned char> buffer;
+        eudaq::bool2uchar(m_sct.data, m_sct.data + m_sct.size, buffer);
+          ev.AddBlock(0, buffer);
+        
+          m_sct.readLine(); 
         // Send the event to the Data Collector      
         SendEvent(ev);
         // Now increment the event number
@@ -130,7 +125,7 @@ class SCTProducer : public eudaq::Producer {
     // This is just a dummy class representing the hardware
     // It here basically that the example code will compile
     // but it also generates example raw data to help illustrate the decoder
-    eudaq::ExampleHardware hardware;
+    SCTDummy m_sct;
     unsigned m_run, m_ev, m_exampleparam;
     bool stopping, done,started;
 };
