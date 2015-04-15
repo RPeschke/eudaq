@@ -15,12 +15,12 @@
 static const std::string EVENT_TYPE = "Example";
 
 // Declare a new class that inherits from eudaq::Producer
-class ExampleProducer : public eudaq::Producer {
+class SCTProducer : public eudaq::Producer {
   public:
 
     // The constructor must call the eudaq::Producer constructor with the name
     // and the runcontrol connection string, and initialize any member variables.
-    ExampleProducer(const std::string & name, const std::string & runcontrol)
+    SCTProducer(const std::string & name, const std::string & runcontrol)
       : eudaq::Producer(name, runcontrol),
       m_run(0), m_ev(0), stopping(false), done(false),started(0) {}
 
@@ -154,7 +154,7 @@ int main(int /*argc*/, const char ** argv) {
     // Set the Log level for displaying messages based on command-line
     EUDAQ_LOG_LEVEL(level.Value());
     // Create a producer
-    ExampleProducer producer(name.Value(), rctrl.Value());
+    SCTProducer producer(name.Value(), rctrl.Value());
     // And set it running...
     producer.ReadoutLoop();
     // When the readout loop terminates, it is time to go
