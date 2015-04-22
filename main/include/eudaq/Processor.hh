@@ -10,21 +10,24 @@ namespace eudaq{
   public:
 
     
-    Processor(Parameter_ref);
-    virtual void init() override;
-    virtual void ProcessorEvent(event_sp ev) override;
-    virtual void end()override;
-
-
-
-    virtual ProcessorBase* getProcessor(std::string name = "") override;
-
-    virtual void AddProcessor(ProcessorBase* next, std::string = "") override;
+    virtual void ProcessorEvent(event_sp ev) =0;
 
     virtual std::string getName() override;
     virtual void print(std::ostream& os) ;
 
-    ProcessorBase* m_next;
+
+    Processor(Parameter_ref);
+    void init() override;
+ 
+    void end()override;
+
+    
+    ProcessorBase* getProcessor(const std::string& name = "") override;
+
+    void AddProcessor(ProcessorBase* next,const  std::string& name = "") override;
+    void ProcessNext(event_sp ev);
+    ProcessorBase* m_next=nullptr;
+    std::string m_connection;
   };
 
 }

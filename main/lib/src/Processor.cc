@@ -4,7 +4,7 @@
 
 namespace eudaq{
 
-  RegisterProcessor(Processor, "processor");
+  
 
 
   void Processor::init()
@@ -12,21 +12,25 @@ namespace eudaq{
     std::cout << " init " << std::endl;
   }
 
-  void Processor::ProcessorEvent(event_sp ev)
-  {
-    std::cout << "void Processor::ProcessorEvent(event_sp ev)  "<< ev->GetEventNumber() << std::endl;
-    m_next->ProcessorEvent(std::move(ev));
-  }
 
 
-  ProcessorBase* Processor::getProcessor(std::string name /*= ""*/)
+  ProcessorBase* Processor::getProcessor(const std::string& name /*= ""*/)
   {
+    m_connection = name;
     return this;
   }
 
-  void Processor::AddProcessor(ProcessorBase* next, std::string /*= ""*/)
+
+
+  void Processor::AddProcessor(ProcessorBase* next, const std::string& name)
   {
-    m_next = next;
+    if (name.empty()){
+      m_next = next->getProcessor(getName());
+    
+    }
+    else{
+      m_next = next->getProcessor(name);
+    }
   }
 
   std::string Processor::getName()
@@ -47,6 +51,14 @@ namespace eudaq{
   void Processor::end()
   {
     std::cout << "end" << std::endl;
+  }
+
+  void Processor::ProcessNext(event_sp ev)
+  {
+    if (m_next)
+    {
+    m_next->ProcessorEvent(ev);
+    }
   }
 
 }
