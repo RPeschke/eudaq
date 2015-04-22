@@ -8,11 +8,27 @@
 #include <iostream>
 #include "eudaq/EventSynchronisationDetectorEvents.hh"
 
+#include "eudaq/ProcessorBase.hh"
+#include "eudaq/RawDataEvent.hh"
+
 using namespace eudaq;
 unsigned dbg = 0;
 
 
 int main(int, char ** argv) {
+
+  
+
+  auto pro = ProcessorFactory::create("Processor_batch", "fileReader,ShowEventNR,ProcessorFileWriter");
+  event_sp ev = std::dynamic_pointer_cast<Event>(std::make_shared<eudaq::RawDataEvent>("tesT",1,1));
+
+  pro->init();
+
+    pro->ProcessorEvent(ev);
+  
+
+  pro->end();
+
   std::clock_t    start;
 
   start = std::clock();

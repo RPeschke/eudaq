@@ -1,9 +1,9 @@
-#include "eudaq/ProcessorBase.hh"
+#include "eudaq/Processor.hh"
 #include <memory>
 
 
 namespace eudaq {
-  class Processor_batch :public ProcessorBase{
+  class Processor_batch :public Processor{
 
   public:
     Processor_batch(Parameter_ref name);
@@ -13,9 +13,9 @@ namespace eudaq {
 
 
 
-    virtual ProcessorBase* getProcessor(std::string name = "") override;
+    virtual ProcessorBase* getProcessor(const std::string& name = "") override;
 
-    virtual void AddProcessor(ProcessorBase* next, std::string = "") override;
+    virtual void AddProcessor(ProcessorBase* next, const std::string& = "") override;
 
     virtual std::string getName() override;
     virtual void print(std::ostream& os);
@@ -27,7 +27,7 @@ namespace eudaq {
     ProcessorBase *m_next = nullptr;
   };
 
-  Processor_batch::Processor_batch(Parameter_ref name) :ProcessorBase(name)
+  Processor_batch::Processor_batch(Parameter_ref name) :Processor(name)
   {
 
     auto splitted_names = eudaq::split(name,",");
@@ -56,7 +56,7 @@ namespace eudaq {
     }
   }
 
-  ProcessorBase* Processor_batch::getProcessor(std::string name /*= ""*/)
+  ProcessorBase* Processor_batch::getProcessor(const std::string& name /*= ""*/)
   {
     return this;
   }
@@ -66,7 +66,7 @@ namespace eudaq {
     return "batch";
   }
 
-  void Processor_batch::AddProcessor(ProcessorBase* next, std::string name/*= ""*/)
+  void Processor_batch::AddProcessor(ProcessorBase* next,const std::string& name/*= ""*/)
   {
     m_next = next;
     m_processors.back()->AddProcessor(next, name);

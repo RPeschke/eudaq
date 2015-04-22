@@ -1,10 +1,10 @@
-#include "eudaq/ProcessorBase.hh"
 #include "eudaq/FileWriter.hh"
 #include <iostream>
+#include "eudaq/Processor.hh"
 
 namespace eudaq{
 
-  class  ProcessorFileWriter :public ProcessorBase{
+  class  ProcessorFileWriter :public Processor{
   public:
     ProcessorFileWriter(Parameter_ref conf);
     virtual void init() override;
@@ -13,9 +13,7 @@ namespace eudaq{
 
 
 
-    virtual ProcessorBase* getProcessor(std::string name = "") override;
 
-    virtual void AddProcessor(ProcessorBase* next, std::string = "") override;
 
     virtual std::string getName() override;
     virtual void print(std::ostream& os);
@@ -27,7 +25,7 @@ namespace eudaq{
     unsigned m_run;
   };
   RegisterProcessor(ProcessorFileWriter, "ProcessorFileWriter");
-  ProcessorFileWriter::ProcessorFileWriter(Parameter_ref conf) :ProcessorBase(conf)
+  ProcessorFileWriter::ProcessorFileWriter(Parameter_ref conf) :Processor(conf)
   {
     m_write = FileWriterFactory::Create("native", ".raw");
   }
@@ -48,10 +46,10 @@ namespace eudaq{
     }
 
     m_write->WriteBaseEvent(*ev);
-if (m_next)
-{
-    m_next->ProcessorEvent(ev);
-}
+
+
+  ProcessNext(ev);
+
 
   }
 
@@ -65,15 +63,7 @@ if (m_next)
     return "ProcessorFileWriter";
   }
 
-  void ProcessorFileWriter::AddProcessor(ProcessorBase* next, std::string /*= ""*/)
-  {
-    m_next = next;
-  }
-
-  ProcessorBase* ProcessorFileWriter::getProcessor(std::string name /*= ""*/)
-  {
-    return this;
-  }
+ 
 
   void ProcessorFileWriter::end()
   {
