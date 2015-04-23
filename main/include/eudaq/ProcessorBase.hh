@@ -23,6 +23,16 @@ namespace eudaq{
   using Processor_sp = std::shared_ptr < ProcessorBase >;
   class DLLEXPORT ProcessorBase{
   public:
+    enum ReturnParam:int
+    {
+      sucess,
+      ret_error,
+      stop,
+      busy_retry,
+      busy_skip,
+      skip_event
+
+    };
     using MainType = std::string;
     using Parameter_t = std::string;
     using Parameter_ref = const Parameter_t&;
@@ -30,7 +40,7 @@ namespace eudaq{
 
     ProcessorBase(Parameter_ref name);
     virtual void init() =0;
-    virtual void ProcessorEvent(event_sp ev) =0;
+    virtual ReturnParam ProcessorEvent(event_sp ev) = 0;
     virtual void end() =0;
 
 
