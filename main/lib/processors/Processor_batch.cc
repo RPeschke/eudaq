@@ -1,32 +1,9 @@
-#include "eudaq/Processor.hh"
+#include "eudaq/Processor_batch.hh"
 #include <memory>
 
 
 namespace eudaq {
-  class Processor_batch :public Processor{
-
-  public:
-    Processor_batch(Parameter_ref name);
-    virtual void init() override;
-    virtual void ProcessorEvent(event_sp ev) override;
-    virtual void end()override;
-
-
-
-    virtual ProcessorBase* getProcessor(const std::string& name = "") override;
-
-    virtual void AddProcessor(ProcessorBase* next, const std::string& = "") override;
-
-    virtual std::string getName() override;
-    virtual void print(std::ostream& os);
-    void AddProcessor2Batch(std::unique_ptr<ProcessorBase> processor);
-
-  private:
-    std::vector<std::unique_ptr<ProcessorBase>> m_processors;
-
-    ProcessorBase *m_next = nullptr;
-  };
-
+  using ReturnParam = ProcessorBase::ReturnParam;
   Processor_batch::Processor_batch(Parameter_ref name) :Processor(name)
   {
 
@@ -77,9 +54,19 @@ namespace eudaq {
     os << getName();
   }
 
-  void Processor_batch::ProcessorEvent(event_sp ev)
+  ReturnParam Processor_batch::ProcessorEvent(event_sp ev)
   {
-    m_processors.front()->ProcessorEvent(ev);
+    ReturnParam ret =sucess;
+    do 
+    {
+      ret = m_processors.front()->ProcessorEvent(ev);
+
+      if (ret == ret_error){
+        std::cout << "an error occurred " << std::endl;
+        
+      }
+    } while (ret!= stop );
+    return ret;
   }
 
   void Processor_batch::AddProcessor2Batch(std::unique_ptr<ProcessorBase> processor)

@@ -4,7 +4,7 @@
 
 namespace eudaq{
 
-  
+  using ReturnParam = ProcessorBase::ReturnParam;
 
 
   void Processor::init()
@@ -53,12 +53,13 @@ namespace eudaq{
     std::cout << "end" << std::endl;
   }
 
-  void Processor::ProcessNext(event_sp ev)
+  ReturnParam Processor::ProcessNext(event_sp ev)
   {
     if (m_next)
     {
-    m_next->ProcessorEvent(ev);
+      return m_next->ProcessorEvent(ev);
     }
+    return sucess;  // reach the end of the chain therefore it was sucess full 
   }
 
 }

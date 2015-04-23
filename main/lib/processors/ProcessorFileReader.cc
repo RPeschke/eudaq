@@ -4,13 +4,14 @@
 #include "eudaq/baseFileReader.hh"
 
 namespace eudaq{
+  using ReturnParam =ProcessorBase::ReturnParam;
 
   class ProcessorFileReader : public Processor
   {
   public:
     ProcessorFileReader(Parameter_ref conf);
 
-    virtual void ProcessorEvent(event_sp ev);
+    virtual ReturnParam ProcessorEvent(event_sp ev);
    
 
     virtual std::string getName() override;
@@ -44,17 +45,23 @@ namespace eudaq{
   }
 
 
-  void ProcessorFileReader::ProcessorEvent(event_sp ev)
+  ReturnParam ProcessorFileReader::ProcessorEvent(event_sp ev)
   {
+    ReturnParam ret=sucess;
     ev = m_reader->getEventPtr();
     while (m_reader->NextEvent())
     {
     
-      ProcessNext(ev);
+      ret= ProcessNext(ev);
+      if (ret==stop)
+      {
+        return stop;
+      }
       ev = m_reader->getEventPtr();
     }
-
-    ProcessNext(ev);
+    ret = ProcessNext(ev);
+    
+   return stop;
   }
 
 

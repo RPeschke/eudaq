@@ -3,12 +3,12 @@
 #include "eudaq/Processor.hh"
 
 namespace eudaq{
-
+  using ReturnParam = ProcessorBase::ReturnParam;
   class  ProcessorFileWriter :public Processor{
   public:
     ProcessorFileWriter(Parameter_ref conf);
     virtual void init() override;
-    virtual void ProcessorEvent(event_sp ev) override;
+    virtual ReturnParam ProcessorEvent(event_sp ev) override;
     virtual void end()override;
 
 
@@ -36,7 +36,7 @@ namespace eudaq{
     m_first = true;
   }
 
-  void ProcessorFileWriter::ProcessorEvent(event_sp ev)
+  ReturnParam ProcessorFileWriter::ProcessorEvent(event_sp ev)
   {
     if (m_first)
     {
@@ -48,7 +48,7 @@ namespace eudaq{
     m_write->WriteBaseEvent(*ev);
 
 
-  ProcessNext(ev);
+    return ProcessNext(ev);
 
 
   }
