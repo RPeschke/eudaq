@@ -17,13 +17,14 @@ namespace eudaq{
 
 
     Processor(Parameter_ref);
+    virtual ~Processor(){}
     void init() override;
  
     void end()override;
 
     
     ProcessorBase* getProcessor(const std::string& name = "") override;
-
+    virtual void pushProducer(std::unique_ptr<ProcessorBase> processor){}
     void AddProcessor(ProcessorBase* next,const  std::string& name = "") override;
     ReturnParam ProcessNext(event_sp ev);
     ProcessorBase* m_next=nullptr;

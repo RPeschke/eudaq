@@ -1,10 +1,17 @@
+#ifndef Processor_batch_h__
+#define Processor_batch_h__
+
+
 #include "eudaq/Processor.hh"
+#include "eudaq/Platform.hh"
+#include <memory>
 namespace eudaq{
 
-  class DLLEXPORT Processor_batch :public Processor{
+  class  Processor_batch :public Processor{
 
   public:
     Processor_batch(Parameter_ref name);
+    virtual ~Processor_batch(){}
     virtual void init() override;
     virtual ReturnParam ProcessorEvent(event_sp ev) override;
     virtual void end()override;
@@ -17,7 +24,7 @@ namespace eudaq{
 
     virtual std::string getName() override;
     virtual void print(std::ostream& os);
-    void AddProcessor2Batch(std::unique_ptr<ProcessorBase> processor);
+    virtual void pushProducer(std::unique_ptr<ProcessorBase> processor);
 
   private:
     std::vector<std::unique_ptr<ProcessorBase>> m_processors;
@@ -25,3 +32,4 @@ namespace eudaq{
     ProcessorBase *m_next = nullptr;
   };
 }
+#endif // Processor_batch_h__

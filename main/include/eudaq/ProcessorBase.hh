@@ -39,6 +39,7 @@ namespace eudaq{
 
 
     ProcessorBase(Parameter_ref name);
+    virtual ~ProcessorBase() {};
     virtual void init() =0;
     virtual ReturnParam ProcessorEvent(event_sp ev) = 0;
     virtual void end() =0;
@@ -51,7 +52,7 @@ namespace eudaq{
     
     virtual std::string getName() =0;
     virtual void print(std::ostream& os)=0;
-  
+    virtual void pushProducer(std::unique_ptr<ProcessorBase> processor) =0;
   protected:
     Parameter_t m_conf;
   };
