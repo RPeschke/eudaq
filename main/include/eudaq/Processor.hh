@@ -6,11 +6,11 @@
 #include "eudaq/ProcessorBase.hh"
 
 namespace eudaq{
-  class Processor:public ProcessorBase{
+  class DLLEXPORT Processor:public ProcessorBase{
   public:
 
     
-    virtual void ProcessorEvent(event_sp ev) =0;
+    virtual ReturnParam ProcessorEvent(event_sp ev) = 0;
 
     virtual std::string getName() override;
     virtual void print(std::ostream& os) ;
@@ -25,7 +25,7 @@ namespace eudaq{
     ProcessorBase* getProcessor(const std::string& name = "") override;
 
     void AddProcessor(ProcessorBase* next,const  std::string& name = "") override;
-    void ProcessNext(event_sp ev);
+    ReturnParam ProcessNext(event_sp ev);
     ProcessorBase* m_next=nullptr;
     std::string m_connection;
   };
