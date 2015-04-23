@@ -11,7 +11,7 @@ namespace eudaq {
     for (auto& e:splitted_names)
     {
 
-      AddProcessor2Batch(ProcessorFactory::create(e, ""));
+      pushProducer(ProcessorFactory::create(e, ""));
     }
 
   }
@@ -57,6 +57,11 @@ namespace eudaq {
   ReturnParam Processor_batch::ProcessorEvent(event_sp ev)
   {
     ReturnParam ret =sucess;
+    if (ev)
+    {
+      std::cout << "input not supported " << std::endl;
+      ev = nullptr;
+    }
     do 
     {
       ret = m_processors.front()->ProcessorEvent(ev);
@@ -69,7 +74,7 @@ namespace eudaq {
     return ret;
   }
 
-  void Processor_batch::AddProcessor2Batch(std::unique_ptr<ProcessorBase> processor)
+  void Processor_batch::pushProducer(std::unique_ptr<ProcessorBase> processor)
   {
     if (processor&&!m_processors.empty())
     {

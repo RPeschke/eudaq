@@ -46,13 +46,16 @@ namespace eudaq{
 
   ReturnParam Process_eventOfInterest::inspecktEvent(const Event& ev)
   {
-    std::cout << ev.GetEventNumber() << std::endl;
+    if (ev.IsBORE()||ev.IsEORE())
+    {
+      return sucess;
+    }
     if (m_events.empty())
     {
       return sucess;
     }
 
-    if (CheckIfCurrentEventIsBeyondLastElementOfIntrest(ev.GetEventNumber()));
+    if (CheckIfCurrentEventIsBeyondLastElementOfIntrest(ev.GetEventNumber()))
     {
       return stop;
     }

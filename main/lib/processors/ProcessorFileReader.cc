@@ -1,40 +1,40 @@
 
 
-#include "eudaq/Processor.hh"
 #include "eudaq/baseFileReader.hh"
+#include "eudaq/Processor_add2queue.hh"
 
 namespace eudaq{
-  using ReturnParam =ProcessorBase::ReturnParam;
+  using ReturnParam = ProcessorBase::ReturnParam;
 
-  class ProcessorFileReader : public Processor
+  class ProcessorFileReader : public Processor_add2queue
   {
   public:
     ProcessorFileReader(Parameter_ref conf);
 
-    virtual ReturnParam ProcessorEvent(event_sp ev);
-   
+    virtual ReturnParam add2queue(event_sp& ev);
+
 
     virtual std::string getName() override;
     virtual void print(std::ostream& os);
   private:
 
     std::unique_ptr<baseFileReader> m_reader;
-
+    bool m_first = true;
   };
 
 
   RegisterProcessor(ProcessorFileReader, "fileReader");
 
 
-  ProcessorFileReader::ProcessorFileReader(Parameter_ref conf) :Processor(conf)
+  ProcessorFileReader::ProcessorFileReader(Parameter_ref conf) :Processor_add2queue(conf)
   {
-    m_reader =FileReaderFactory::create("../data/run000047_ - Kopie.raw");
+    m_reader = FileReaderFactory::create("../data/run000047_Kopie.raw");
   }
 
 
   std::string ProcessorFileReader::getName()
   {
-   
+
     return m_conf;
   }
 
@@ -45,23 +45,27 @@ namespace eudaq{
   }
 
 
-  ReturnParam ProcessorFileReader::ProcessorEvent(event_sp ev)
+
+  ReturnParam ProcessorFileReader::add2queue(event_sp& ev)
   {
-    ReturnParam ret=sucess;
-    ev = m_reader->getEventPtr();
-    while (m_reader->NextEvent())
+    ReturnParam ret = sucess;
+    if (m_first)
     {
-    
-      ret= ProcessNext(ev);
-      if (ret==stop)
-      {
-        return stop;
-      }
       ev = m_reader->getEventPtr();
+      m_first = false;
+      return sucess;
     }
-    ret = ProcessNext(ev);
-    
-   return stop;
+
+    if (m_reader->NextEvent())
+    {
+      ev = m_reader->getEventPtr();
+      return sucess;
+
+    }
+
+
+
+    return stop;
   }
 
 
