@@ -21,6 +21,8 @@ namespace eudaq{
 
 
   using Processor_sp = std::shared_ptr < ProcessorBase >;
+  using Processor_up = std::unique_ptr < ProcessorBase > ;
+  using Processor_rp =ProcessorBase*;
   class DLLEXPORT ProcessorBase{
   public:
     enum ReturnParam:int
@@ -36,6 +38,8 @@ namespace eudaq{
     using MainType = std::string;
     using Parameter_t = std::string;
     using Parameter_ref = const Parameter_t&;
+    using ConnectionName_t=std::string;
+    using ConnectionName_ref = const ConnectionName_t &;
 
 
     ProcessorBase(Parameter_ref name);
@@ -46,13 +50,13 @@ namespace eudaq{
 
 
     
-    virtual ProcessorBase* getProcessor(const std::string& name ="")=0;
+    virtual ProcessorBase* getProcessor(ConnectionName_ref name = "") = 0;
     
-    virtual void AddProcessor(ProcessorBase *next,const  std::string& name ="") =0;
+    virtual void AddProcessor(ProcessorBase *next, ConnectionName_ref name = "") = 0;
     
     virtual std::string getName() =0;
     virtual void print(std::ostream& os)=0;
-    virtual void pushProducer(std::unique_ptr<ProcessorBase> processor) =0;
+    virtual void pushProducer(Processor_up processor) =0;
   protected:
     Parameter_t m_conf;
   };
