@@ -8,27 +8,30 @@ namespace eudaq{
 
   class Processor_splitter :public ProcessorBase{
 
-    virtual ReturnParam ProcessorEvent(event_sp ev) = 0;
-
+  public:
+    virtual void init() override;
     virtual std::string getName() override;
+    virtual ReturnParam ProcessorEvent(ConnectionName_ref name,event_sp ev) = 0;
     virtual void print(std::ostream& os);
+    virtual void end()override;
 
 
     Processor_splitter(Parameter_ref);
     virtual ~Processor_splitter(){}
-    virtual void init() override;
-
-    virtual void end()override;
 
 
-    ProcessorBase* getProcessor(ConnectionName_ref name = "") override;
+
+    ReturnParam ProcessorEvent(event_sp ev) override;
+    Processor_rp getProcessor(ConnectionName_ref name = "") override;
     virtual void pushProducer(Processor_up processor){}
-    void AddProcessor(ProcessorBase* next, ConnectionName_ref name = "") override;
+    void AddProcessor(Processor_rp next, ConnectionName_ref name = "") override;
     ReturnParam ProcessNext(ConnectionName_ref name, event_sp ev);
-    ProcessorBase* m_nextProcessor = nullptr;
+    Processor_rp m_nextProcessor = nullptr;
     std::string m_connection;
-    std::map<ConnectionName_t, ProcessorBase*> m_nextInterfaces;
+    std::map<ConnectionName_t, Processor_rp> m_nextInterfaces;
 
+
+    std::map<ConnectionName_t, Processor_up> m_inputInterface;
   };
 }
 
