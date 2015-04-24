@@ -1,4 +1,5 @@
 #include "eudaq/Processor_splitter.hh"
+#include "eudaq/Processor_splitter_interface.hh"
 namespace eudaq{
   using ReturnParam = ProcessorBase::ReturnParam;
   eudaq::Processor_splitter::Processor_splitter(Parameter_ref conf) :ProcessorBase(conf)
@@ -47,7 +48,17 @@ namespace eudaq{
 
   ProcessorBase* Processor_splitter::getProcessor(const ConnectionName_t& name /*= ""*/)
   {
+    auto inputItt = m_inputInterface.find(name);
 
+
+    if (inputItt==m_inputInterface.end())
+    {
+      m_inputInterface[name] = Processor_up(new Processor_splitter_interface( name ));
+      m_inputInterface[name]->AddProcessor(this, "base");
+
+    }
+
+    return m_inputInterface[name].get();
   }
 
   std::string Processor_splitter::getName()
@@ -59,5 +70,13 @@ namespace eudaq{
   {
     os << getName();
   }
+
+  ReturnParam Processor_splitter::ProcessorEvent(event_sp ev)
+  {
+   return ProcessorEvent(getName(), ev);
+  }
+
+
+
 
 }
