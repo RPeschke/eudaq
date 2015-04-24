@@ -11,6 +11,10 @@ namespace eudaq{
 
   ReturnParam Processor_Inspector::ProcessorEvent(event_sp ev)
   {
+    if (!ev)
+    {
+      return stop;
+    }
     auto ret = inspecktEvent(*ev);
 
     if (ret!=sucess)
