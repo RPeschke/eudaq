@@ -2,33 +2,24 @@
 #include "eudaq/Processor_N_x_M_input_interface.hh"
 namespace eudaq{
   using ReturnParam = ProcessorBase::ReturnParam;
-  eudaq::Processor_N_x_M::Processor_N_x_M(Parameter_ref conf) :ProcessorBase(conf)
+   Processor_N_x_M::Processor_N_x_M(Parameter_ref conf) :ProcessorBase(conf)
   {
 
   }
 
-  void eudaq::Processor_N_x_M::init()
+  void Processor_N_x_M::init()
   {
 
   }
 
-  void eudaq::Processor_N_x_M::end()
+  void  Processor_N_x_M::end()
   {
 
   }
 
-  void eudaq::Processor_N_x_M::AddProcessor(ProcessorBase* next, const ConnectionName_t& name /*= ""*/)
-  {
-    if (m_nextProcessor)
-    {
-      m_nextProcessor = next;
-      m_connection = name;
-    }
 
-    m_nextInterfaces[name] = next;
-  }
 
-  ReturnParam eudaq::Processor_N_x_M::ProcessNext(const ConnectionName_t& name, event_sp ev)
+  ReturnParam Processor_N_x_M::ProcessNext(const ConnectionName_t& name, event_sp ev)
   {
     auto nextItt = m_nextInterfaces.find(name);
 
@@ -74,6 +65,17 @@ namespace eudaq{
   ReturnParam Processor_N_x_M::ProcessorEvent(event_sp ev)
   {
    return ProcessorEvent(getName(), ev);
+  }
+
+  void Processor_N_x_M::AddProcessor(Processor_rp next, ConnectionName_ref name /*= ""*/)
+  {
+    if (!m_nextProcessor)
+    {
+      m_nextProcessor = next;
+      m_connection = name;
+    }
+
+    m_nextInterfaces[name] = next;
   }
 
 
