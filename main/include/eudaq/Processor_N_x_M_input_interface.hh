@@ -3,11 +3,11 @@
 #include "eudaq/ProcessorBase.hh"
 
 namespace eudaq{
-  class Processor_splitter;
-  class Processor_splitter_interface :public ProcessorBase{
+  class Processor_N_x_M;
+  class Processor_N_x_M_input_interface :public ProcessorBase{
   public:
-    Processor_splitter_interface(Parameter_ref name);
-    virtual ~Processor_splitter_interface() {};
+    Processor_N_x_M_input_interface(Parameter_ref name);
+    virtual ~Processor_N_x_M_input_interface() {};
     virtual void init(){}
     virtual ReturnParam ProcessorEvent(event_sp ev);
     virtual void end(){}
@@ -23,7 +23,7 @@ namespace eudaq{
     virtual void pushProducer(Processor_up processor) {}
   private:
 
-    Processor_splitter* m_baseProcessor = nullptr;
+    Processor_N_x_M* m_baseProcessor = nullptr;
     std::string m_name, m_baseName;
   };
 
