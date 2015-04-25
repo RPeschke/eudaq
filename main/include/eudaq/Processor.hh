@@ -18,9 +18,9 @@ namespace eudaq{
 
     Processor(Parameter_ref);
     virtual ~Processor(){}
-    void init() override;
+    virtual void init() override;
  
-    void end()override;
+   virtual void end()override;
 
     
     ProcessorBase* getProcessor(const std::string& name = "") override;
