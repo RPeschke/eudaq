@@ -11,12 +11,12 @@ namespace eudaq{
   public:
     virtual ReturnParam ProcessorEvent(ConnectionName_ref name, event_sp ev) override;
 
+    Processor_splitter(Parameter_ref);
+    virtual ~Processor_splitter(){}
   private:
     ReturnParam ProcessorBaseEvent(ConnectionName_ref name, event_sp ev);
 
 
-    Processor_splitter(Parameter_ref);
-    virtual ~Processor_splitter(){}
 
 
 
