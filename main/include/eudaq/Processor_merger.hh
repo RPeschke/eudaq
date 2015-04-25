@@ -10,8 +10,8 @@ namespace eudaq{
 
 
   class Processor_merger :public Processor_N_x_M{
-
-    virtual ReturnParam ProcessorEvent(ConnectionName_ref name, event_sp ev) = 0;
+  public:
+    virtual ReturnParam ProcessorEvent(ConnectionName_ref name, event_sp ev) ;
     Processor_merger(Parameter_ref);
     virtual ~Processor_merger(){}
   };
