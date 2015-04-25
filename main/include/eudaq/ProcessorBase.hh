@@ -94,6 +94,12 @@ namespace eudaq{
 
     static Name_t batch();
     static Name_t buffer();
+    static Name_t multi_buffer();
+    static Name_t busy_test();
+    static Name_t file_reader();
+    static Name_t file_writer();
+    static Name_t show_event_nr();
+    static Name_t events_of_intresst();
   };
 }
 #endif // ProcessorBase_h__

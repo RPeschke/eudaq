@@ -24,7 +24,7 @@ namespace eudaq{
     bool CheckIfCurrentEventIsBeyondLastElementOfIntrest(unsigned eventNR);
     bool CheckIfElementIsElementOfIntrest(unsigned eventNR);
   };
-  RegisterProcessor(Process_eventOfInterest, "eventOfInterest");
+  RegisterProcessor(Process_eventOfInterest, ProcessorNames::events_of_intresst());
 
 
   std::string Process_eventOfInterest::getName()

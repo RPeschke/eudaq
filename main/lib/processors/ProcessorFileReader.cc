@@ -23,7 +23,7 @@ namespace eudaq{
   };
 
 
-  RegisterProcessor(ProcessorFileReader, "fileReader");
+  RegisterProcessor(ProcessorFileReader, ProcessorNames::file_reader());
 
 
   ProcessorFileReader::ProcessorFileReader(Parameter_ref conf) :Processor_add2queue(conf)

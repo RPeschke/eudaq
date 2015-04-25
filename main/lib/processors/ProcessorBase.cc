@@ -12,7 +12,37 @@ namespace eudaq{
 
   Name_t ProcessorNames::buffer()
   {
+    return "buffer";
+  }
 
+  Name_t ProcessorNames::busy_test()
+  {
+    return "busy_test";
+  }
+
+  Name_t ProcessorNames::multi_buffer()
+  {
+    return "multi_buffer";
+  }
+
+  Name_t ProcessorNames::file_reader()
+  {
+    return "file_reader";
+  }
+
+  Name_t ProcessorNames::file_writer()
+  {
+    return "file_writer";
+  }
+
+  Name_t ProcessorNames::show_event_nr()
+  {
+    return "show_event_nr";
+  }
+
+  Name_t ProcessorNames::events_of_intresst()
+  {
+    return "event_of_intressted";
   }
 
   registerBaseClassDef(ProcessorBase);

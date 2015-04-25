@@ -31,7 +31,7 @@ namespace eudaq{
     ProcessorBase* getProcessorInternal(ConnectionName_ref name = "");
   };
   using ReturnParam = ProcessorBase::ReturnParam;
-  RegisterProcessor(Processor_multi_buffer, "multi_buffer");
+  RegisterProcessor(Processor_multi_buffer, ProcessorNames::multi_buffer());
   
   ReturnParam Processor_multi_buffer::ProcessorEvent(event_sp ev)
   {

@@ -20,7 +20,7 @@ namespace eudaq{
     ShowEventNR(Parameter_ref);
     std::string m_name;
   };
-  RegisterProcessor(ShowEventNR, "ShowEventNR");
+  RegisterProcessor(ShowEventNR, ProcessorNames::show_event_nr());
 
 
   std::string ShowEventNR::getName()
