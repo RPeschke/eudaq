@@ -18,14 +18,14 @@ namespace eudaq{
 
     
     ShowEventNR(Parameter_ref);
-  
+    std::string m_name;
   };
   RegisterProcessor(ShowEventNR, "ShowEventNR");
 
 
   std::string ShowEventNR::getName()
   {
-    return "show event nr";
+    return m_name;
   }
 
   void ShowEventNR::print(std::ostream& os)
@@ -35,14 +35,14 @@ namespace eudaq{
 
   ShowEventNR::ShowEventNR(Parameter_ref conf) :Processor_Inspector(conf)
   {
-
+    m_name = conf;
   }
 
 
 
   ReturnParam ShowEventNR::inspecktEvent(const Event& ev)
   {
-    std::cout << ev.GetEventNumber() << std::endl;
+    std::cout << getName() << ": "<<ev.GetEventNumber() << std::endl;
     return sucess;
   }
 
