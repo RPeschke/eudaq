@@ -23,6 +23,7 @@ namespace eudaq{
   using Processor_sp = std::shared_ptr < ProcessorBase >;
   using Processor_up = std::unique_ptr < ProcessorBase > ;
   using Processor_rp =ProcessorBase*;
+
   class DLLEXPORT ProcessorBase{
   public:
     enum ReturnParam:int
@@ -80,7 +81,10 @@ namespace eudaq{
     static Impl& getImpl();
 
   };
-
+  template<typename T>
+  ProcessorBase::ConnectionName_t concatenate(ProcessorBase::ConnectionName_ref first, T second){
+    return first + std::to_string(second);
+  }
   
 }
 #endif // ProcessorBase_h__
