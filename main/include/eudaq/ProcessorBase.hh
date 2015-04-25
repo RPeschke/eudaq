@@ -62,6 +62,8 @@ namespace eudaq{
     Parameter_t m_conf;
   };
 
+
+ 
   
   class DLLEXPORT ProcessorFactory{
   public:
@@ -85,6 +87,13 @@ namespace eudaq{
   ProcessorBase::ConnectionName_t concatenate(ProcessorBase::ConnectionName_ref first, T second){
     return first + std::to_string(second);
   }
-  
+ 
+  class DLLEXPORT ProcessorNames{
+  public:
+    using  Name_t = const ProcessorBase::MainType&;
+
+    static Name_t batch();
+    static Name_t buffer();
+  };
 }
 #endif // ProcessorBase_h__

@@ -4,6 +4,17 @@
 
 namespace eudaq{
   
+  using Name_t = ProcessorNames::Name_t;
+  Name_t ProcessorNames::batch()
+  {
+    return "Processor_batch";
+  }
+
+  Name_t ProcessorNames::buffer()
+  {
+
+  }
+
   registerBaseClassDef(ProcessorBase);
 
 
