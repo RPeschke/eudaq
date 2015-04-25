@@ -63,7 +63,7 @@ int main(int, char ** argv) {
     pro->pushProducer(ProcessorFactory::create("fileReader", ""));
     pro->pushProducer(ProcessorFactory::create("ShowEventNR", ""));
     pro->pushProducer(ProcessorFactory::create("eventOfInterest", events->Value()));
-    //pro->pushProducer(ProcessorFactory::create("ShowEventNR", ""));
+    pro->pushProducer(ProcessorFactory::create("ShowEventNR", ""));
     pro->pushProducer(ProcessorFactory::create("ProcessorFileWriter", ""));
 
     //auto p = (eudaq::Processor_batch*) pro.get();
