@@ -61,9 +61,13 @@ int main(int, char ** argv) {
     auto pro = ProcessorFactory::create("Processor_batch", "fileReader");
     event_sp ev = std::dynamic_pointer_cast<Event>(std::make_shared<eudaq::RawDataEvent>("tesT", 1, 1));
     pro->pushProducer(ProcessorFactory::create("fileReader", ""));
-    pro->pushProducer(ProcessorFactory::create("ShowEventNR", ""));
+    //pro->pushProducer(ProcessorFactory::create("ShowEventNR", ""));
     pro->pushProducer(ProcessorFactory::create("eventOfInterest", events->Value()));
-    pro->pushProducer(ProcessorFactory::create("ShowEventNR", ""));
+    pro->pushProducer(ProcessorFactory::create("ShowEventNR", "buffer"));
+    pro->pushProducer(ProcessorFactory::create("splitter", ""));
+    pro->pushProducer(ProcessorFactory::create("buffer", ""));
+    pro->pushProducer(ProcessorFactory::create("busy", ""));
+    pro->pushProducer(ProcessorFactory::create("ShowEventNR", "busy"));
     pro->pushProducer(ProcessorFactory::create("ProcessorFileWriter", ""));
 
     //auto p = (eudaq::Processor_batch*) pro.get();
