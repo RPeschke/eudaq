@@ -55,6 +55,16 @@ namespace eudaq{
     return "merger";
   }
 
+  Name_t ProcessorNames::Parallel_file_reader()
+  {
+    return "Parallel_file_reader";
+  }
+
+  Name_t ProcessorNames::Parallel_processor()
+  {
+    return "parallel_processor";
+  }
+
   registerBaseClassDef(ProcessorBase);
 
 

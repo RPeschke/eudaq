@@ -104,6 +104,8 @@ namespace eudaq{
     static Name_t events_of_intresst();
     static Name_t splitter(); 
     static Name_t merger();
+    static Name_t Parallel_file_reader();
+    static Name_t Parallel_processor();
   };
 }
 #endif // ProcessorBase_h__
