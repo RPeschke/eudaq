@@ -57,6 +57,11 @@ namespace eudaq{
     return create(getDefaultSync(), SyncBase::Parameter_t(""));
   }
 
+  std::unique_ptr<SyncBase> EventSyncFactory::create(SyncBase::MainType name)
+  {
+    return create(name, SyncBase::Parameter_t(""));
+  }
+
   std::vector<std::string> EventSyncFactory::GetTypes()
   {
     return EUDAQ_Utilities::Factory<SyncBase>::GetTypes();

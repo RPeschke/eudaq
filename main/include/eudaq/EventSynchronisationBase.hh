@@ -53,6 +53,7 @@ namespace eudaq{
   public:
 
    static std::unique_ptr<SyncBase>  create(SyncBase::MainType name, SyncBase::Parameter_ref sync);
+   static std::unique_ptr<SyncBase>  create(SyncBase::MainType name );
    static std::unique_ptr<SyncBase> create();
    static std::vector<std::string> GetTypes();
    static std::string  Help_text();
