@@ -96,5 +96,11 @@ namespace eudaq{
     return m_impl;
   }
 
+  template<>
+  ProcessorBase::ConnectionName_t concatenate(ProcessorBase::ConnectionName_ref first, std::string second)
+  {
+    return first + second;
+  }
+
   
 }

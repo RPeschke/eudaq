@@ -87,7 +87,8 @@ namespace eudaq{
   ProcessorBase::ConnectionName_t concatenate(ProcessorBase::ConnectionName_ref first, T second){
     return first + std::to_string(second);
   }
- 
+  template<>
+  ProcessorBase::ConnectionName_t concatenate<std::string>(ProcessorBase::ConnectionName_ref first, std::string second);
   class DLLEXPORT ProcessorNames{
   public:
     using  Name_t = ProcessorBase::MainType;
