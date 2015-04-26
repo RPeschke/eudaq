@@ -20,8 +20,9 @@ namespace eudaq{
 
     virtual void AddProcessor(ProcessorBase *next, ConnectionName_ref = "");
 
-    virtual std::string getName() = 0;
-    virtual void print(std::ostream& os) = 0;
+    virtual std::string getName() ;
+    virtual void print(std::ostream& os) ;
+    virtual void pushProducer(Processor_up processor){}
   private:
     std::map<ConnectionName_t, Processor_up> m_inputInterface;
     std::map<ConnectionName_t, Processor_rp> m_nextInterfaces;
@@ -83,6 +84,17 @@ namespace eudaq{
     }
 
     return m_nextInterfaces[name];
+  }
+
+  std::string Processor_multi_buffer::getName()
+  {
+    return "multi buffer";
+  }
+
+  void Processor_multi_buffer::print(std::ostream& os)
+  {
+    os << getName() << std::endl;
+
   }
 
 }
