@@ -9,14 +9,14 @@ namespace eudaq {
 
   Configuration::Configuration(const std::string & config, const std::string & section)
     : m_cur(&m_config[""]) {
-      std::istringstream confstr(config);
-      Load(confstr, section);
-    }
+    std::istringstream confstr(config);
+    Load(confstr, section);
+  }
 
   Configuration::Configuration(std::istream & conffile, const std::string & section)
     : m_cur(&m_config[""]) {
-      Load(conffile, section);
-    }
+    Load(conffile, section);
+  }
 
   Configuration::Configuration(const Configuration & other)
     : m_config(other.m_config)
@@ -61,21 +61,23 @@ namespace eudaq {
       if (equals == std::string::npos) {
         line = trim(line);
         if (line == "" || line[0] == ';' || line[0] == '#') continue;
-        if (line[0] == '[' && line[line.length()-1] == ']') {
-          line = std::string(line, 1, line.length()-2);
+        if (line[0] == '[' && line[line.length() - 1] == ']') {
+          line = std::string(line, 1, line.length() - 2);
           // TODO: check name is alphanumeric?
           //std::cerr << "Section " << line << std::endl;
           cur_sec = &config[line];
         }
-      } else {
+      }
+      else {
         std::string key = trim(std::string(line, 0, equals));
         // TODO: check key does not already exist
         // handle lines like: blah = "foo said ""bar""; ok." # not "baz"
-        line = trim(std::string(line, equals+1));
-        if ((line[0] == '\'' && line[line.length()-1] == '\'') ||
-            (line[0] == '\"' && line[line.length()-1] == '\"')) {
-          line = std::string(line, 1, line.length()-2);
-        } else {
+        line = trim(std::string(line, equals + 1));
+        if ((line[0] == '\'' && line[line.length() - 1] == '\'') ||
+            (line[0] == '\"' && line[line.length() - 1] == '\"')) {
+          line = std::string(line, 1, line.length() - 2);
+        }
+        else {
           size_t i = line.find_first_of(";#");
           if (i != std::string::npos) line = trim(std::string(line, 0, i));
         }
@@ -104,7 +106,8 @@ namespace eudaq {
   std::string Configuration::Get(const std::string & key, const std::string & def) const {
     try {
       return GetString(key);
-    } catch (const Exception &) {
+    }
+    catch (const Exception &) {
       // ignore: return default
     }
     return def;
@@ -113,7 +116,8 @@ namespace eudaq {
   double Configuration::Get(const std::string & key, double def) const {
     try {
       return from_string(GetString(key), def);
-    } catch (const Exception &) {
+    }
+    catch (const Exception &) {
       // ignore: return default
     }
     return def;
@@ -128,25 +132,27 @@ namespace eudaq {
 #else
       return std::strtoll(s.c_str(), 0, 0);
 #endif
-    } catch (const Exception &) {
+    }
+    catch (const Exception &) {
       // ignore: return default
     }
     return def;
   }
-uint64_t Configuration::Get(const std::string & key, uint64_t def) const {
-	  try {
-		  std::string s = GetString(key);
+  uint64_t Configuration::Get(const std::string & key, uint64_t def) const {
+    try {
+      std::string s = GetString(key);
 #if EUDAQ_PLATFORM_IS(CYGWIN) || EUDAQ_PLATFORM_IS(WIN32)
-		  // Windows doesn't have strtull, so just use stoull for now
-		  return std::stoull(s);
-		  
+      // Windows doesn't have strtull, so just use stoull for now
+      return std::stoull(s);
+
 #else
-		  return std::strtoull(s.c_str(), 0, 0);
+      return std::strtoull(s.c_str(), 0, 0);
 #endif
-	  } catch (const Exception &) {
-		  // ignore: return default
-	  }
-	  return def;
+    }
+    catch (const Exception &) {
+      // ignore: return default
+    }
+    return def;
   }
 
 
@@ -155,7 +161,8 @@ uint64_t Configuration::Get(const std::string & key, uint64_t def) const {
     try {
       std::string s = GetString(key);
       return std::strtol(s.c_str(), 0, 0);
-    } catch (const Exception &) {
+    }
+    catch (const Exception &) {
       // ignore: return default
     }
     return def;
