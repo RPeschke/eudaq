@@ -20,9 +20,10 @@ namespace eudaq{
  
 
 
-  using Processor_sp = std::shared_ptr < ProcessorBase >;
+  using Processor_sp = std::shared_ptr < ProcessorBase >; 
   using Processor_up = std::unique_ptr < ProcessorBase > ;
-  using Processor_rp =ProcessorBase*;
+
+  using Processor_rp =ProcessorBase*;  //reference pointer 
 
   class DLLEXPORT ProcessorBase{
   public:
@@ -51,9 +52,9 @@ namespace eudaq{
 
 
     
-    virtual ProcessorBase* getProcessor(ConnectionName_ref name = "") = 0;
+    virtual Processor_rp getProcessor(ConnectionName_ref name = "") = 0;
     
-    virtual void AddProcessor(ProcessorBase *next, ConnectionName_ref name = "") = 0;
+    virtual void AddProcessor(Processor_rp next, ConnectionName_ref name = "") = 0;
     
     virtual std::string getName() =0;
     virtual void print(std::ostream& os)=0;
