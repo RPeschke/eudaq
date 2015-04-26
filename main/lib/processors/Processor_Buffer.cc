@@ -32,10 +32,9 @@ namespace eudaq{
       return ret;
       
     }
-    else
-    {
-      m_queue.push_back(ev);
-    }
+   
+    m_queue.push_back(ev);
+    
     ReturnParam ret = ProcessorBase::sucess;
     while (!m_queue.empty() )
     {
