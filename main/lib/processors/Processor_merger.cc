@@ -25,13 +25,17 @@ namespace eudaq{
 
       return ProcessorBase::stop;
     }
+    if (m_sync->InputIsEmpty())
+    {
+      return ProcessorBase::sucess; //more events needed 
+    }
     ev = nullptr;
     if (m_sync->getNextEvent(ev))
     {
       return ProcessNext("", ev);
     }
     
-    return ProcessorBase::busy_retry;
+    return ProcessorBase::sucess;
   }
 
   Processor_merger::Processor_merger(Parameter_ref conf) :Processor_N_x_M(conf)
