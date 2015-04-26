@@ -90,7 +90,7 @@ namespace eudaq{
  
   class DLLEXPORT ProcessorNames{
   public:
-    using  Name_t = const ProcessorBase::MainType&;
+    using  Name_t = ProcessorBase::MainType;
 
     static Name_t batch();
     static Name_t buffer();
@@ -100,6 +100,8 @@ namespace eudaq{
     static Name_t file_writer();
     static Name_t show_event_nr();
     static Name_t events_of_intresst();
+    static Name_t splitter(); 
+    static Name_t merger();
   };
 }
 #endif // ProcessorBase_h__

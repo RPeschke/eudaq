@@ -45,6 +45,16 @@ namespace eudaq{
     return "event_of_intressted";
   }
 
+  Name_t ProcessorNames::splitter()
+  {
+    return "splitter";
+  }
+
+  Name_t ProcessorNames::merger()
+  {
+    return "merger";
+  }
+
   registerBaseClassDef(ProcessorBase);
 
 
