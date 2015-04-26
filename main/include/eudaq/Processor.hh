@@ -23,11 +23,11 @@ namespace eudaq{
    virtual void end()override;
 
     
-    ProcessorBase* getProcessor(const std::string& name = "") override;
+    Processor_rp getProcessor(const std::string& name = "") override;
     virtual void pushProducer(std::unique_ptr<ProcessorBase> processor){}
-    void AddProcessor(ProcessorBase* next,const  std::string& name = "") override;
+    void AddProcessor(Processor_rp next, const  std::string& name = "") override;
     ReturnParam ProcessNext(event_sp ev);
-    ProcessorBase* m_next=nullptr;
+    Processor_rp m_next = nullptr;
     std::string m_connection;
   };
 
