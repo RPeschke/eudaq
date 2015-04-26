@@ -17,7 +17,7 @@ namespace eudaq{
     virtual std::string getName() override;
     virtual void print(std::ostream& os);
   private:
-
+   
     std::unique_ptr<baseFileReader> m_reader;
     bool m_first = true;
   };
@@ -28,6 +28,7 @@ namespace eudaq{
 
   ProcessorFileReader::ProcessorFileReader(Parameter_ref conf) :Processor_add2queue(conf)
   {
+    
     m_reader = FileReaderFactory::create("../data/run000047_Kopie.raw");
   }
 
@@ -53,17 +54,19 @@ namespace eudaq{
     {
       ev = m_reader->getEventPtr();
       m_first = false;
+      ev->SetTag("__fileReader", getName());
       return sucess;
     }
 
     if (m_reader->NextEvent())
     {
       ev = m_reader->getEventPtr();
+      ev->SetTag("__fileReader", getName());
       return sucess;
 
     }
 
-
+    
 
     return stop;
   }
