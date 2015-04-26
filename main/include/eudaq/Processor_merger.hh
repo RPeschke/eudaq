@@ -8,12 +8,18 @@
 namespace eudaq{
 
 
-
+  class SyncBase;
   class Processor_merger :public Processor_N_x_M{
   public:
     virtual ReturnParam ProcessorEvent(ConnectionName_ref name, event_sp ev) ;
     Processor_merger(Parameter_ref);
     virtual ~Processor_merger(){}
+    virtual void init();
+    
+  private:
+    std::map<ConnectionName_t, unsigned> m_map;
+    unsigned m_counter = 0;
+    std::unique_ptr < SyncBase > m_sync;
   };
 }
 
