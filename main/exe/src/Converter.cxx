@@ -60,11 +60,12 @@ int main(int, char ** argv) {
 
     auto pro = ProcessorFactory::create(ProcessorNames::batch(), ProcessorNames::file_reader());
     event_sp ev = std::dynamic_pointer_cast<Event>(std::make_shared<eudaq::RawDataEvent>("tesT", 1, 1));
-    pro->pushProducer(ProcessorFactory::create(ProcessorNames::file_reader(), "second"));
+    pro->pushProducer(ProcessorFactory::create(ProcessorNames::Parallel_file_reader(), "second"));
     //pro->pushProducer(ProcessorFactory::create("ShowEventNR", ""));
     pro->pushProducer(ProcessorFactory::create(ProcessorNames::events_of_intresst(), events->Value()));
     pro->pushProducer(ProcessorFactory::create(ProcessorNames::show_event_nr(), "buffer"));
     pro->pushProducer(ProcessorFactory::create(ProcessorNames::splitter(), ""));
+    pro->pushProducer(ProcessorFactory::create(ProcessorNames::Parallel_processor(),ProcessorNames::show_event_nr()));
     pro->pushProducer(ProcessorFactory::create(ProcessorNames::multi_buffer(), ""));
     pro->pushProducer(ProcessorFactory::create(ProcessorNames::merger(), ""));
     pro->pushProducer(ProcessorFactory::create(ProcessorNames::buffer(), ""));
