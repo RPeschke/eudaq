@@ -9,6 +9,7 @@
                                            BaseClass::Parameter_ref pType{};\
                                            EUDAQ_Utilities::Factory<BaseClass>::Create(mType,pType );       \
                                            EUDAQ_Utilities::Factory<BaseClass>::GetTypes();          \
+                                           EUDAQ_Utilities::Factory<BaseClass>::getInstance();\
                                            }}  \
                                      int EUDAQ_DUMMY_VARIABLE_DO_NOT_USE##BaseClass=0
 
@@ -35,6 +36,11 @@ namespace EUDAQ_Utilities{
 
   }
 
+  template <typename baseClassType>
+  typename Factory<baseClassType>::map_t& Factory<baseClassType>::getInstance(){
+    static map_t m;
+    return m;
+  }
 
 
 //   template <typename baseClassType>

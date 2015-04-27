@@ -47,11 +47,8 @@ namespace EUDAQ_Utilities{
     static void do_register(const MainType & name, factoryfunc func){
       getInstance()[name] = func;
     }
-
-    static map_t& getInstance(){
-      static map_t m;
-      return m;
-    }
+  public:
+    static map_t& getInstance(); 
 
   };
 
