@@ -10,13 +10,23 @@
 
 #include "eudaq/ProcessorBase.hh"
 #include "eudaq/RawDataEvent.hh"
+#include "eudaq/Processor_inspector.hh"
 
 
 
 using namespace eudaq;
 unsigned dbg = 0;
 
+class test : public Processor_Inspector{
+public:
+  test(Parameter_ref conf) :Processor_Inspector(conf){}
+  virtual ReturnParam inspecktEvent(const Event&) { std::cout << "hello from test" << std::endl; return ProcessorBase::sucess; };
+};
+std::string testName(){
+  return "test";
+}
 
+RegisterProcessor(test, testName());
 int main(int, char ** argv) {
 
 
@@ -58,10 +68,10 @@ int main(int, char ** argv) {
 
 
 
-    auto pro = ProcessorFactory::create(ProcessorNames::batch(), ProcessorNames::file_reader());
+    auto pro = ProcessorFactory::create(ProcessorNames::batch(), "");
     event_sp ev = std::dynamic_pointer_cast<Event>(std::make_shared<eudaq::RawDataEvent>("tesT", 1, 1));
     pro->pushProducer(ProcessorFactory::create(ProcessorNames::Parallel_file_reader(), "second"));
-    //pro->pushProducer(ProcessorFactory::create("ShowEventNR", ""));
+    pro->pushProducer(ProcessorFactory::create("test", ""));
     pro->pushProducer(ProcessorFactory::create(ProcessorNames::events_of_intresst(), events->Value()));
     pro->pushProducer(ProcessorFactory::create(ProcessorNames::show_event_nr(), "buffer"));
     pro->pushProducer(ProcessorFactory::create(ProcessorNames::splitter(), ""));
