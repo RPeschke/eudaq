@@ -9,7 +9,7 @@ namespace eudaq{
 
  
 
-  class  Processor_Inspector:public Processor{
+  class DLLEXPORT Processor_Inspector:public Processor{
   public:
 
 
