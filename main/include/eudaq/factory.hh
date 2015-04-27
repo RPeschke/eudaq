@@ -4,6 +4,7 @@
 #include <map>
 #include <vector>
 #include <memory>
+#include "Platform.hh"
 
 #define registerClass(baseClass,derivedClass,identifier)    namespace {static EUDAQ_Utilities::Registerbase<baseClass,derivedClass> reg##derivedClass(identifier); } int EUDAQ_DUMMY_VARIABLE_DO_NOT_USE##derivedClass=0 
 
@@ -16,7 +17,7 @@
 namespace EUDAQ_Utilities{
 
   template <typename baseClassType>
-  class  Factory {
+  class DLLEXPORT Factory {
   public:
 
     using MainType = typename baseClassType::MainType;
@@ -56,7 +57,7 @@ namespace EUDAQ_Utilities{
 
 
   template <typename baseClass, typename DerivedClass>
-  class  Registerbase {
+  class DLLEXPORT Registerbase {
   public:
     using MainType = typename baseClass::MainType;
 
