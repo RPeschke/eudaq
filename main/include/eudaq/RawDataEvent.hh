@@ -98,9 +98,9 @@ namespace eudaq {
       }
 
     template <typename T>
-      static data_t make_vector(const std::vector<T> & data) {
-        const unsigned char * ptr = reinterpret_cast<const byte_t *>(&data[0]);
-        return data_t(ptr, ptr + data.size() * sizeof(T));
+      static data_t make_vector(const std::vector<T> & inData) {
+        const unsigned char * ptr = reinterpret_cast<const byte_t *>(inData.data());
+        return data_t(ptr, ptr + inData.size() * sizeof(T));
       }
 
     std::string m_type;
