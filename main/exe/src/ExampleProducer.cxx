@@ -23,6 +23,7 @@ public:
     starting,
     started,
     stopping,
+    stopped,
     doTerminat
 
   };
@@ -55,6 +56,8 @@ public:
   // This gets called whenever a new run is started
   // It receives the new run number as a parameter
   virtual void OnStartRun(unsigned param) {
+    
+    m_stat = starting;
     m_run = param;
     m_ev = 0;
     eudaq::mSleep(m_send_bore_delay);
@@ -94,6 +97,7 @@ public:
     EOREvent.SetTag("ID", m_ID);
     EOREvent.SetTimeStampToNow();
     SendEvent(EOREvent);
+    m_stat = configured;
     std::cout << "Stopped" << std::endl;
   }
 
@@ -112,7 +116,7 @@ public:
         // No events are pending, so check if the run is stopping
         if (m_stat=stopping) {
           // if so, signal that there are no events left
-          m_stat = configured;
+          m_stat = stopped;
         }
         // Now sleep for a bit, to prevent chewing up all the CPU
         eudaq::mSleep(20);
