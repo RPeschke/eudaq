@@ -82,6 +82,7 @@ public:
 	//status flags
 	void checkStatus();
 
+  void setTimeOut(int);
 
   bool getOnStart();
 	void setOnStart(bool newStat);
@@ -93,7 +94,7 @@ public:
 
   bool getOnStop();
 	void setOnStop(bool newStat);
-
+  void setStatusToStopped();
 
   bool getOnTerminate();
 	void setOnTerminate(bool newStat);
