@@ -59,14 +59,14 @@ namespace eudaq {
 
 
 
-        uchar2bool(inputVector,
+        uchar2bool(inputVector.data()+
             STREAMSTART(streamNr) +(moduleNr-1)*TOTALMODULSIZE,
-            STREAMEND(streamNr)   +(moduleNr-1)*TOTALMODULSIZE,
+            inputVector.data()+ STREAMEND(streamNr) + (moduleNr - 1)*TOTALMODULSIZE,
             outputStream0);
 
 
 
-    size_t x_pos=0;
+        size_t x_pos=0;
         for (size_t i=0; i<outputStream0.size();++i)
         {
             
