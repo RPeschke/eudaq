@@ -8,6 +8,7 @@
 
 #include <iostream>
 #include <fstream>
+#include "eudaq/FileWriter.hh"
 
 using eudaq::StandardEvent;
 using eudaq::from_string;
@@ -122,12 +123,11 @@ int main(int /*argc*/, char ** argv) {
 
     if (do_event_to_ttree.IsSet()) throw eudaq::MessageException("The -r option is deprecated: use \"./Converter.exe -t root\" instead.");
 
-    for (size_t i = 0; i < op.NumArgs(); ++i) {
-
       
-      eudaq::baseFileReader::Parameter_t p;
-	  eudaq::multiFileReader reader(p);
-		  reader.addFileReader(op.GetArg(i), ipat.Value());
+  
+    auto readerM = eudaq::FileReaderFactory::create(op);
+
+      auto& reader = *readerM;
       reader.NextEvent();
 
 	  EUDAQ_INFO("Reading: " + reader.Filename());
@@ -205,7 +205,7 @@ int main(int /*argc*/, char ** argv) {
       }
 
       if (nnondet || (nbore != 1) || (neore > 1)) std::cout << "Probably corrupt file." << std::endl;
-    }
+    
     //  cout << "Last event read is # "<< i_last << " (should be by 2 more than Event in the file counting the EORE & BORE)" << endl;
   } catch (...) {      
     return op.HandleMainException();
