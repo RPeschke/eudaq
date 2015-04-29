@@ -79,7 +79,7 @@ namespace eudaq {
     if (processor&&!m_processors.empty())
     {
 
-      AddProcessor(processor.get());
+      AddProcessor(processor.get(),processor->getName());
     }
     m_processors.push_back(std::move(processor));
     m_next = m_processors.back().get();
