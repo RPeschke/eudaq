@@ -57,9 +57,9 @@ namespace eudaq {
 		if (rof)
 		{
       *m_out << Event::id2str(rof->get_id()) << "  " << rof->GetSubType() << " <timeStamps>";
-			for (size_t j = 0; j < rof->GetSizeOfTimeStamps();++j)
+			for (size_t j = 0; j < PluginManager::GetTimeStamp_size(*rof);++j)
 				{
-				*m_out << rof->GetTimestamp(j) << " ";
+				*m_out << PluginManager::GetTimeStamp(*rof,j) << " ";
 				}
 				
       *m_out << "</timestamps>" << rof->GetTag("eventID") << "||";
