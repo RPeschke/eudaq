@@ -65,8 +65,20 @@ namespace eudaq{
     return "parallel_processor";
   }
 
+
+  using Config = ProConfig::Config;
+  Config ProConfig::Topic(const std::string& name)
+  {
+	  return "[" + name + "]\n";
+  }
+
   registerBaseClassDef(ProcessorBase);
 
+
+  Config ProConfig::Tag(const std::string& tagName, const std::string& tagValue)
+  {
+	  return tagName + "=" + tagValue + "\n";
+  }
 
   ProcessorBase::ProcessorBase(Parameter_ref name) :m_conf(name)
   {
