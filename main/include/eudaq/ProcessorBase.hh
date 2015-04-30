@@ -44,9 +44,11 @@ namespace eudaq{
     using ConnectionName_ref = const ConnectionName_t &;
 
 
+	using Configuration_t = std::string;
+	using Configuration_ref = const Configuration_t&;
     ProcessorBase(Parameter_ref name);
     virtual ~ProcessorBase() {};
-    virtual void init() =0;
+	virtual void init(Configuration_ref conf) = 0;
     virtual ReturnParam ProcessorEvent(event_sp ev) = 0;
     virtual void end() =0;
 

@@ -16,11 +16,11 @@ namespace eudaq {
 
   }
 
-  void Processor_batch::init()
+  void Processor_batch::init(Configuration_ref conf)
   {
     for (auto& e:m_processors)
     {
-      e->init();
+      e->init(conf);
     }
   }
 

@@ -8,12 +8,12 @@ namespace eudaq{
   using ReturnParam = ProcessorBase::ReturnParam;
 
   RegisterProcessor(Processor_parallel_file, ProcessorNames::Parallel_file_reader());
-  void Processor_parallel_file::init()
+  void Processor_parallel_file::init(Configuration_ref conf)
   {
     m_reader = ProcessorFactory::create(ProcessorNames::file_reader(), m_conf);
-    m_reader->init();
+	m_reader->init(conf);
     m_reader->AddProcessor(getNextProcessor(getName()), getName());
-    Processor_Parrallel_add2queue::init();
+    Processor_Parrallel_add2queue::init(conf);
   }
 
   void Processor_parallel_file::end()

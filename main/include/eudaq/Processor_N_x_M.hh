@@ -9,7 +9,7 @@ namespace eudaq{
   class Processor_N_x_M :public ProcessorBase{
 
   public:
-    virtual void init() override;
+	  virtual void init(Configuration_ref conf) override;
     virtual std::string getName() override;
     virtual ReturnParam ProcessorEvent(ConnectionName_ref name,event_sp ev) = 0;
     virtual void print(std::ostream& os);

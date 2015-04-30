@@ -8,7 +8,7 @@ namespace eudaq{
   public:
     Processor_N_x_M_input_interface(Parameter_ref name);
     virtual ~Processor_N_x_M_input_interface() {};
-    virtual void init(){}
+	virtual void init(Configuration_ref conf){}
     virtual ReturnParam ProcessorEvent(event_sp ev);
     virtual void end(){}
 

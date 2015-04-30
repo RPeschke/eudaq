@@ -96,11 +96,11 @@ namespace eudaq{
 
   }
 
-  void Processor_Parrallel_add2queue::init()
+  void Processor_Parrallel_add2queue::init(Configuration_ref conf)
   {
     for (auto& e:m_inputInterface)
     {
-      e.second->init();
+      e.second->init(conf);
     }
     
   }

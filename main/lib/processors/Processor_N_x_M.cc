@@ -7,7 +7,7 @@ namespace eudaq{
 
   }
 
-  void Processor_N_x_M::init()
+   void Processor_N_x_M::init(Configuration_ref conf)
   {
 
   }

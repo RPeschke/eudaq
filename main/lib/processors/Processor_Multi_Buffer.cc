@@ -10,7 +10,7 @@ namespace eudaq{
       
     }
 
-    virtual void init() ;
+	virtual void init(Configuration_ref conf);
     virtual ReturnParam ProcessorEvent(event_sp ev);
     virtual void end() ;
 
@@ -39,7 +39,7 @@ namespace eudaq{
     return ProcessorBase::ret_error;
   }
 
-  void Processor_multi_buffer::init()
+  void Processor_multi_buffer::init(Configuration_ref conf)
   {
 
   }

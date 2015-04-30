@@ -3,12 +3,12 @@
 
 
 namespace eudaq{
-  void Processor_N_2_N::init()
+	void Processor_N_2_N::init(Configuration_ref conf)
   {
     for (auto&e:m_Processors)
     {
       e.second->AddProcessor(getNextProcessor(e.first), e.first);
-      e.second->init();
+      e.second->init(conf);
     }
     Initilize();
   }

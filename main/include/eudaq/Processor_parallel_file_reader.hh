@@ -10,7 +10,7 @@ namespace eudaq{
   public:
     Processor_parallel_file(Parameter_ref conf);
     virtual ~Processor_parallel_file(){}
-    virtual void init() ;
+	virtual void init(Configuration_ref conf);
     virtual void end() ;
 
     virtual ReturnParam ProcessorEvent(event_sp ev);
