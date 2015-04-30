@@ -1,11 +1,11 @@
 #ifndef Processor_N_2_N_h__
 #define Processor_N_2_N_h__
 
-#include "eudaq/ProcessorBase.hh"
+#include "eudaq/Processor_N_2_M_base.hh"
 
 namespace eudaq{
 
-  class Processor_N_2_N :public ProcessorBase{
+  class Processor_N_2_N :public Processor_N_2_M_base{
   public:
     Processor_N_2_N(Parameter_ref conf);
     virtual ~Processor_N_2_N(){}
@@ -22,17 +22,17 @@ namespace eudaq{
 
 
 
-    virtual void init();
+	virtual void init(Configuration_ref conf);
     virtual void end() ;
     virtual Processor_rp getProcessor(ConnectionName_ref name = "");
     virtual void AddProcessor(Processor_rp next, ConnectionName_ref name = "") ;
     virtual void pushProducer(Processor_up processor);
     
   private:
-    Processor_rp getNextProcessor(ConnectionName_t name = "");
+  
     std::map<ConnectionName_t, Processor_up> m_Processors;
     virtual ReturnParam ProcessorEvent(event_sp ev) { return ProcessorBase::ret_error; }
-    Processor_rp m_next=nullptr;
+
   };
 
 }

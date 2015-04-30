@@ -32,9 +32,11 @@ namespace eudaq{
     if (inputItt == m_Processors.end())
     {
       m_Processors[name] = CreateProcessor(name,m_conf);
-      if (m_next)
+
+	  auto nextProcessor = getNextProcessor(name);
+      if (nextProcessor)
       {
-        m_Processors[name]->AddProcessor(getNextProcessor(name), name);
+        m_Processors[name]->AddProcessor(nextProcessor, name);
       }
 
     }
@@ -42,10 +44,6 @@ namespace eudaq{
     return m_Processors[name].get();
   }
 
-  void Processor_N_2_N::AddProcessor(Processor_rp next, ConnectionName_ref name /*= ""*/)
-  {
-    m_next = next;
-  }
 
   void Processor_N_2_N::pushProducer(Processor_up processor)
   {
@@ -53,23 +51,9 @@ namespace eudaq{
   }
 
  
-  Processor_rp Processor_N_2_N::getNextProcessor(ConnectionName_t name /*= ""*/)
-  {
 
 
-    if (name.empty())
-    {
-      name = getName();
-    }
-
-    if (m_next){
-      return m_next->getProcessor(name);
-    }
-
-    return nullptr;
-  }
-
-  Processor_N_2_N::Processor_N_2_N(Parameter_ref conf) :ProcessorBase(conf)
+  Processor_N_2_N::Processor_N_2_N(Parameter_ref conf) :Processor_N_2_M_base(conf)
   {
 
   }
