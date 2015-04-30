@@ -18,6 +18,7 @@ namespace eudaq{
 		}
 	}
 
+
 	void Processor_N_2_M_base::AddProcessorInternal(Processor_rp next, ConnectionName_ref name)
 	{
 		if (next)
@@ -61,4 +62,10 @@ namespace eudaq{
 
 		return nullptr;
 	}
+
+  void Processor_N_2_M_base::init(Configuration_ref conf)
+  {
+
+  }
+
 }

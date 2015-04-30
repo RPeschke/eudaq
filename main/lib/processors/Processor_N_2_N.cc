@@ -10,7 +10,7 @@ namespace eudaq{
       e.second->AddProcessor(getNextProcessor(e.first), e.first);
       e.second->init(conf);
     }
-    Initilize();
+	initialize(conf);
   }
 
   void Processor_N_2_N::end()
