@@ -42,8 +42,6 @@ namespace eudaq{
     using Parameter_ref = const Parameter_t&;
     using ConnectionName_t=std::string;
     using ConnectionName_ref = const ConnectionName_t &;
-
-
 	using Configuration_t = std::string;
 	using Configuration_ref = const Configuration_t&;
     ProcessorBase(Parameter_ref name);
@@ -108,6 +106,17 @@ namespace eudaq{
     static Name_t merger();
     static Name_t Parallel_file_reader();
     static Name_t Parallel_processor();
+
+
+  };
+
+  class DLLEXPORT ProConfig{
+  public:
+	  using Config = ProcessorBase::Configuration_t;
+
+	  static Config Topic(const std::string& name);
+	  static Config Tag(const std::string& tagName, const std::string& tagValue);
+
   };
 }
 #endif // ProcessorBase_h__
