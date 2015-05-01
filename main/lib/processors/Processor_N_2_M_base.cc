@@ -10,7 +10,31 @@ namespace eudaq{
 
 	}
 
-	void Processor_N_2_M_base::AddProcessor(Processor_rp next, ConnectionName_ref name /*= ""*/)
+  Processor_rp Processor_N_2_M_base::getProcessor(ConnectionName_ref name /*= ""*/)
+  {
+    auto inputItt = m_interfaces.find(name);
+
+
+    if (inputItt == m_interfaces.end())
+    {
+
+      
+      m_interfaces[name] = CreateInterface(name, m_conf);
+
+      auto nextProcessor = getNextProcessor(name);
+      if (nextProcessor)
+      {
+        m_interfaces[name]->AddProcessor(nextProcessor, name);
+      }
+
+    }
+
+    return m_interfaces[name].get();
+  }
+
+
+
+  void Processor_N_2_M_base::AddProcessor(Processor_rp next, ConnectionName_ref name /*= ""*/)
 	{
 	    if (next)
 		{
@@ -19,7 +43,18 @@ namespace eudaq{
 	}
 
 
-	void Processor_N_2_M_base::AddProcessorInternal(Processor_rp next, ConnectionName_ref name)
+  void Processor_N_2_M_base::pushProducer(Processor_up processor)
+  {
+    m_interfaces[processor->getName()] = std::move(processor);
+  }
+
+  void Processor_N_2_M_base::clearProducer()
+  {
+    m_interfaces.clear();
+    m_internal_map.clear();
+  }
+
+  void Processor_N_2_M_base::AddProcessorInternal(Processor_rp next, ConnectionName_ref name)
 	{
 		if (next)
 		{
@@ -65,7 +100,25 @@ namespace eudaq{
 
   void Processor_N_2_M_base::init(Configuration_ref conf)
   {
+    
 
+    for (auto &e:m_interfaces)
+    {
+      e.second->init(conf);
+    }
+
+    initialize(conf);
+  }
+
+  void Processor_N_2_M_base::end()
+  {
+    for (auto & e:m_interfaces)
+    {
+      e.second->end();
+    }
+    
+
+    finish();
   }
 
 }

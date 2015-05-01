@@ -16,7 +16,7 @@ namespace eudaq {
 
   }
 
-  void Processor_batch::init(Configuration_ref conf)
+  void Processor_batch::initialize(Configuration_ref conf)
   {
     for (auto& e:m_processors)
     {
@@ -24,7 +24,7 @@ namespace eudaq {
     }
   }
 
-  void Processor_batch::end()
+  void Processor_batch::Finish()
   {
 
     for (auto& e : m_processors)

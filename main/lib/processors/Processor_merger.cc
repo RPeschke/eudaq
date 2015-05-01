@@ -43,12 +43,14 @@ namespace eudaq{
 
   }
 
-  void Processor_merger::init()
+  void Processor_merger::initialize(Configuration_ref conf)
   {
     m_counter = 0;
     m_map.clear();
     SyncBase::Parameter_t p;
     m_sync = EventSyncFactory::create("DetectorEvents", p);
   }
+
+
 
 }

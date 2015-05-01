@@ -14,7 +14,6 @@ namespace eudaq{
 
 
     virtual void multiEnd() =0;
-    virtual Processor_up CreateProcessor(ConnectionName_ref name, Parameter_ref conf)=0;
     virtual std::string getName() = 0;
     virtual void print(std::ostream& os) = 0;
 
@@ -22,11 +21,9 @@ namespace eudaq{
 
 
 
-	virtual void init(Configuration_ref conf);
-    virtual void end() ;
-    virtual Processor_rp getProcessor(ConnectionName_ref name = "");
- 
-    virtual void pushProducer(Processor_up processor);
+	virtual void initialize(Configuration_ref conf);
+    virtual void finish() ;
+
     
   private:
   

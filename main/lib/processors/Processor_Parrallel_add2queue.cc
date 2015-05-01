@@ -55,9 +55,11 @@ namespace eudaq{
       m_inputInterface[name] = Processor_up(new Processor_Parrallel_add2queue::interfaceProducer(name));
       auto p_raw = dynamic_cast<interfaceProducer*>(m_inputInterface[name].get());
       p_raw->setBaseProcessor(this);
-      if (m_nextProcessor)
+
+      auto next = getNextProcessor(name);
+      if (next)
       {
-      m_inputInterface[name]->AddProcessor(getNextProcessor(name), name);
+        m_inputInterface[name]->AddProcessor(next, name);
       }
 
     }
@@ -65,38 +67,21 @@ namespace eudaq{
     return m_inputInterface[name].get();
   }
 
-  Processor_rp Processor_Parrallel_add2queue::getNextProcessor(ConnectionName_ref name /*= ""*/)
-  {
-    if (m_nextProcessor)
-    {
-      return m_nextProcessor->getProcessor(name);
-    }
 
-    return nullptr;
-  }
 
-  void Processor_Parrallel_add2queue::AddProcessor(Processor_rp next, ConnectionName_ref name /*= ""*/)
-  {
-    if (name.empty()){
-      m_nextProcessor = next->getProcessor(getName());
 
-    }
-    else{
-      m_nextProcessor = next->getProcessor(name);
-    }
-  }
 
   std::string Processor_Parrallel_add2queue::getName()
   {
     return m_conf;
   }
 
-  Processor_Parrallel_add2queue::Processor_Parrallel_add2queue(Parameter_ref conf) :ProcessorBase(conf)
+  Processor_Parrallel_add2queue::Processor_Parrallel_add2queue(Parameter_ref conf) :Processor_N_2_M_base(conf)
   {
 
   }
 
-  void Processor_Parrallel_add2queue::init(Configuration_ref conf)
+  void Processor_Parrallel_add2queue::initialize(Configuration_ref conf)
   {
     for (auto& e:m_inputInterface)
     {

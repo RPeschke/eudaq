@@ -12,9 +12,9 @@ namespace eudaq{
   public:
     Processor_batch(Parameter_ref name);
     virtual ~Processor_batch(){}
-	virtual void init(Configuration_ref conf) override;
+    virtual void initialize(Configuration_ref conf) override;
     virtual ReturnParam ProcessorEvent(event_sp ev) override;
-    virtual void end()override;
+    virtual void Finish()override;
 
 
 

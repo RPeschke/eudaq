@@ -1,14 +1,14 @@
 #ifndef Processor_Parrallel_add2queue_h__
 #define Processor_Parrallel_add2queue_h__
-#include "eudaq/ProcessorBase.hh"
+#include "eudaq/Processor_N_2_M_base.hh"
 
 namespace eudaq{
-  class Processor_Parrallel_add2queue :public ProcessorBase{
+  class Processor_Parrallel_add2queue :public Processor_N_2_M_base{
   public:
     Processor_Parrallel_add2queue(Parameter_ref conf);
     virtual ~Processor_Parrallel_add2queue(){}
-	virtual void init(Configuration_ref conf);
-    virtual void end() = 0;
+    virtual void initialize (Configuration_ref conf);
+    
 
     virtual ReturnParam ProcessorEvent(event_sp ev)=0;
 
@@ -16,15 +16,13 @@ namespace eudaq{
 
 
 
-    virtual Processor_rp getProcessor(ConnectionName_ref name = "");
-    virtual void pushProducer(Processor_up processor) {};
     virtual std::string getName() ;
-    virtual void AddProcessor(Processor_rp next, ConnectionName_ref name = "") ;
 
-  protected:
-    Processor_rp getNextProcessor(ConnectionName_ref name = "") ;
+
+  
+    
   private:
-    Processor_rp m_nextProcessor=nullptr;
+
     class interfaceProducer;
 
     

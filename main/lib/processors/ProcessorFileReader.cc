@@ -12,7 +12,7 @@ namespace eudaq{
     ProcessorFileReader(Parameter_ref conf);
 
     virtual ReturnParam add2queue(event_sp& ev);
-
+    virtual void initialize(Configuration_ref conf);
 
     virtual std::string getName() override;
     virtual void print(std::ostream& os);
@@ -29,7 +29,7 @@ namespace eudaq{
   ProcessorFileReader::ProcessorFileReader(Parameter_ref conf) :Processor_add2queue(conf)
   {
     
-    m_reader = FileReaderFactory::create("../data/run000047_Kopie.raw");
+    
   }
 
 
@@ -72,5 +72,10 @@ namespace eudaq{
   }
 
 
+
+  void ProcessorFileReader::initialize(Configuration_ref conf)
+  {
+    m_reader = FileReaderFactory::create(ProConfig::getFilename(conf,getName(),""));
+  }
 
 }

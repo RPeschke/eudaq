@@ -3,24 +3,9 @@
 
 
 namespace eudaq{
-	void Processor_N_2_N::init(Configuration_ref conf)
-  {
-    for (auto&e:m_Processors)
-    {
-      e.second->AddProcessor(getNextProcessor(e.first), e.first);
-      e.second->init(conf);
-    }
-	initialize(conf);
-  }
 
-  void Processor_N_2_N::end()
-  {
-    for (auto&e : m_Processors)
-    {
-      e.second->end();
-    }
-    multiEnd();
-  }
+
+
 
 
 
@@ -45,10 +30,7 @@ namespace eudaq{
   }
 
 
-  void Processor_N_2_N::pushProducer(Processor_up processor)
-  {
-   m_Processors[processor->getName()]=std::move(processor);
-  }
+
 
  
 

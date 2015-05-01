@@ -39,6 +39,11 @@ namespace eudaq{
 
   }
 
+  Processor_up Processor_splitter::CreateInterface(ConnectionName_ref name, Parameter_ref conf)
+  {
+
+  }
+
   ReturnParam Processor_splitter::ProcessorBaseEvent(ConnectionName_ref name, event_sp ev)
   {
 
@@ -52,9 +57,10 @@ namespace eudaq{
 
   }
 
-  Processor_splitter::Processor_splitter(Parameter_ref conf) :Processor_N_x_M(conf)
+  void Processor_splitter::initialize(Configuration_ref conf)
   {
 
   }
+
 
 }
