@@ -75,14 +75,30 @@ namespace eudaq{
   registerBaseClassDef(ProcessorBase);
 
 
+  static const std::string ProcessorNameTag = "ProcessorName";
+  static const std::string FileNameTag = "FileName";
+  static const std::string ProcessorTypeTag = "ProcessorType";
+  static const std::string ProcessorBaseTopic = "base";
+
+
   Config ProConfig::Tag(const std::string& tagName, const std::string& tagValue)
   {
 	  return tagName + "=" + tagValue + "\n";
   }
 
+  Config ProConfig::ProcessorName(const std::string& Name)
+  {
+    return Tag(ProcessorNameTag, Name);
+  }
+
+  Config ProConfig::ProcessorType(const std::string& Name)
+  {
+    return Tag(ProcessorTypeTag, Name);
+  }
+
   Config ProConfig::Filename(const std::string& fileName)
   {
-    return Tag("FileName", fileName);
+    return Tag(FileNameTag, fileName);
   }
 
   std::string ProConfig::getTag(const ConfigInput& conf, const std::string& section, const std::string& tag, const std::string& def)
@@ -95,7 +111,17 @@ namespace eudaq{
 
   std::string ProConfig::getFilename(const ConfigInput& conf, const std::string& section, const std::string& def)
   {
-    return getTag(conf, section, "FileName", def);
+    return getTag(conf, section, FileNameTag, def);
+  }
+
+  std::string ProConfig::getProcessorName(const ConfigInput& conf)
+  {
+    return  getTag(conf, ProcessorBaseTopic, ProcessorNameTag, "");
+  }
+
+  std::string ProConfig::getProcessorType(const ConfigInput& conf)
+  {
+    return getTag(conf, ProcessorBaseTopic, ProcessorTypeTag, "");
   }
 
   ProcessorBase::ProcessorBase(Parameter_ref name) :m_conf(name)
@@ -105,7 +131,7 @@ namespace eudaq{
   std::unique_ptr<ProcessorBase> ProcessorFactory::create(ProcessorBase::MainType type, ProcessorBase::Parameter_ref param)
   {
 
-    return EUDAQ_Utilities::Factory<ProcessorBase>::Create(type, param);
+    return EUDAQ_Utilities::Factory<ProcessorBase>::Create(type, ProConfig::Topic(ProcessorBaseTopic) +ProConfig::ProcessorType(type)  + param );
   }
 
   void ProcessorFactory::addComandLineOptions(eudaq::OptionParser & op)

@@ -6,13 +6,13 @@ namespace eudaq {
   using ReturnParam = ProcessorBase::ReturnParam;
   Processor_batch::Processor_batch(Parameter_ref name) :Processor(name)
   {
-
-    auto splitted_names = eudaq::split(name,",");
-    for (auto& e:splitted_names)
-    {
-
-      pushProducer(ProcessorFactory::create(e, ""));
-    }
+    
+//     auto splitted_names = eudaq::split(name,",");
+//     for (auto& e:splitted_names)
+//     {
+// 
+//       pushProducer(ProcessorFactory::create(e, ""));
+//     }
 
   }
 

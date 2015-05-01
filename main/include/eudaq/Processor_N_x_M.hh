@@ -12,7 +12,7 @@ namespace eudaq{
     virtual std::string getName() override;
     virtual ReturnParam ProcessorEvent(ConnectionName_ref name,event_sp ev) = 0;
     virtual void print(std::ostream& os);
-
+    Processor_up CreateInterface(ConnectionName_ref name, Parameter_ref conf);
 
     Processor_N_x_M(Parameter_ref);
     virtual ~Processor_N_x_M(){}

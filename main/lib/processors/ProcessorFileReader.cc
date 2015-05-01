@@ -35,8 +35,9 @@ namespace eudaq{
 
   std::string ProcessorFileReader::getName()
   {
-
-    return m_conf;
+    
+    auto name = ProConfig::getProcessorName(m_conf);
+    return ProConfig::getProcessorName(m_conf);
   }
 
 

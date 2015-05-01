@@ -39,7 +39,7 @@ namespace eudaq{
 
   Process_eventOfInterest::Process_eventOfInterest(Parameter_ref conf) :Processor_Inspector("EventsOfIntrest")
   {
-    m_events = parsenumbers(conf);
+    m_events = parsenumbers(ProConfig::getTag(conf,"base","events",""));
   }
 
 

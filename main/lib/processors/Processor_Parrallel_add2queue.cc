@@ -42,31 +42,6 @@ namespace eudaq{
 
  
 
-  ProcessorBase* Processor_Parrallel_add2queue::getProcessor(ConnectionName_ref name /*= ""*/)
-  {
- 
-
-
-    auto inputItt = m_inputInterface.find(name);
-
-
-    if (inputItt == m_inputInterface.end())
-    {
-      m_inputInterface[name] = Processor_up(new Processor_Parrallel_add2queue::interfaceProducer(name));
-      auto p_raw = dynamic_cast<interfaceProducer*>(m_inputInterface[name].get());
-      p_raw->setBaseProcessor(this);
-
-      auto next = getNextProcessor(name);
-      if (next)
-      {
-        m_inputInterface[name]->AddProcessor(next, name);
-      }
-
-    }
-
-    return m_inputInterface[name].get();
-  }
-
 
 
 
@@ -93,5 +68,17 @@ namespace eudaq{
 
 
 
+
+  Processor_up Processor_Parrallel_add2queue::CreateInterface(ConnectionName_ref name, Parameter_ref conf)
+  {
+  
+      auto proc= Processor_up(new Processor_Parrallel_add2queue::interfaceProducer(name));
+    
+      
+      auto p_raw = dynamic_cast<interfaceProducer*>(proc.get());
+      p_raw->setBaseProcessor(this);
+   
+      return proc;
+  }
 
 }

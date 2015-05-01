@@ -41,12 +41,13 @@ public:
     // Configuration file values are accessible as config.Get(name, default)
     m_exampleparam = config.Get("Parameter", 0);
     m_send_bore_delay = config.Get("boreDelay", 0);
-    m_maxEventNR = config.Get("numberOfEvents", 100);
+    m_maxEventNR = config.Get("numberOfEvents", 200);
     m_ID = config.Get("ID", 0);
     m_Skip = config.Get("skip", 0);
-    std::cout << "Example Parameter = " << m_exampleparam << std::endl;
+    std::cout << "m_maxEventNR = " << m_maxEventNR << std::endl;
     hardware.Setup(m_exampleparam);
-    m_TLU = config.Get("TLU", 1);
+    
+    m_TLU = config.Get("TLU", 0);
     // At the end, set the status that will be displayed in the Run Control.
     SetStatus(eudaq::Status::LVL_OK, "Configured (" + config.Name() + ")");
     m_stat = configured;
@@ -56,13 +57,13 @@ public:
   // This gets called whenever a new run is started
   // It receives the new run number as a parameter
   virtual void OnStartRun(unsigned param) {
-    
+    std::cout << "Start Run: " << m_run << std::endl;
     m_stat = starting;
     m_run = param;
     m_ev = 0;
     eudaq::mSleep(m_send_bore_delay);
-    std::cout << "Start Run: " << m_run << std::endl;
-
+   
+    
     // It must send a BORE to the Data Collector
     eudaq::RawDataEvent bore(eudaq::RawDataEvent::BORE(EVENT_TYPE, m_run));
     // You can set tags on the BORE that will be saved in the data file
@@ -73,11 +74,12 @@ public:
     bore.SetTimeStampToNow();
     // Send the event to the Data Collector
     SendEvent(bore);
+    hardware.PrepareForRun();
     hardware.Start();
     // At the end, set the status that will be displayed in the Run Control.
     m_stat = started;
     SetStatus(eudaq::Status::LVL_OK, "Running");
-    
+    std::cout << "... Started"<< std::endl;
   }
 
   // This gets called whenever a run is stopped
@@ -98,7 +100,7 @@ public:
     EOREvent.SetTimeStampToNow();
     SendEvent(EOREvent);
     m_stat = configured;
-    std::cout << "Stopped" << std::endl;
+    std::cout << "Stopped \n "<<m_ev<<" Events send"<< std::endl;
   }
 
   // This gets called when the Run Control is terminating,
@@ -108,67 +110,89 @@ public:
     m_stat = doTerminat;
   }
 
+  void state_waiting(){
+    std::cout << "<waiting>" << std::endl;
+    while (m_stat != started)
+    {
+      eudaq::mSleep(20);
+    }
+    std::cout << "</waiting>" << std::endl;
+  }
+
+  void state_running(){
+    std::cout << "<starting>" << std::endl;
+    while (m_stat == started){
+
+      if (!makeAndSendEvents())
+      {
+        eudaq::mSleep(20);
+      }
+     
+    }
+    std::cout << "</starting>" << std::endl;
+  }
+
+  void state_stopping(){
+    std::cout << "<stopping>" << std::endl;
+    while (m_stat == stopping){
+      if (!makeAndSendEvents())
+      {
+        
+        m_stat = stopped;
+      }
+    }
+    std::cout << "</stopping>" << std::endl;
+  }
+  bool makeAndSendEvents(){
+   
+    if (!hardware.EventsPending()) {
+      return false;
+    }
+    if (m_maxEventNR < m_ev)
+    {
+      eudaq::mSleep(1000);
+      return false;
+    }
+    ++m_ev;
+    eudaq::RawDataEvent ev(EVENT_TYPE, m_run, m_ev);
+    ev.SetTag("TLU", m_TLU);
+    ev.SetTag("ID", m_ID);
+
+    for (unsigned plane = 0; plane < hardware.NumSensors(); ++plane) {
+      // Read out a block of raw data from the hardware
+      std::vector<unsigned char> buffer = hardware.ReadSensor(plane);
+      // Each data block has an ID that is used for ordering the planes later
+      // If there are multiple sensors, they should be numbered incrementally
+
+      // Add the block of raw data to the event
+      ev.AddBlock(plane, buffer);
+    }
+    ev.SetTimeStampToNow();
+    hardware.CompletedEvent();
+    // Send the event to the Data Collector 
+    if (m_ev % 10 == 0)
+    {
+      std::cout << "sending Event: " << m_ev << std::endl;
+    }
+    if (m_Skip != 0)
+    {
+      if (m_ev%m_Skip == 0)
+      {
+
+        return false;
+      }
+    }
+    SendEvent(ev);
+    return true;
+  }
   // This is just an example, adapt it to your hardware
   void ReadoutLoop() {
     // Loop until Run Control tells us to terminate
     while (m_stat != doTerminat) {
-      if (!hardware.EventsPending()) {
-        // No events are pending, so check if the run is stopping
-        if (m_stat=stopping) {
-          // if so, signal that there are no events left
-          m_stat = stopped;
-        }
-        // Now sleep for a bit, to prevent chewing up all the CPU
-        eudaq::mSleep(20);
-        // Then restart the loop
-        continue;
-      }
-      if (m_stat!=started&&m_stat!=stopping)
-      {
-        // Now sleep for a bit, to prevent chewing up all the CPU
-        eudaq::mSleep(20);
-        // Then restart the loop
-        continue;
-      }
-      ++m_ev;
-      if (m_maxEventNR<m_ev)
-      {
-        eudaq::mSleep(1000);
-        continue;
-      }
-      // If we get here, there must be data to read out
-      // Create a RawDataEvent to contain the event data to be sent
-      eudaq::RawDataEvent ev(EVENT_TYPE, m_run, m_ev);
-      ev.SetTag("TLU", m_TLU);
-      ev.SetTag("ID", m_ID);
-      
-      for (unsigned plane = 0; plane < hardware.NumSensors(); ++plane) {
-        // Read out a block of raw data from the hardware
-        std::vector<unsigned char> buffer = hardware.ReadSensor(plane);
-        // Each data block has an ID that is used for ordering the planes later
-        // If there are multiple sensors, they should be numbered incrementally
 
-        // Add the block of raw data to the event
-        ev.AddBlock(plane, buffer);
-      }
-      ev.SetTimeStampToNow();
-      hardware.CompletedEvent();
-      // Send the event to the Data Collector 
-      if (m_ev%1000==0)
-      {
-        std::cout << "sending Event: " << m_ev << std::endl;
-      }
-      if (m_Skip!=0)
-      {
-        if (m_ev%m_Skip==0)
-        {
-          
-          continue;
-        }
-      }
-      SendEvent(ev);
-      // Now increment the event number
-     
+      state_waiting();
+      state_running();
+      state_stopping();
     }
   }
 

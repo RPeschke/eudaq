@@ -29,7 +29,7 @@ namespace eudaq{
 
 
     virtual void pushProducer(Processor_up processor) final;
-    virtual void clearProducer() final;
+		virtual void clearProducer() final;
     virtual void AddProcessor(Processor_rp next, ConnectionName_ref name = "") final;
 		virtual Processor_rp getProcessor(ConnectionName_ref name = "") final;
     virtual void init(Configuration_ref conf) final;

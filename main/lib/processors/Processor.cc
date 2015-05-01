@@ -25,6 +25,10 @@ namespace eudaq{
 
   void Processor::AddProcessor(ProcessorBase* next, const std::string& name)
   {
+    if (!next)
+    {
+      return;
+    }
     if (name.empty()){
       m_next = next->getProcessor(getName());
     

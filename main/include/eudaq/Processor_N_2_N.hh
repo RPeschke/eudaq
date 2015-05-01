@@ -13,7 +13,7 @@ namespace eudaq{
 
 
 
-    virtual void multiEnd() =0;
+   
     virtual std::string getName() = 0;
     virtual void print(std::ostream& os) = 0;
 
@@ -21,8 +21,8 @@ namespace eudaq{
 
 
 
-	virtual void initialize(Configuration_ref conf);
-    virtual void finish() ;
+	virtual void initialize(Configuration_ref conf) =0;
+    virtual void finish() =0;
 
     
   private:

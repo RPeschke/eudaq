@@ -86,6 +86,10 @@ namespace eudaq{
 			return ittinternal->second;
 		}
 
+    if (m_external_map.empty())
+    {
+      return nullptr;
+    }
 		
 		auto nextProcessor = m_external_map.begin()->second->getProcessor(name);
 		if (nextProcessor)

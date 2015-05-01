@@ -14,7 +14,7 @@ namespace eudaq{
       auto ret = add2queue(ev1);
       if (ret==stop)
       {
-        m_status == stopping;
+        m_status = stopping;
       }
       if (ret != sucess)
       {

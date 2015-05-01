@@ -14,7 +14,7 @@ namespace eudaq{
   {
 
     Processor_N_x_M* base = dynamic_cast<Processor_N_x_M*>(next);
-    if (base)
+    if (base&&!m_baseProcessor)
     {
       m_baseName = name;
       m_baseProcessor = base;

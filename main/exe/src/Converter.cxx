@@ -31,9 +31,11 @@ int main(int, char ** argv) {
 
 
 
-
+	std::cout << ProConfig::Topic("hello") + ProConfig::Tag("tag", "value");
     std::clock_t    start;
 
+	auto p=Configuration(ProConfig::Topic("hello") + ProConfig::Tag("tag", "value"),"hello");
+	auto tag = p.Get("tag","nix");
     start = std::clock();
     eudaq::OptionParser op("EUDAQ File Converter", "1.0", "", 1);
 
@@ -70,9 +72,9 @@ int main(int, char ** argv) {
 
     auto pro = ProcessorFactory::create(ProcessorNames::batch(), "");
     event_sp ev = std::dynamic_pointer_cast<Event>(std::make_shared<eudaq::RawDataEvent>("tesT", 1, 1));
-    pro->pushProducer(ProcessorFactory::create(ProcessorNames::Parallel_file_reader(), "second"));
+    pro->pushProducer(ProcessorFactory::create(ProcessorNames::Parallel_file_reader(), ProConfig::ProcessorName("second")));
     pro->pushProducer(ProcessorFactory::create("test", ""));
-    pro->pushProducer(ProcessorFactory::create(ProcessorNames::events_of_intresst(), events->Value()));
+    pro->pushProducer(ProcessorFactory::create(ProcessorNames::events_of_intresst(), ProConfig::Tag("events", events->Value())));
     pro->pushProducer(ProcessorFactory::create(ProcessorNames::show_event_nr(), "buffer"));
     pro->pushProducer(ProcessorFactory::create(ProcessorNames::splitter(), ""));
     pro->pushProducer(ProcessorFactory::create(ProcessorNames::Parallel_processor(),ProcessorNames::show_event_nr()));
@@ -86,7 +88,9 @@ int main(int, char ** argv) {
     //auto p = (eudaq::Processor_batch*) pro.get();
     //p->AddProcessor2Batch(std::move(ProcessorFactory::create("eventOfInterest", events->Value())));
     //p->AddProcessor2Batch(std::move(ProcessorFactory::create("ProcessorFileWriter", "")));
-      pro->init();
+
+    auto conf = ProConfig::Topic("second") + ProConfig::Filename("..\\data\\run000021_.raw");
+      pro->init(conf);
 
     pro->ProcessorEvent(ev);
 

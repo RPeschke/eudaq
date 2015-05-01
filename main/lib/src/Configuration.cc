@@ -86,7 +86,15 @@ namespace eudaq {
       }
     }
     m_config = config;
+    if (section.empty())
+    {
+      SetSection(m_config.begin()->first);
+    }
+    else
+    {
+
     SetSection(section);
+    }
   }
 
   bool Configuration::SetSection(const std::string & section) const {
