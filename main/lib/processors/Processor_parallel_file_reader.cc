@@ -10,7 +10,7 @@ namespace eudaq{
   RegisterProcessor(Processor_parallel_file, ProcessorNames::Parallel_file_reader());
 
 
-  void Processor_parallel_file::Finish()
+  void Processor_parallel_file::finish()
   {
     m_reader->end();
   }
@@ -35,7 +35,6 @@ namespace eudaq{
     m_reader = ProcessorFactory::create(ProcessorNames::file_reader(), m_conf);
     m_reader->init(conf);
     m_reader->AddProcessor(getNextProcessor(getName()), getName());
-    Processor_Parrallel_add2queue::init(conf);
   }
 
 }

@@ -51,6 +51,10 @@ namespace eudaq{
     m_sync = EventSyncFactory::create("DetectorEvents", p);
   }
 
+  void Processor_merger::finish()
+  {
+
+  }
 
 
 }
