@@ -80,6 +80,24 @@ namespace eudaq{
 	  return tagName + "=" + tagValue + "\n";
   }
 
+  Config ProConfig::Filename(const std::string& fileName)
+  {
+    return Tag("FileName", fileName);
+  }
+
+  std::string ProConfig::getTag(const ConfigInput& conf, const std::string& section, const std::string& tag, const std::string& def)
+  {
+    Configuration c(conf);
+
+    c.SetSection(section);
+    return c.Get(tag, def);
+  }
+
+  std::string ProConfig::getFilename(const ConfigInput& conf, const std::string& section, const std::string& def)
+  {
+    return getTag(conf, section, "FileName", def);
+  }
+
   ProcessorBase::ProcessorBase(Parameter_ref name) :m_conf(name)
   {
 

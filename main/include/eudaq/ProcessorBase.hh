@@ -59,6 +59,7 @@ namespace eudaq{
     virtual std::string getName() =0;
     virtual void print(std::ostream& os)=0;
     virtual void pushProducer(Processor_up processor) =0;
+    virtual void clearProducer() = 0;
   protected:
     Parameter_t m_conf;
   };
@@ -113,10 +114,13 @@ namespace eudaq{
   class DLLEXPORT ProConfig{
   public:
 	  using Config = ProcessorBase::Configuration_t;
+    using ConfigInput = ProcessorBase::Configuration_t;
 
 	  static Config Topic(const std::string& name);
 	  static Config Tag(const std::string& tagName, const std::string& tagValue);
-
+    static Config Filename(const std::string& fileName);
+    static std::string getTag(const ConfigInput& conf, const std::string& section, const std::string& tag,const std::string& def);
+    static std::string getFilename(const ConfigInput& conf,const std::string& section,const std::string& def);
   };
 }
 #endif // ProcessorBase_h__
