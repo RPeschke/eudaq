@@ -9,7 +9,8 @@ namespace eudaq{
 
   void Processor::init(Configuration_ref conf)
   {
-    std::cout << " init "<<conf << std::endl;
+    //std::cout << " init "<<conf << std::endl;
+    initialize(conf);
   }
 
 
@@ -51,7 +52,10 @@ namespace eudaq{
   void Processor::end()
   {
     std::cout << "end" << std::endl;
+    Finish();
   }
+
+
 
   ReturnParam Processor::ProcessNext(event_sp ev)
   {

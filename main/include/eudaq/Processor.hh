@@ -14,14 +14,15 @@ namespace eudaq{
 
     virtual std::string getName() override;
     virtual void print(std::ostream& os) ;
-
+    virtual void clearProducer() {};
 
     Processor(Parameter_ref);
     virtual ~Processor(){}
-	virtual void init(Configuration_ref conf) override;
- 
-   virtual void end()override;
+	virtual void init(Configuration_ref conf) override final;
+  virtual void initialize(Configuration_ref conf) {}
 
+   virtual void end()override final;
+   virtual void Finish() {}
     
     Processor_rp getProcessor(const std::string& name = "") override;
     virtual void pushProducer(std::unique_ptr<ProcessorBase> processor){}
