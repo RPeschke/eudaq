@@ -22,7 +22,7 @@ namespace eudaq{
 
     virtual void AddProcessor(ProcessorBase* next, const std::string& = "") override;
 
-    virtual std::string getName() override;
+    
     virtual void print(std::ostream& os);
     virtual void pushProducer(std::unique_ptr<ProcessorBase> processor);
 

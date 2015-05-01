@@ -14,7 +14,7 @@ namespace eudaq{
     virtual ReturnParam add2queue(event_sp& ev);
     virtual void initialize(Configuration_ref conf);
 
-    virtual std::string getName() override;
+ 
     virtual void print(std::ostream& os);
   private:
    
@@ -33,12 +33,6 @@ namespace eudaq{
   }
 
 
-  std::string ProcessorFileReader::getName()
-  {
-    
-    auto name = ProConfig::getProcessorName(m_conf);
-    return ProConfig::getProcessorName(m_conf);
-  }
 
 
   void ProcessorFileReader::print(std::ostream& os)

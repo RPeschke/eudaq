@@ -38,10 +38,7 @@ namespace eudaq{
     }
   }
 
-  std::string Processor::getName()
-  {
-    return "some name";
-  }
+
 
   void Processor::print(std::ostream& os)
   {

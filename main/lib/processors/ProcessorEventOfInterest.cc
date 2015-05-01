@@ -12,7 +12,7 @@ namespace eudaq{
 
     virtual ReturnParam inspecktEvent(const Event&);
 
-    virtual std::string getName() override;
+  
     virtual void print(std::ostream& os);
 
 
@@ -27,10 +27,6 @@ namespace eudaq{
   RegisterProcessor(Process_eventOfInterest, ProcessorNames::events_of_intresst());
 
 
-  std::string Process_eventOfInterest::getName()
-  {
-    return "event of interest";
-  }
 
   void Process_eventOfInterest::print(std::ostream& os)
   {

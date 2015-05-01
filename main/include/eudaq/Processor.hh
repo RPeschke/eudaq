@@ -12,7 +12,6 @@ namespace eudaq{
     
     virtual ReturnParam ProcessorEvent(event_sp ev) = 0;
 
-    virtual std::string getName() override;
     virtual void print(std::ostream& os) ;
     virtual void clearProducer() {};
 

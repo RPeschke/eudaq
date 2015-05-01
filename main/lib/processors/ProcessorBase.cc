@@ -126,8 +126,15 @@ namespace eudaq{
 
   ProcessorBase::ProcessorBase(Parameter_ref name) :m_conf(name)
   {
-
+    m_name = ProConfig::getProcessorName(m_conf);
   }
+
+  std::string ProcessorBase::getName()
+  {
+
+    return m_name;
+  }
+
   std::unique_ptr<ProcessorBase> ProcessorFactory::create(ProcessorBase::MainType type, ProcessorBase::Parameter_ref param)
   {
 

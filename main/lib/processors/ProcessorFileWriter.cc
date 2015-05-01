@@ -14,7 +14,7 @@ namespace eudaq{
 
 
 
-    virtual std::string getName() override;
+
     virtual void print(std::ostream& os);
 
   private:
@@ -59,10 +59,7 @@ namespace eudaq{
     os << "ProcessorFileWriter" << std::endl;
   }
 
-  std::string ProcessorFileWriter::getName()
-  {
-    return "ProcessorFileWriter";
-  }
+
 
  
 

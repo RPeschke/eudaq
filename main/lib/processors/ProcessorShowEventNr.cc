@@ -12,21 +12,17 @@ namespace eudaq{
 
     virtual ReturnParam inspecktEvent(const Event&);
 
-    virtual std::string getName() override;
     virtual void print(std::ostream& os);
 
 
     
     ShowEventNR(Parameter_ref);
-    std::string m_name;
+  
   };
   RegisterProcessor(ShowEventNR, ProcessorNames::show_event_nr());
 
 
-  std::string ShowEventNR::getName()
-  {
-    return m_name;
-  }
+
 
   void ShowEventNR::print(std::ostream& os)
   {
@@ -35,7 +31,7 @@ namespace eudaq{
 
   ShowEventNR::ShowEventNR(Parameter_ref conf) :Processor_Inspector(conf)
   {
-    m_name = conf;
+  
   }
 
 

@@ -38,10 +38,6 @@ namespace eudaq {
     return this;
   }
 
-  std::string Processor_batch::getName()
-  {
-    return "batch";
-  }
 
   void Processor_batch::AddProcessor(ProcessorBase* next,const std::string& name/*= ""*/)
   {

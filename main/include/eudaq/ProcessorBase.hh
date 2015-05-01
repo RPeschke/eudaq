@@ -56,12 +56,13 @@ namespace eudaq{
     
     virtual void AddProcessor(Processor_rp next, ConnectionName_ref name = "") = 0;
     
-    virtual std::string getName() =0;
+    std::string getName();
     virtual void print(std::ostream& os)=0;
     virtual void pushProducer(Processor_up processor) =0;
     virtual void clearProducer() = 0;
   protected:
     Parameter_t m_conf;
+    std::string m_name;
   };
 
 
