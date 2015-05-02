@@ -12,15 +12,17 @@
 namespace eudaq{
   class Event;
   class OptionParser;
+  class baseFileReader;
+  using FileReader_up = std::unique_ptr < baseFileReader > ;
   class DLLEXPORT baseFileReader{
   public:
-
     static const char* getKeyFileName();
     static const char* getKeyInputPattern();
     static const char* getKeySectionName();
     using MainType = std::string;
     using Parameter_t = eudaq::Configuration;
     using Parameter_ref = const Parameter_t&;
+    static Parameter_t getConfiguration(const std::string& fileName, const std::string& filePattern);
     baseFileReader(Parameter_ref config);
     baseFileReader(const std::string&  fileName);
     std::string Filename()const;
@@ -45,10 +47,10 @@ namespace eudaq{
   class DLLEXPORT FileReaderFactory{
   public:
     
-    static std::unique_ptr<baseFileReader> create(const std::string & filename, const std::string & filepattern);
-    static std::unique_ptr<baseFileReader> create(const std::string & filename);
-    static std::unique_ptr<baseFileReader> create(baseFileReader::MainType type, baseFileReader::Parameter_ref  param);
-    static std::unique_ptr<baseFileReader> create(eudaq::OptionParser & op);
+    static FileReader_up create(const std::string & filename, const std::string & filepattern);
+    static FileReader_up create(const std::string & filename);
+    static FileReader_up create(baseFileReader::MainType type, baseFileReader::Parameter_ref  param);
+    static FileReader_up create(eudaq::OptionParser & op);
 
 
     static void addComandLineOptions(eudaq::OptionParser & op);
