@@ -167,10 +167,12 @@ namespace eudaq {
       {
         TTC = reinterpret_cast<const TriggerData_t*>(block.data());
       }
-
+      size_t j = 0;
+      // sev.SetTag(std::string("triggerData_") + to_string(j), to_hex(TTC[j], 16));
+     // sev.SetTag("triggerData_0", to_hex(TTC[0], 16));
       for (size_t i = 0; i < size_of_TTC; ++i)
       {
-        sev.SetTag(std::string("triggerData_") + to_string(i), to_hex(TTC[i], 16));
+       
         uint64_t data = TTC[i];
         switch (data >> 60) {
         case 0xd:
@@ -350,11 +352,18 @@ namespace eudaq {
   public:
     mergeITSDAQStreams(Parameter_ref conf) :Processor(conf){}
     virtual ReturnParam ProcessorEvent(event_sp ev) override{
+      if (!ev)
+      {
+        return ProcessorBase::stop;
+      }
       if (ev->IsBORE())
       {
         return ProcessNext(ev);
       }
-
+      if (ev->IsEORE())
+      {
+        return ProcessNext(ev);
+      }
       auto det = dynamic_cast<DetectorEvent*>(ev.get());
 
       if (!det)
@@ -417,6 +426,10 @@ namespace eudaq {
       {
         return ProcessNext(ev);
       }
+      if (ev->IsEORE())
+      {
+        return ProcessNext(ev);
+      }
 
       if (m_ev != ev->GetEventNumber())
       {
@@ -437,7 +450,7 @@ namespace eudaq {
 
       if (block1.size()!=block2.size())
       {
-        std::cout << "different block sizes \n block1: " << block1.size() << "\n block2: " << block2.size() << std::endl;
+    //    std::cout << "different block sizes \n block1: " << block1.size() << "\n block2: " << block2.size() << std::endl;
       }
 
       auto min_s = min(block1.size(), block2.size());
