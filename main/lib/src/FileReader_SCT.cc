@@ -7,15 +7,22 @@
 #include "eudaq/FileSerializer.hh"
 #include "eudaq/Configuration.hh"
 #include "eudaq/factory.hh"
-
+#include "eudaq/SCT_defs.hh"
 
 const std::string EventID = "SCT";
 const unsigned UnsetVariable = (unsigned) -1;
 namespace eudaq {
 
+ 
+  std::string sct::SCT_FileReader_Name(){
+    return "sct";
+  }
+  using namespace sct;
+  FileReader_up Create_SCT_Filereader(const std::string& fileName){
 
+    return FileReaderFactory::create(SCT_FileReader_Name(), baseFileReader::getConfiguration(fileName, ""));
 
-
+  }
 
   class DLLEXPORT FileReaderSCT : public baseFileReader {
   public:
@@ -91,7 +98,9 @@ namespace eudaq {
     m_triggerFileName = filepath + "/" + triggername + splittedName.at(splittedName.size() - 3) + "_" + splittedName.at(splittedName.size() - 2) + ".dat";
     m_eventFile = std::unique_ptr<std::ifstream>(new std::ifstream(name));
     m_triggerFile = std::unique_ptr<std::ifstream>(new std::ifstream(m_triggerFileName));
-
+    
+//     std::string line;
+//     std::getline(*m_triggerFile, line);
   }
 
   FileReaderSCT::FileReaderSCT(Parameter_ref param) :FileReaderSCT(param.Get(getKeyFileName(), ""), param.Get(getKeyFileName(),""))
@@ -188,34 +197,44 @@ namespace eudaq {
       EUDAQ_THROW("unexpected end of file");
     }
     auto splittedline = split(line, " ");
-    m_raw_ev->SetTag("L0ID", hex2uint_64(splittedline.at(5)));
-    m_raw_ev->SetTag("BCID", hex2uint_64(splittedline.at(7)));
+    m_raw_ev->SetTag(Event_L0ID(), to_hex(hex2uint_64(splittedline.at(5)), 4));
+    m_raw_ev->SetTag(Event_BCID(), to_hex(hex2uint_64(splittedline.at(7)), 4));
   }
 
   void FileReaderSCT::event_process_even_lines()
   {
     std::string line;
     std::getline(*m_eventFile, line);
+
+    line.erase(0, line.find_first_not_of(" "));
+    line.erase(line.find_last_not_of(" ") + 1);
+
     if (line.empty())
     {
       EUDAQ_THROW("unexpected end of file");
     }
 
-    std::vector<unsigned char> data; //this needs to be replaced with a bool in future
+    size_t size_of_bool_data = line.size();
+    bool* bool_data = new bool[size_of_bool_data];
+    size_t i = 0;
     for (auto& e : line)
     {
       if (e == '1')
       {
-        data.push_back(1);
+        bool_data[i] = true;
       }
       else if (e == '0')
       {
-        data.push_back(0);
+        bool_data[i] = false;
       }
-
+      ++i;
     }
 
-    m_raw_ev->AddBlock(0, data);
+    std::vector<unsigned char> char_data;
+    bool2uchar(bool_data, bool_data + size_of_bool_data, char_data);
+    delete[] bool_data;
+    
+    m_raw_ev->AddBlock(0,char_data);
   }
 
   void FileReaderSCT::Trigger_process_TDC()
@@ -226,9 +245,15 @@ namespace eudaq {
     {
       EUDAQ_THROW("unexpected end of file");
     }
+
+    if (line.find("Trigger data packet") != std::string::npos )
+    {
+      Trigger_process_TDC();
+      return;
+    }
     auto splittedline = split(line, " ");
-    m_raw_ev->SetTag("tdc", hex2uint_64(*(splittedline.end() - 1)));
-    m_raw_ev->SetTag("tdc_ev_num", hex2uint_64(*(splittedline.end() - 2)));
+    m_raw_ev->SetTag(TDC_data(), to_hex(hex2uint_64(*(splittedline.end() - 1)),5) );
+    m_raw_ev->SetTag(TDC_L0ID(), to_hex(hex2uint_64(*(splittedline.end() - 2)),4) );
 
   }
 
@@ -241,8 +266,8 @@ namespace eudaq {
       EUDAQ_THROW("unexpected end of file");
     }
     auto splittedline = split(line, " ");
-    m_raw_ev->SetTag("TLUID", hex2uint_64(*(splittedline.end() - 1)));
-    m_raw_ev->SetTag("TLU_ev_num", hex2uint_64(*(splittedline.end() - 3)));
+    m_raw_ev->SetTag(TLU_TLUID(), to_hex(hex2uint_64(*(splittedline.end() - 1)) ,4));
+    m_raw_ev->SetTag(TLU_L0ID(), to_hex(hex2uint_64(*(splittedline.end() - 3)),4) );
   }
 
   void FileReaderSCT::Trigger_process_Timestamps()
@@ -254,8 +279,9 @@ namespace eudaq {
       EUDAQ_THROW("unexpected end of file");
     }
     auto splittedline = split(line, " ");
-    m_raw_ev->SetTag("TS_data", hex2uint_64(*(splittedline.end() - 1)));
-    m_raw_ev->SetTag("TS_ev_num", hex2uint_64(*(splittedline.end() - 2)));
+
+    m_raw_ev->SetTag(Timestamp_data(), to_hex(hex2uint_64(*(splittedline.end() - 1)),10));
+    m_raw_ev->SetTag(Timestamp_L0ID(), to_hex(hex2uint_64(*(splittedline.end() - 2)),4));
     m_raw_ev->setTimeStamp(hex2uint_64(splittedline.back()));
   }
 
@@ -277,6 +303,6 @@ namespace eudaq {
 
 
 
-  RegisterFileReader(FileReaderSCT, "sct");
+  RegisterFileReader(FileReaderSCT, SCT_FileReader_Name());
 
 }

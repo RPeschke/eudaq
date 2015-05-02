@@ -13,19 +13,26 @@
 #include "eudaq/Processor.hh"
 #include "eudaq/PluginManager.hh"
 
+#include "eudaq/SCT_defs.hh"
+
 namespace eudaq {
 
   // The event type for which this converter plugin will be registered
   // Modify this to match your actual event type (from the Producer)
   static const char* EVENT_TYPE_ITS_ABC = "ITS_ABC";
-  static const int PlaneID = 8;
- const std::string TDC_L0ID="TDC.L0ID";
- const std::string TLU_TLUID="TLU.TLUID";
- const std::string TDC_data="TDC.data";
- const std::string TLU_L0ID="TLU.L0ID";
-         
- const std::string Timestamp_data="Timestamp.data";
- const std::string Timestamp_L0ID="Timestamp.L0ID";
+  static const int PlaneID = 8;   
+  namespace sct{
+    std::string TDC_L0ID(){ return "TDC.L0ID"; }
+    std::string TLU_TLUID(){ return "TLU.TLUID"; }
+    std::string TDC_data(){ return "TDC.data"; }
+    std::string TLU_L0ID(){ return "TLU.L0ID"; }
+    std::string Timestamp_data(){ return "Timestamp.data"; }
+    std::string Timestamp_L0ID(){ return "Timestamp.L0ID"; }
+    std::string Event_L0ID(){ return "Event.L0ID"; }
+    std::string Event_BCID(){ return "Event.BCID"; }
+  }
+
+  using namespace sct;
   // Declare a new class that inherits from DataConverterPlugin
   class SCTConverterPlugin_ITS_ABC : public DataConverterPlugin {
 
@@ -170,7 +177,7 @@ namespace eudaq {
           ProcessTLU_data(data, sev);
           break;
         case 0xe:
-          ProcessTDC_Data(data, sev);
+          ProcessTDC_data(data, sev);
           break;
 
         case 0xf:
@@ -189,17 +196,17 @@ namespace eudaq {
       uint32_t hsioID = (uint32_t)(data >> 40) & 0xffff;
       uint64_t TLUID = data & 0xffff;
 
-      sev.SetTag(TLU_TLUID, to_hex(TLUID, 4));
-      sev.SetTag(TLU_L0ID, to_hex(hsioID, 4));
+      sev.SetTag(TLU_TLUID(), to_hex(TLUID, 4));
+      sev.SetTag(TDC_data(), to_hex(hsioID, 4));
 
     }
     template<typename T>
-    static   void ProcessTDC_Data(uint64_t data, T & sev) {
+    static   void ProcessTDC_data(uint64_t data, T & sev) {
 
       uint32_t L0ID = (uint32_t)(data >> 40) & 0xffff;
       uint64_t TDC = data & 0xfffff;
-      sev.SetTag(TDC_data, to_hex(TDC, 5));
-      sev.SetTag(TDC_L0ID, to_hex(L0ID, 4));
+      sev.SetTag(TDC_data(), to_hex(TDC, 5));
+      sev.SetTag(TDC_L0ID(), to_hex(L0ID, 4));
     }
     template<typename T>
     static void ProcessTimeStamp_data(uint64_t data, T & sev) {
@@ -207,8 +214,8 @@ namespace eudaq {
        
         uint64_t  timestamp = data & 0x000000ffffffffffULL;
         uint32_t L0ID = (uint32_t)(data >> 40) & 0xffff;
-        sev.SetTag(Timestamp_data, to_hex(timestamp, 10));
-        sev.SetTag(Timestamp_L0ID, to_hex(L0ID ,4));
+        sev.SetTag(Timestamp_data(), to_hex(timestamp, 10));
+        sev.SetTag(Timestamp_L0ID(), to_hex(L0ID ,4));
      
 
     }
@@ -303,13 +310,13 @@ namespace eudaq {
       }
       sev.AddPlane(plane);
 
-      sev.SetTag(TDC_data, ev.GetTag(TDC_data, ""));
-      sev.SetTag(TDC_L0ID, ev.GetTag(TDC_L0ID, ""));
-      sev.SetTag(TLU_TLUID, ev.GetTag(TLU_TLUID, ""));
-      sev.SetTag(TLU_L0ID, ev.GetTag(TLU_L0ID, ""));
+      sev.SetTag(TDC_data(), ev.GetTag(TDC_data(), ""));
+      sev.SetTag(TDC_L0ID(), ev.GetTag(TDC_L0ID(), ""));
+      sev.SetTag(TLU_TLUID(), ev.GetTag(TLU_TLUID(), ""));
+      sev.SetTag(TDC_data(), ev.GetTag(TDC_data(), ""));
 
-      sev.SetTag(Timestamp_data, ev.GetTag(Timestamp_data, ""));
-      sev.SetTag(Timestamp_L0ID, ev.GetTag(Timestamp_L0ID, ""));
+      sev.SetTag(Timestamp_data(), ev.GetTag(Timestamp_data(), ""));
+      sev.SetTag(Timestamp_L0ID(), ev.GetTag(Timestamp_L0ID(), ""));
 
       return true;
     }
@@ -447,13 +454,13 @@ namespace eudaq {
       
 
 
-      compare(raw1, raw2, TDC_L0ID);
-      compare(raw1,raw2,TLU_TLUID );
-      compare(raw1,raw2,TDC_data );
-      compare(raw1,raw2,TLU_L0ID );
+      compare(raw1, raw2, TDC_L0ID());
+      compare(raw1,raw2,TLU_TLUID() );
+      compare(raw1,raw2,TDC_data() );
+      compare(raw1,raw2,TDC_data() );
 
-      compare(raw1,raw2,Timestamp_data );
-      compare(raw1,raw2,Timestamp_L0ID );
+      compare(raw1,raw2,Timestamp_data() );
+      compare(raw1,raw2,Timestamp_L0ID() );
 
       auto ret=ProcessNext(m_first);
 
@@ -476,7 +483,7 @@ namespace eudaq {
     event_sp m_first, m_second;
     unsigned m_ev;
     static void compare(RawDataEvent* raw1, RawDataEvent* raw2, const std::string & name){
-      if (hex2uint_64(raw1->GetTag(name, "0")) == hex2uint_64(raw2->GetTag(name, "0"))){
+      if (hex2uint_64(raw1->GetTag(name, "0")) != hex2uint_64(raw2->GetTag(name, "0"))){
         std::cout << "block difference at: " << name << " " << raw1->GetTag(name, "") << " "<< raw2->GetTag(name, "") << std::endl;
 
       }
