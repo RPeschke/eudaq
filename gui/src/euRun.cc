@@ -1,3 +1,10 @@
+
+#ifdef WIN32
+#ifndef _DEBUG
+#pragma comment(linker, "/SUBSYSTEM:windows /ENTRY:mainCRTStartup")
+#endif // !_DEBUG
+#endif // WIN32
+
 #include <QApplication>
 #include <QDateTime>
 #include <fstream>
