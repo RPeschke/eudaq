@@ -5,8 +5,8 @@
 
 namespace eudaq {
 
-  unsigned DataConverterPlugin::GetTriggerID(eudaq::Event const &) const {
-    return (unsigned)-1;
+  unsigned DataConverterPlugin::GetTriggerID(eudaq::Event const & ev) const {
+    return ev.GetEventNumber();
   }
 
   DataConverterPlugin::DataConverterPlugin(std::string subtype) :DataConverterPlugin(Event::str2id("_RAW"),subtype)
