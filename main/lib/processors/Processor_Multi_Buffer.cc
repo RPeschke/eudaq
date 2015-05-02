@@ -6,7 +6,7 @@ namespace eudaq{
 
   class Processor_multi_buffer :public Processor_parallel{
   public:
-    Processor_multi_buffer(Parameter_ref conf) : Processor_parallel(conf +ProConfig::Tag("ParrallelTypes",ProcessorNames::buffer())){
+    Processor_multi_buffer(Parameter_ref conf) : Processor_parallel(conf +ProConfig::ProcessorParallelType(ProcessorNames::buffer())){
       
     }
 

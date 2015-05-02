@@ -79,7 +79,7 @@ namespace eudaq{
   static const std::string FileNameTag = "FileName";
   static const std::string ProcessorTypeTag = "ProcessorType";
   static const std::string ProcessorBaseTopic = "base";
-
+  static const std::string ProcessorParallelTypeTag = "ParrallelType";
 
   Config ProConfig::Tag(const std::string& tagName, const std::string& tagValue)
   {
@@ -99,6 +99,11 @@ namespace eudaq{
   Config ProConfig::Filename(const std::string& fileName)
   {
     return Tag(FileNameTag, fileName);
+  }
+
+  Config ProConfig::ProcessorParallelType(const std::string& Name)
+  {
+    return Tag(ProcessorParallelTypeTag, Name);
   }
 
   std::string ProConfig::getTag(const ConfigInput& conf, const std::string& section, const std::string& tag, const std::string& def)
@@ -122,6 +127,11 @@ namespace eudaq{
   std::string ProConfig::getProcessorType(const ConfigInput& conf)
   {
     return getTag(conf, ProcessorBaseTopic, ProcessorTypeTag, "");
+  }
+
+  std::string ProConfig::getProcessorParallelType(const ConfigInput& conf)
+  {
+    return getTag(conf, ProcessorBaseTopic, ProcessorParallelTypeTag, "");
   }
 
   ProcessorBase::ProcessorBase(Parameter_ref name) :m_conf(name)

@@ -122,11 +122,12 @@ namespace eudaq{
     static Config ProcessorName(const std::string& Name);
     static Config ProcessorType(const std::string& Name);
     static Config Filename(const std::string& fileName);
+    static Config ProcessorParallelType(const std::string& Name);
     static std::string getTag(const ConfigInput& conf, const std::string& section, const std::string& tag,const std::string& def);
     static std::string getFilename(const ConfigInput& conf,const std::string& section,const std::string& def);
     static std::string  getProcessorName(const ConfigInput& conf);
     static std::string  getProcessorType(const ConfigInput& conf);
-    
+    static std::string  getProcessorParallelType(const ConfigInput& conf);
   };
 }
 #endif // ProcessorBase_h__

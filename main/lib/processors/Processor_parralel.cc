@@ -19,8 +19,8 @@ namespace eudaq{
 
   Processor_up Processor_parallel::CreateInterface(ConnectionName_ref name, Parameter_ref conf)
   {
-    auto type = ProConfig::getTag(m_conf, "base", "ParrallelTypes", "");
-    return ProcessorFactory::create(type, name);
+    auto type = ProConfig::getProcessorParallelType(m_conf);
+    return ProcessorFactory::create(type, ProConfig::ProcessorName(name));
   }
 
   std::string Processor_parallel::getName()
