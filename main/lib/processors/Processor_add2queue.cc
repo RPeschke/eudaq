@@ -20,17 +20,17 @@ namespace eudaq{
       {
         return ret;
       }
-      handelReturn(ProcessNext(ev1)); 
+      handelReturn(ProcessNext(std::move(ev1))); 
 
 
 
     }
     if (ev)
     {
-      return ProcessNext(ev);
+      return ProcessNext(std::move(ev));
     }else if (m_status==stopping)
     {
-      return ProcessNext(ev);
+      return ProcessNext(std::move(ev));
     }
      
     return sucess;

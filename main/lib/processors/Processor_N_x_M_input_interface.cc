@@ -33,7 +33,7 @@ namespace eudaq{
 
   ReturnParam Processor_N_x_M_input_interface::ProcessorEvent(event_sp ev)
   {
-    return m_baseProcessor->ProcessorEvent(getName(), ev);
+    return m_baseProcessor->ProcessorEvent(getName(), std::move(ev));
   }
 
   Processor_N_x_M_input_interface::Processor_N_x_M_input_interface(Parameter_ref conf) :ProcessorBase(conf)

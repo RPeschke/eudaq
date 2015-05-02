@@ -22,7 +22,7 @@ namespace eudaq{
       return ret;
     }
 
-   return ProcessNext(ev);
+   return ProcessNext(std::move(ev));
   }
 
   Processor_Inspector::Processor_Inspector(Parameter_ref conf) :Processor(conf)

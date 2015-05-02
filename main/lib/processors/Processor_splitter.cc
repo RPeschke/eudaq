@@ -25,7 +25,7 @@ namespace eudaq{
       {
         auto det = dynamic_cast<DetectorEvent*>(ev.get());
         det->clearEvents();
-        ret = ProcessorBaseEvent(name1, ev);
+        ret = ProcessorBaseEvent(name1, std::move(ev));
         if (ret != ProcessorBase::sucess)
         {
           return ret;
@@ -35,7 +35,7 @@ namespace eudaq{
       return ProcessorBase::sucess;
     }
     
-   return ProcessorBaseEvent(name1, ev);
+   return ProcessorBaseEvent(name1, std::move(ev));
 
   }
 
@@ -50,7 +50,7 @@ namespace eudaq{
     auto newName =concatenate(name ,id);
 
 
-   return ProcessNext(newName, ev);
+   return ProcessNext(newName,std::move(ev));
 
   }
 

@@ -28,7 +28,7 @@ namespace eudaq{
 
       if (ev)
       {
-        return ProcessNext(ev);
+        return ProcessNext(std::move(ev));
       }
 
       return ret;

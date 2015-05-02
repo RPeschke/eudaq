@@ -17,7 +17,7 @@ namespace eudaq{
 
   ReturnParam Processor_parallel_file::ProcessorEvent(event_sp ev)
   {
-    return m_reader->ProcessorEvent(ev);
+    return m_reader->ProcessorEvent(std::move(ev));
   }
 
   void Processor_parallel_file::print(std::ostream& os)

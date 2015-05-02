@@ -32,7 +32,7 @@ namespace eudaq{
     ev = nullptr;
     if (m_sync->getNextEvent(ev))
     {
-      return ProcessNext("", ev);
+      return ProcessNext("", std::move(ev));
     }
     
     return ProcessorBase::sucess;
