@@ -42,11 +42,13 @@ SET(MY_INCLUDE_DIRECTORIES ${PROJECT_SOURCE_DIR}/monitors/onlinemon/include/ ${P
 set(OnlineMon_DICTIONARY ${CMAKE_CURRENT_BINARY_DIR}/OnlineMonDict.cxx) 
 ROOT_GENERATE_DICTIONARY_OLD("${OnlineMon_HEADERS}" "${OnlineMon_DICTIONARY}" "${MY_INCLUDE_DIRECTORIES}")
 
-add_executable(OnlineMon.exe ${OnlineMon_SOURCES} ${CMAKE_CURRENT_BINARY_DIR}/OnlineMonDict.cxx)
+add_executable(OnlineMon  ${OnlineMon_SOURCES} ${CMAKE_CURRENT_BINARY_DIR}/OnlineMonDict.cxx)
 
-target_link_libraries(OnlineMon.exe EUDAQ ${EUDAQ_THREADS_LIB} ${ROOT_LIBRARIES} ${ADDITIONAL_LIBRARIES})
+set_property(TARGET OnlineMon     PROPERTY PROJECT_LABEL "BinOnlineMon") 
 
-INSTALL(TARGETS OnlineMon.exe
+target_link_libraries(OnlineMon  EUDAQ ${EUDAQ_THREADS_LIB} ${ROOT_LIBRARIES} ${ADDITIONAL_LIBRARIES})
+
+INSTALL(TARGETS OnlineMon 
   RUNTIME DESTINATION bin
   LIBRARY DESTINATION lib
   ARCHIVE DESTINATION lib)

@@ -15,6 +15,9 @@ SET (OfflineMon_SOURCES
 
 add_executable(${OfflineMon_name} ${OfflineMon_SOURCES} )
 
+set_property(TARGET ${OfflineMon_name}     PROPERTY PROJECT_LABEL "BinOfflineMonitor") 
+
+
 target_link_libraries(${OfflineMon_name} EUDAQ ${EUDAQ_THREADS_LIB} ${ROOT_LIBRARIES} ${ADDITIONAL_LIBRARIES})
 
 INSTALL(TARGETS ${OfflineMon_name}
