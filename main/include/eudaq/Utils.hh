@@ -85,6 +85,7 @@ namespace eudaq {
    * \param digits The minimum number of digits, shorter numbers are padded with zeroes.
    * \return A string representing the passed in parameter in hex.
    */
+  uint64_t hex2uint_64(const std::string& hex_string);
   template <typename T>
     inline std::string to_hex(const T & x, int digits = 0) {
       std::ostringstream s;

@@ -31,6 +31,12 @@ using namespace std;
 
 namespace eudaq {
 
+  uint64_t hex2uint_64(const std::string& hex_string){
+
+    auto ts = "0x" + hex_string;
+    return std::stoull(ts, nullptr, 16);
+  }
+
   std::string ucase(const std::string & str) {
     std::string result(str);
     for (size_t i = 0; i < result.length(); ++i) {

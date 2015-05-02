@@ -15,11 +15,7 @@ namespace eudaq {
 
 
 
-  uint64_t hex2uint_64(const std::string& hex_string){
 
-    auto ts = "0x" + hex_string;
-    return std::stoull(ts, nullptr, 16);
-  }
 
   class DLLEXPORT FileReaderSCT : public baseFileReader {
   public:
