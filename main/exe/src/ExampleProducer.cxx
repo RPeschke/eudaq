@@ -112,7 +112,7 @@ public:
 
   void state_waiting(){
     std::cout << "<waiting>" << std::endl;
-    while (m_stat != started)
+    while (m_stat != started&&m_stat!=doTerminat)
     {
       eudaq::mSleep(20);
     }
