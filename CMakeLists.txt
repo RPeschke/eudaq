@@ -28,7 +28,7 @@ IF(NOT SOURCE_PACKAGE)
   # Get the version from last git tag plus numer of additional commits:
   FIND_PACKAGE(Git QUIET)
   IF(GIT_FOUND)
-    EXECUTE_PROCESS(COMMAND ${GIT_EXECUTABLE} describe --tags HEAD WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR} OUTPUT_VARIABLE EUDAQ_LIB_VERSION ERROR_VARIABLE GIT_ERROR)
+    EXECUTE_PROCESS(COMMAND ${GIT_EXECUTABLE} describe --tags --always HEAD WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR} OUTPUT_VARIABLE EUDAQ_LIB_VERSION ERROR_VARIABLE GIT_ERROR)
     IF(GIT_ERROR) # git execution resulted in error message -- cannot trust result but construct version from hard-set variable
       MESSAGE(WARNING "Could not determine EUDAQ version from git -- git execution resulted in error: ${GIT_ERROR}")
       SET(EUDAQ_LIB_VERSION ${EUDAQ_VERSION_MAJOR}.${EUDAQ_VERSION_MINOR}.${EUDAQ_VERSION_PATCH})
