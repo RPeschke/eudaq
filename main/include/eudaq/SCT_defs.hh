@@ -4,7 +4,7 @@
 #include "eudaq/Platform.hh"
 
 namespace eudaq{
-  class FileReader_up;
+  
   namespace sct{
 
     DLLEXPORT   std::string TDC_L0ID();
@@ -18,7 +18,7 @@ namespace eudaq{
     DLLEXPORT   std::string Event_BCID();
 
   
-    DLLEXPORT FileReader_up Create_SCT_Filereader(const std::string& fileName);
+
     DLLEXPORT   std::string SCT_FileReader_Name();
   }
 

@@ -73,7 +73,7 @@ namespace eudaq {
   baseFileReader::Parameter_t baseFileReader::getConfiguration(const std::string& fileName, const std::string& filePattern)
   {
 
-    auto configuartion = std::string("[") + baseFileReader::getKeySectionName() + "] \n " + baseFileReader::getKeyFileName() + "=" + fileName+ "\n " + baseFileReader::getKeyInputPattern() +"="_+ filePattern +"\n";
+    auto configuartion = std::string("[") + baseFileReader::getKeySectionName() + "] \n " + baseFileReader::getKeyFileName() + "=" + fileName+ "\n " + baseFileReader::getKeyInputPattern() +"="+ filePattern +"\n";
     return Parameter_t(configuartion);
   }
 

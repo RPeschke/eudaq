@@ -17,12 +17,8 @@ namespace eudaq {
   std::string sct::SCT_FileReader_Name(){
     return "sct";
   }
+
   using namespace sct;
-  FileReader_up Create_SCT_Filereader(const std::string& fileName){
-
-    return FileReaderFactory::create(SCT_FileReader_Name(), baseFileReader::getConfiguration(fileName, ""));
-
-  }
 
   class DLLEXPORT FileReaderSCT : public baseFileReader {
   public:

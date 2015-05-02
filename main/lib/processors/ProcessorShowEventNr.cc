@@ -38,7 +38,15 @@ namespace eudaq{
 
   ReturnParam ShowEventNR::inspecktEvent(const Event& ev)
   {
-    std::cout << getName() << ": "<<ev.GetEventNumber() << std::endl;
+    if (ev.GetEventNumber() <10)
+    {
+      std::cout << getName() << ": "<<ev.GetEventNumber() << std::endl;
+    }
+    else if (ev.GetEventNumber()% 100 ==0)
+    {
+      std::cout << getName() << ": " << ev.GetEventNumber() << std::endl;
+    }
+   
     return sucess;
   }
 

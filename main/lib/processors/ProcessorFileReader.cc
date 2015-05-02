@@ -70,6 +70,7 @@ namespace eudaq{
 
   void ProcessorFileReader::initialize(Configuration_ref conf)
   {
+    m_status = running;
     m_reader = FileReaderFactory::create(ProConfig::getFilename(conf,getName(),""));
   }
 
