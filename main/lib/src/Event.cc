@@ -88,10 +88,29 @@ namespace eudaq {
   void Event::Print(std::ostream & os, size_t offset) const
   {
     os << std::string(offset, ' ') << "<Event> \n";
-    os<<std::string(offset+2,' ') << "\m Type=" << id2str(get_id()) << ":" << GetSubType()
-      << ", Number=" << m_runnumber << "." << m_eventnumber << "\n";
+    os << std::string(offset + 2, ' ') << "<Type>" << id2str(get_id()) << ":" << GetSubType() << "</Type> \n";
+    os << std::string(offset + 2, ' ') << "<RunNumber>" << m_runnumber << "</RunNumber>\n";
+    os << std::string(offset + 2, ' ') << "<EventNumber>" << m_eventnumber << "</EventNumber>\n";
+    
+    bool timestampsSet = false;
+    for (auto& e : m_timestamp)
+    {
+      if (e!=NOTIMESTAMP)
+      {
+        if (!timestampsSet)
+        {
+          os << std::string(offset + 2, ' ') << "<Time> \n";
+          timestampsSet = true;
+        }
+        os << std::string(offset +4, ' ') << "0x" << to_hex(e, 16) << ",\n";
+
+      }
+    }
+    if (timestampsSet)
+    {
+      os << std::string(offset + 2, ' ') << "</Time>\n";
+    }
     if (m_timestamp[0] != NOTIMESTAMP)
-      os << std::string(offset + 2, ' ') << " Time=0x" << to_hex(m_timestamp[0], 16) << "\n";
     if (m_flags) {
       unsigned f = m_flags;
       bool first = true;
