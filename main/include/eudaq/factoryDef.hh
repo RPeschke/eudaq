@@ -29,7 +29,7 @@ namespace EUDAQ_Utilities{
   {
     auto it = getInstance().find(name);
     if (it == getInstance().end()) {
-      EUDAQ_THROW("unknown class: "+ name);
+      EUDAQ_THROW("unknown class: <"+ name+">");
       return nullptr;
     }
     return (it->second)(params);
