@@ -13,7 +13,7 @@ add_executable(TestMonitor         src/TestMonitor.cxx       )
 add_executable(TestProducer        src/TestProducer.cxx      )
 add_executable(TestReader          src/TestReader.cxx        )
 add_executable(TestRunControl      src/TestRunControl.cxx    )
-
+add_executable(SCT_Comparer        src/SCT_Comparer.cxx      )
 
 set_property(TARGET ClusterExtractor   PROPERTY PROJECT_LABEL "BinClusterExtractor") 
 set_property(TARGET Converter          PROPERTY PROJECT_LABEL "BinConverter") 
@@ -30,7 +30,7 @@ set_property(TARGET TestMonitor        PROPERTY PROJECT_LABEL "BinTestMonitor")
 set_property(TARGET TestProducer       PROPERTY PROJECT_LABEL "BinTestProducer") 
 set_property(TARGET TestReader         PROPERTY PROJECT_LABEL "BinTestReader") 
 set_property(TARGET TestRunControl     PROPERTY PROJECT_LABEL "BinTestRunControl") 
-
+set_property(TARGET SCT_Comparer       PROPERTY PROJECT_LABEL "BinSCT_Comparer") 
 
 
 
@@ -51,8 +51,10 @@ target_link_libraries(TestMonitor         EUDAQ ${EUDAQ_THREADS_LIB} ${ADDITIONA
 target_link_libraries(TestProducer        EUDAQ ${EUDAQ_THREADS_LIB} ${ADDITIONAL_LIBRARIES})
 target_link_libraries(TestReader          EUDAQ ${EUDAQ_THREADS_LIB} ${ADDITIONAL_LIBRARIES})
 target_link_libraries(TestRunControl      EUDAQ ${EUDAQ_THREADS_LIB} ${ADDITIONAL_LIBRARIES})
+target_link_libraries(SCT_Comparer      EUDAQ ${EUDAQ_THREADS_LIB} ${ADDITIONAL_LIBRARIES})
 
-INSTALL(TARGETS ClusterExtractor  Converter  ExampleProducer  ExampleReader  FileChecker  IPHCConverter  MagicLogBook  OptionExample  RunListener  TestDataCollector  TestLogCollector  TestMonitor  TestProducer  TestReader  TestRunControl 
+
+INSTALL(TARGETS ClusterExtractor  Converter  ExampleProducer  ExampleReader  FileChecker  IPHCConverter  MagicLogBook  OptionExample  RunListener  TestDataCollector  TestLogCollector  TestMonitor  TestProducer  TestReader  TestRunControl SCT_Comparer
   RUNTIME DESTINATION bin
   LIBRARY DESTINATION lib
   ARCHIVE DESTINATION lib)

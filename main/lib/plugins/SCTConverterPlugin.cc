@@ -410,18 +410,19 @@ namespace eudaq {
 
   };
 
-  std::string mergeITSDAQStreamsName(){
+  std::string sct::mergeITSDAQStreamsName(){
     return "mergeITSDAQStreams";
   }
 
 
 
-  RegisterProcessor(mergeITSDAQStreams, mergeITSDAQStreamsName());
+  RegisterProcessor(mergeITSDAQStreams, sct::mergeITSDAQStreamsName());
 
   class SCT_COMPARE : public Processor{
   public:
     SCT_COMPARE(Parameter_ref conf) :Processor(conf){}
     virtual ReturnParam ProcessorEvent(event_sp ev) override{
+      bool same = true;
       if (ev->IsBORE())
       {
         return ProcessNext(ev);
@@ -439,7 +440,10 @@ namespace eudaq {
         return ProcessorBase::sucess;
       }
       m_second = ev;
-
+      if (ev->GetEventNumber()==5)
+      {
+        same = false;
+      }
 
       auto raw1 = dynamic_cast<RawDataEvent*>(dynamic_cast<DetectorEvent*>(m_first.get())->GetEvent(0));
       auto raw2 = dynamic_cast<RawDataEvent*>(dynamic_cast<DetectorEvent*>(m_second.get())->GetEvent(0));
@@ -450,7 +454,8 @@ namespace eudaq {
 
       if (block1.size()!=block2.size())
       {
-    //    std::cout << "different block sizes \n block1: " << block1.size() << "\n block2: " << block2.size() << std::endl;
+//       same = false;
+//       std::cout << "different block sizes \n block1: " << block1.size() << "\n block2: " << block2.size() << std::endl;
       }
 
       auto min_s = min(block1.size(), block2.size());
@@ -459,6 +464,7 @@ namespace eudaq {
       {
         if (block1[i]!=block2[2])
         {
+          same = false;
           errors.push_back(i);
           std::cout << "block difference at: " << i << std::endl;
         }
@@ -467,13 +473,30 @@ namespace eudaq {
       
 
 
-      compare(raw1, raw2, TDC_L0ID());
-      compare(raw1,raw2,TLU_TLUID() );
-      compare(raw1,raw2,TDC_data() );
-      compare(raw1,raw2,TDC_data() );
+      if (Is_unequal(raw1, raw2, TDC_L0ID())
+        ||
+        Is_unequal(raw1, raw2, TLU_TLUID())
+        ||
+        Is_unequal(raw1, raw2, TDC_data())
+        ||
+        Is_unequal(raw1, raw2, TDC_data())
+        ||
+        Is_unequal(raw1, raw2, Timestamp_data())
+        ||
+        Is_unequal(raw1, raw2, Timestamp_L0ID()))
+      {
 
-      compare(raw1,raw2,Timestamp_data() );
-      compare(raw1,raw2,Timestamp_L0ID() );
+        same = false;
+      }
+     
+     
+      
+
+      if (same==true)
+      {
+        return ProcessorBase::sucess;
+      }
+      
 
       auto ret=ProcessNext(m_first);
 
@@ -495,21 +518,21 @@ namespace eudaq {
 
     event_sp m_first, m_second;
     unsigned m_ev;
-    static void compare(RawDataEvent* raw1, RawDataEvent* raw2, const std::string & name){
+    static bool Is_unequal(RawDataEvent* raw1, RawDataEvent* raw2, const std::string & name){
       if (hex2uint_64(raw1->GetTag(name, "0")) != hex2uint_64(raw2->GetTag(name, "0"))){
         std::cout << "block difference at: " << name << " " << raw1->GetTag(name, "") << " "<< raw2->GetTag(name, "") << std::endl;
-
+        return true;
       }
-
+      return false;
     }
   };
 
-  std::string SCT_COMPARE_Name(){
+  std::string sct::SCT_COMPARE_Name(){
     return "SCT_COMPARE";
   }
 
 
 
-  RegisterProcessor(SCT_COMPARE, SCT_COMPARE_Name());
+  RegisterProcessor(SCT_COMPARE, sct::SCT_COMPARE_Name());
 
 } // namespace eudaq

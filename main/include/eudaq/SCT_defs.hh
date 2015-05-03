@@ -18,7 +18,8 @@ namespace eudaq{
     DLLEXPORT   std::string Event_BCID();
 
   
-
+    DLLEXPORT   std::string mergeITSDAQStreamsName();
+    DLLEXPORT   std::string SCT_COMPARE_Name();
     DLLEXPORT   std::string SCT_FileReader_Name();
   }
 
