@@ -234,6 +234,9 @@ namespace eudaq {
       //if (len > 500000) std::cout << "Starting send" << std::endl;
       size_t sent = 0;
       do {
+        std::string buffer(len,' ');
+        std::copy(data, data + len, &buffer[0]);
+        std::cout << "sending: " << buffer << std::endl;
         int result = send(sock,
             reinterpret_cast<const char*>(data+sent),
             static_cast<int>(len-sent),

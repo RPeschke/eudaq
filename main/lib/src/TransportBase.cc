@@ -67,6 +67,7 @@ namespace eudaq {
     if (!m_events.empty() && conn.Matches(m_events.front().id)) {
       ret = true;
       *packet = m_events.front().packet;
+    //  std::cout << "recieved: " << *packet << std::endl;
       m_events.pop();
     }
     //std::cout << "ReceivePacket() return " << (ret ? "true" : "false") << std::endl;
@@ -91,7 +92,7 @@ namespace eudaq {
     SendPacket(sendpacket, connection);
     //std::cout << "DEBUG: SendReceive sent packet " << sendpacket << std::endl;
     bool ret = ReceivePacket(recpacket, timeout, connection);
-    //std::cout << "SendReceivePacket() return '" << *recpacket << "' " << (ret ? "true" : "false") << std::endl;
+    std::cout << "SendReceivePacket() return '" << *recpacket << "' " << (ret ? "true" : "false") << std::endl;
     return ret;
   }
 
