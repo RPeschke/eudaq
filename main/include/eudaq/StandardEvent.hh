@@ -102,6 +102,7 @@ namespace eudaq {
       int  Polarity() const;
 
       void Print(std::ostream &) const;
+      void Print(std::ostream &os ,size_t offset) const;
     private:
       const std::vector<pixel_t> & GetFrame(const std::vector<std::vector<pixel_t> > & v, unsigned f) const;
       void SetupResult() const;
@@ -137,7 +138,7 @@ namespace eudaq {
     StandardPlane & GetPlane(size_t i);
     virtual void Serialize(Serializer &) const;
     virtual void Print(std::ostream &) const;
-
+    virtual void Print(std::ostream & os,size_t offset) const;
     private:
     std::vector<StandardPlane> m_planes;
   };

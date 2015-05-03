@@ -16,8 +16,8 @@ namespace eudaq {
       "EORE",
       "HITS",
       "FAKE",
-      "SIMU"
-      "EUDAQ2"
+      "SIMU",
+      "EUDAQ2",
       "Packet"
     };
 
@@ -82,27 +82,53 @@ namespace eudaq {
   }
 
   void Event::Print(std::ostream & os) const {
-    os << "Type=" << id2str(get_id()) << ":" << GetSubType()
-      << ", Number=" << m_runnumber << "." << m_eventnumber;
+    Print(os, 0);
+  }
+
+  void Event::Print(std::ostream & os, size_t offset) const
+  {
+    os << std::string(offset, ' ') << "<Event> \n";
+    os<<std::string(offset+2,' ') << "\m Type=" << id2str(get_id()) << ":" << GetSubType()
+      << ", Number=" << m_runnumber << "." << m_eventnumber << "\n";
     if (m_timestamp[0] != NOTIMESTAMP)
-      os << ", Time=0x" << to_hex(m_timestamp[0], 16);
+      os << std::string(offset + 2, ' ') << " Time=0x" << to_hex(m_timestamp[0], 16) << "\n";
     if (m_flags) {
       unsigned f = m_flags;
       bool first = true;
       for (size_t i = 0; f > 0; ++i, f >>= 1) {
         if (f & 1) {
-          os << (first ? ", Flags=" : ",")
-            << (i < sizeof FLAGNAMES / sizeof *FLAGNAMES ? std::string(FLAGNAMES[i]) : to_string(i));
-          first = false;
+          if (first)
+          {
+            os << std::string(offset + 2, ' ') << "<Flags> ";
+              first = false;
+          }
+          else
+          {
+            os << ", ";
+          }
+          if (i < sizeof FLAGNAMES / sizeof *FLAGNAMES)
+          {
+            os << std::string(FLAGNAMES[i]);
+          }
+          else{
+            os << to_string(i);
+          }
         }
       }
+      if (first==false)
+      {
+        os  << "</Flags> \n";
+      }
+
     }
     if (m_tags.size() > 0) {
+      os << std::string(offset + 2, ' ') << "<Tags> \n";
       for (map_t::const_iterator i = m_tags.begin(); i != m_tags.end(); ++i) {
-        os << (i == m_tags.begin() ? ", {" : ", ") << i->first << "=" << i->second;
+        os << std::string(offset+4, ' ')  << i->first << "=" << i->second << "\n";
       }
-      os << "}";
+      os << std::string(offset + 2, ' ') << "</Tags> \n";
     }
+    os << std::string(offset, ' ') << "</Event> \n";
   }
 
   unsigned Event::str2id(const std::string & str) {

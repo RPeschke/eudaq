@@ -51,7 +51,12 @@ namespace eudaq {
   // }
 
   void StandardPlane::Print(std::ostream & os) const {
-    os << m_id << ", " << m_type << ":" << m_sensor << ", " << m_xsize << "x" << m_ysize << "x" << m_pix.size()
+    Print(os, 0);
+  }
+
+  void StandardPlane::Print(std::ostream &os, size_t offset) const
+  {
+    os << std::string(offset, ' ') << m_id << ", " << m_type << ":" << m_sensor << ", " << m_xsize << "x" << m_ysize << "x" << m_pix.size()
       << " (" << (m_pix.size() ? m_pix[0].size() : 0) << "), tlu=" << m_tluevent << ", pivot=" << m_pivotpixel;
   }
 
@@ -350,10 +355,15 @@ namespace eudaq {
   }
 
   void StandardEvent::Print(std::ostream & os) const {
-    Event::Print(os);
-    os << ", " << m_planes.size() << " planes:\n";
+    Print(os, 0);
+  }
+
+  void StandardEvent::Print(std::ostream & os, size_t offset) const
+  {
+    Event::Print(os,offset);
+    os << std::string(offset, ' ') << ", " << m_planes.size() << " planes:\n";
     for (size_t i = 0; i < m_planes.size(); ++i) {
-      os << "  " << m_planes[i] << "\n";
+      os << std::string(offset, ' ') << "  " << m_planes[i] << "\n";
     }
   }
 

@@ -73,6 +73,7 @@ namespace eudaq {
     size_t NumBlocks() const { return m_blocks.size(); }
 
     virtual void Print(std::ostream &) const;
+    virtual void Print(std::ostream & ,size_t offset) const;
     static RawDataEvent BORE(std::string type, unsigned run) {
       return RawDataEvent(type, run, (unsigned)-1, Event::FLAG_BORE);
     }

@@ -24,8 +24,13 @@ namespace eudaq{
 
   void PointerEvent::Print(std::ostream & os) const
   {
-    os << "\n PointerEvent \n";
-    os << "reference = " << getReference() << "\n" << "counter = " << getCounter() << "\n";
+    Print(os, 0);
+  }
+
+  void PointerEvent::Print(std::ostream & os, size_t offset) const
+  {
+    os << std::string(offset, ' ') << "\n PointerEvent \n";
+    os << std::string(offset, ' ') << "reference = " << getReference() << "\n" << "counter = " << getCounter() << "\n";
   }
 
   std::string PointerEvent::GetSubType() const

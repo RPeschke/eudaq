@@ -18,7 +18,7 @@ namespace eudaq {
       m_str(str) {}
     StringEvent(Deserializer &);
     virtual void Print(std::ostream &) const;
-
+    virtual void Print(std::ostream &os, size_t offset) const;
     /// Return "StringEvent" as type.
     virtual std::string GetType() const {return "StringEvent";}
 

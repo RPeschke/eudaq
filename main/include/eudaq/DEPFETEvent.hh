@@ -28,6 +28,7 @@ namespace eudaq {
       //     const unsigned char * GetData() const { return &m_data[0]; }
       const vec_t & GetDataVector() const { return m_data; }
       void Print(std::ostream &) const;
+      void Print(std::ostream &os, size_t offset) const;
     private:
       unsigned char GetByte(size_t i) const { return m_data[i]; }
       template <typename T>
@@ -76,7 +77,7 @@ namespace eudaq {
     //       m_boards.push_back(DEPFETBoard(id, data, bytes));
     //     }
     virtual void Print(std::ostream &) const;
-
+    virtual void Print(std::ostream &os, size_t offset) const;
     /// Return "DEPFETEvent" as type.
     virtual std::string GetType() const {return "DEPFETEvent";}
 

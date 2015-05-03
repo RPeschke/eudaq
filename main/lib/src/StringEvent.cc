@@ -13,10 +13,15 @@ namespace eudaq {
   }
 
   void StringEvent::Print(std::ostream & os) const {
-    Event::Print(os);
+    Print(os, 0);
+  }
+
+  void StringEvent::Print(std::ostream &os, size_t offset) const
+  {
+    Event::Print(os,offset);
     static const size_t max = 32;
     std::string s(m_str, 0, max);
-    os << ", '" << s << (m_str.length() > max ? ("' (+" + to_string(m_str.length()-max) + ")") : "'");
+    os << std::string(offset, ' ') << ", '" << s << (m_str.length() > max ? ("' (+" + to_string(m_str.length() - max) + ")") : "'");
   }
 
   void StringEvent::Serialize(Serializer & ser) const {

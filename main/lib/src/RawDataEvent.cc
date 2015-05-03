@@ -47,17 +47,28 @@ namespace eudaq {
   }
 
   void RawDataEvent::Print(std::ostream & os) const {
-    Event::Print(os);
+    Print(os, 0);
+  }
+
+  void RawDataEvent::Print(std::ostream & os, size_t offset) const
+  {
+    os << std::string(offset, ' ') << "<RawDataEvent> \n";
+    Event::Print(os,offset+2);
     std::string tluevstr = "unknown";
     try {
       unsigned tluev = PluginManager::GetTriggerID(*this);
       if (tluev != (unsigned)-1) {
         tluevstr = to_string(tluev);
       }
-    } catch (const Exception &) {
+    }
+    catch (const Exception &) {
       // ignore it
     }
-    os << ", " << m_blocks.size() << " blocks, tluev=" << tluevstr;
+    os << std::string(offset + 2, ' ') << "<blocks>" << m_blocks.size() << "</blocks> \n";
+    os << std::string(offset + 2, ' ') << "<tluev>" << tluevstr << "</tluev> \n";
+    
+    os << std::string(offset, ' ') << "</RawDataEvent> \n";
+
   }
 
   void RawDataEvent::Serialize(Serializer & ser) const {

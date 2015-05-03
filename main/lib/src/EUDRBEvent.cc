@@ -234,7 +234,13 @@ namespace eudaq {
   //   }
 
   void EUDRBBoard::Print(std::ostream & os) const {
-    os << "  ID            = " << m_id << "\n";
+    Print(os, 0);
+
+  }
+
+  void EUDRBBoard::Print(std::ostream &os, size_t offset) const
+  {
+    os << std::string(offset, ' ') << "  ID            = " << m_id << "\n";
     //        << "  LocalEventNum = " << LocalEventNumber() << "\n"
     //        << "  TLUEventNum   = " << TLUEventNumber() << "\n"
     //        << "  FrameNum      = " << FrameNumber() << "\n"
@@ -250,8 +256,13 @@ namespace eudaq {
   }
 
   void EUDRBEvent::Print(std::ostream & os) const {
-    Event::Print(os);
-    os << ", " << m_boards.size() << " boards";
+    Print(os, 0);
+  }
+
+  void EUDRBEvent::Print(std::ostream &os, size_t offset) const
+  {
+    Event::Print(os,offset);
+    os << std::string(offset, ' ') << ", " << m_boards.size() << " boards";
   }
 
   void EUDRBEvent::Debug() {

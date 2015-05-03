@@ -21,11 +21,15 @@ namespace eudaq {
 
 
   void DEPFETBoard::Print(std::ostream & os) const {
-    os << "  ID            = " << m_id << "\n";
-    //        << "  DataSize      = " << DataSize() << "\n";
+    Print(os, 0);
   }
 
 
+
+  void DEPFETBoard::Print(std::ostream &os, size_t offset) const
+  {
+    os << std::string(offset, ' ') << "  ID            = " << m_id << "\n";
+  }
 
   DEPFETEvent::DEPFETEvent(Deserializer & ds) :
     Event(ds)
@@ -34,8 +38,13 @@ namespace eudaq {
   }
 
   void DEPFETEvent::Print(std::ostream & os) const {
-    Event::Print(os);
-    os << ", " << m_boards.size() << " boards";
+    Print(os, 0);
+  }
+
+  void DEPFETEvent::Print(std::ostream &os, size_t offset) const
+  {
+    Event::Print(os,offset);
+    os << std::string(offset, ' ')  << ", " << m_boards.size() << " boards";
   }
 
   void DEPFETEvent::Debug() {

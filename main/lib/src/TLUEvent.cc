@@ -13,10 +13,17 @@ namespace eudaq {
   }
 
   void TLUEvent::Print(std::ostream & os) const {
-    Event::Print(os);
+    Print(os, 0);
+  }
+
+  void TLUEvent::Print(std::ostream &os, size_t offset) const
+  {
+    os << std::string(offset, ' ') << "<TLUEvent> \n";
+    Event::Print(os,offset+2);
     if (m_extratimes.size() > 0) {
-      os << " [" << m_extratimes.size() << " extra]";
+      os << std::string(offset+2, ' ') << "<extraTimes>" << m_extratimes.size() << "</extraTimes>\n";
     }
+    os << std::string(offset, ' ') << "</TLUEvent>\n";
   }
 
   void TLUEvent::Serialize(Serializer & ser) const {

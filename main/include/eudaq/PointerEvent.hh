@@ -22,6 +22,7 @@ namespace eudaq {
     PointerEvent(Deserializer &);
 
     virtual void Print(std::ostream & os) const;
+    virtual void Print(std::ostream & os,size_t offset) const;
     virtual void Serialize(Serializer &) const;
 
     virtual std::string GetSubType() const;

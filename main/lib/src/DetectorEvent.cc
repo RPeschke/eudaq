@@ -36,12 +36,20 @@ namespace eudaq {
   }
 
   void DetectorEvent::Print(std::ostream & os) const {
-    Event::Print(os);
-    os << " {\n";
+    Print(os, 0);
+  }
+
+  void DetectorEvent::Print(std::ostream &os, size_t offset) const
+  {
+    os << std::string(offset, ' ') << "<DetectorEvent> \n";
+    Event::Print(os,offset+2);
+    os <<std::string(offset+2,' ') << "<SubEvents> \n";
     for (size_t i = 0; i < NumEvents(); ++i) {
-      os << "  " << *GetEvent(i) << std::endl;
+      GetEvent(i)->Print(os,offset+4) ;
     }
-    os << "}";
+    os << std::string(offset+2, ' ') << "</SubEvents> \n";
+
+    os << std::string(offset, ' ') << "</DetectorEvent> \n";
   }
 
   void DetectorEvent::Serialize(Serializer & ser) const {
