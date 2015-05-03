@@ -9,13 +9,12 @@ namespace eudaq{
   ReturnParam eudaq::Processor_splitter::ProcessorEvent(ConnectionName_ref name, event_sp ev)
   {
     auto ret = ProcessorBase::sucess;
-    auto name1 = concatenate(name,ev->GetTag("__fileReader", "null"));
 
     if (ev->IsPacket())
     {
       for (size_t i = 0; i < PluginManager::GetNumberOfROF(*ev);++i)
       {
-           ret= ProcessorBaseEvent(name1, PluginManager::ExtractEventN(ev, i));
+           ret= ProcessorBaseEvent(name, PluginManager::ExtractEventN(ev, i));
            if (ret!=ProcessorBase::sucess)
            {
              return ret;
@@ -25,7 +24,7 @@ namespace eudaq{
       {
         auto det = dynamic_cast<DetectorEvent*>(ev.get());
         det->clearEvents();
-        ret = ProcessorBaseEvent(name1, std::move(ev));
+        ret = ProcessorBaseEvent(name, std::move(ev));
         if (ret != ProcessorBase::sucess)
         {
           return ret;
@@ -35,7 +34,7 @@ namespace eudaq{
       return ProcessorBase::sucess;
     }
     
-   return ProcessorBaseEvent(name1, std::move(ev));
+   return ProcessorBaseEvent(name, std::move(ev));
 
   }
 

@@ -25,10 +25,6 @@ namespace eudaq{
 
 
 
-  std::string Processor_N_x_M::getName()
-  {
-    return "splitter";
-  }
 
   void Processor_N_x_M::print(std::ostream& os)
   {

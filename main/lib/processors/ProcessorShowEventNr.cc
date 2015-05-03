@@ -17,7 +17,7 @@ namespace eudaq{
 
     
     ShowEventNR(Parameter_ref);
-  
+    size_t m_pos;
   };
   RegisterProcessor(ShowEventNR, ProcessorNames::show_event_nr());
 
@@ -31,7 +31,7 @@ namespace eudaq{
 
   ShowEventNR::ShowEventNR(Parameter_ref conf) :Processor_Inspector(conf)
   {
-  
+    m_pos =4* ProConfig::getProcessorParallelPos(conf);
   }
 
 
@@ -40,11 +40,11 @@ namespace eudaq{
   {
     if (ev.GetEventNumber() <10)
     {
-      std::cout << getName() << ": "<<ev.GetEventNumber() << std::endl;
+      std::cout << std::string(m_pos, ' ') << getName() << ": " << ev.GetEventNumber() << std::endl;
     }
     else if (ev.GetEventNumber()% 100 ==0)
     {
-      std::cout << getName() << ": " << ev.GetEventNumber() << std::endl;
+      std::cout << std::string(m_pos, ' ') << getName() << ": " << ev.GetEventNumber() << std::endl;
     }
    
     return sucess;

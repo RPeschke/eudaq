@@ -15,6 +15,7 @@ namespace eudaq{
 
   public:
     std::string m_type;
+    
   };
 }
 #endif // Processor_parralel_h__

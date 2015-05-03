@@ -9,7 +9,6 @@ namespace eudaq{
   class Processor_N_x_M :public Processor_N_2_M_base {
 
   public:
-    virtual std::string getName() override;
     virtual ReturnParam ProcessorEvent(ConnectionName_ref name,event_sp ev) = 0;
     virtual void print(std::ostream& os);
     Processor_up CreateInterface(ConnectionName_ref name, Parameter_ref conf);
@@ -23,7 +22,6 @@ namespace eudaq{
     
     ReturnParam ProcessNext(ConnectionName_ref name, event_sp ev);
  
-    std::map<ConnectionName_t, Processor_up> m_inputInterface;
   };
 }
 

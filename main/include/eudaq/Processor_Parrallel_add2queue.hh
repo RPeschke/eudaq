@@ -16,7 +16,7 @@ namespace eudaq{
     virtual void finish() = 0;
 
 
-    virtual std::string getName() ;
+
 
 
   

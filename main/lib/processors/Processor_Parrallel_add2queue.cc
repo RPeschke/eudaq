@@ -46,11 +46,6 @@ namespace eudaq{
 
 
 
-  std::string Processor_Parrallel_add2queue::getName()
-  {
-    return m_conf;
-  }
-
   Processor_Parrallel_add2queue::Processor_Parrallel_add2queue(Parameter_ref conf) :Processor_N_2_M_base(conf)
   {
 

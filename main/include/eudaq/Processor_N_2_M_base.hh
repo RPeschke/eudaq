@@ -24,7 +24,7 @@ namespace eudaq{
 
 		
 
-		virtual std::string getName() = 0;
+	
 		virtual void print(std::ostream& os) = 0;
 
 
@@ -40,7 +40,7 @@ namespace eudaq{
 		void AddProcessorInternal(Processor_rp next, ConnectionName_ref name);
 		Processor_rp getNextProcessor(ConnectionName_t name = "");
 
-	private:
+  
 		using Processor_map = std::map < ConnectionName_t, Processor_rp > ;
     using Processor_up_map = std::map < ConnectionName_t, Processor_up >;
 		

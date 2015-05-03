@@ -25,9 +25,8 @@ namespace eudaq{
     virtual void finish() =0;
 
     
-  private:
+  protected:
   
-    std::map<ConnectionName_t, Processor_up> m_Processors;
     virtual ReturnParam ProcessorEvent(event_sp ev) { return ProcessorBase::ret_error; }
 
   };
