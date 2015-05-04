@@ -82,7 +82,7 @@ int main(int, char ** argv) {
     pro->pushProducer(ProcessorFactory::create(sct::mergeITSDAQStreamsName(), ""));
     
     pro->pushProducer(ProcessorFactory::create(ProcessorNames::file_reader(), ProConfig::ProcessorName("second")));
-    pro->pushProducer(ProcessorFactory::create(ProcessorNames::show_event_nr(), ProConfig::ProcessorName("buffer")));
+    pro->pushProducer(ProcessorFactory::create(ProcessorNames::show_event_nr(), ProConfig::ProcessorName("event Nr:")));
     pro->pushProducer(ProcessorFactory::create(sct::SCT_COMPARE_Name(), ""));
     pro->pushProducer(ProcessorFactory::create(printOutName(), ""));
 

@@ -72,14 +72,19 @@ int main(int, char ** argv) {
 
     auto pro = ProcessorFactory::create(ProcessorNames::batch(), "");
     event_sp ev = std::dynamic_pointer_cast<Event>(std::make_shared<eudaq::RawDataEvent>("tesT", 1, 1));
+    pro->pushProducer(ProcessorFactory::create(ProcessorNames::Parallel_file_reader(), ProConfig::ProcessorName("first")));
     pro->pushProducer(ProcessorFactory::create(ProcessorNames::Parallel_file_reader(), ProConfig::ProcessorName("second")));
-    pro->pushProducer(ProcessorFactory::create("test", ""));
-    pro->pushProducer(ProcessorFactory::create(ProcessorNames::events_of_intresst(), ProConfig::Tag("events", events->Value())));
-    pro->pushProducer(ProcessorFactory::create(ProcessorNames::show_event_nr(), "buffer"));
+
+
+  //  pro->pushProducer(ProcessorFactory::create("test", ""));
+    pro->pushProducer(ProcessorFactory::create(ProcessorNames::Parallel_processor(), ProConfig::ProcessorParallelType(ProcessorNames::show_event_nr())));
     pro->pushProducer(ProcessorFactory::create(ProcessorNames::splitter(), ""));
-    pro->pushProducer(ProcessorFactory::create(ProcessorNames::Parallel_processor(),ProcessorNames::show_event_nr()));
+    pro->pushProducer(ProcessorFactory::create(ProcessorNames::Parallel_processor(), ProConfig::ProcessorParallelType(ProcessorNames::show_event_nr())));
     pro->pushProducer(ProcessorFactory::create(ProcessorNames::multi_buffer(), ""));
+
     pro->pushProducer(ProcessorFactory::create(ProcessorNames::merger(), ""));
+    pro->pushProducer(ProcessorFactory::create(ProcessorNames::events_of_intresst(), ProConfig::Tag("events", events->Value())));
+    pro->pushProducer(ProcessorFactory::create(ProcessorNames::show_event_nr(), ProConfig::ProcessorName("buffer")));
     pro->pushProducer(ProcessorFactory::create(ProcessorNames::buffer(), ""));
     pro->pushProducer(ProcessorFactory::create(ProcessorNames::busy_test(), ""));
     pro->pushProducer(ProcessorFactory::create(ProcessorNames::show_event_nr(), "busy"));
@@ -89,7 +94,7 @@ int main(int, char ** argv) {
     //p->AddProcessor2Batch(std::move(ProcessorFactory::create("eventOfInterest", events->Value())));
     //p->AddProcessor2Batch(std::move(ProcessorFactory::create("ProcessorFileWriter", "")));
 
-    auto conf = ProConfig::Topic("second") + ProConfig::Filename("..\\data\\run000021_.raw");
+    auto conf = ProConfig::Topic("second") + ProConfig::Filename("..\\data\\run000022_.raw") + ProConfig::Topic("first") + ProConfig::Filename("..\\data\\run000022_.raw");;
       pro->init(conf);
 
     pro->ProcessorEvent(ev);
