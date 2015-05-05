@@ -6,7 +6,7 @@
 namespace eudaq{
   
   namespace sct{
-
+    
     DLLEXPORT   std::string TDC_L0ID();
 
     DLLEXPORT   std::string TLU_TLUID();
@@ -17,10 +17,13 @@ namespace eudaq{
     DLLEXPORT   std::string Event_L0ID();
     DLLEXPORT   std::string Event_BCID();
 
-  
+#ifdef USE_EUDAQ2_VERSION
     DLLEXPORT   std::string mergeITSDAQStreamsName();
     DLLEXPORT   std::string SCT_COMPARE_Name();
     DLLEXPORT   std::string SCT_FileReader_Name();
+
+#endif // USE_EUDAQ2_VERSION
+
   }
 
 }

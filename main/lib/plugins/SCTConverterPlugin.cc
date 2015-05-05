@@ -10,7 +10,10 @@
 #  include "IMPL/LCCollectionVec.h"
 #  include "lcio.h"
 #endif
+#ifdef USE_EUDAQ2_VERSION
 #include "eudaq/Processor.hh"
+#endif // USE_EUDAQ2_VERSION
+
 #include "eudaq/PluginManager.hh"
 
 #include "eudaq/SCT_defs.hh"
@@ -346,6 +349,8 @@ namespace eudaq {
 
   // Instantiate the converter plugin instance
   SCTConverterPlugin SCTConverterPlugin::m_instance;
+#ifdef USE_EUDAQ2_VERSION
+
 
 
   class mergeITSDAQStreams : public Processor{
@@ -534,5 +539,6 @@ namespace eudaq {
 
 
   RegisterProcessor(SCT_COMPARE, sct::SCT_COMPARE_Name());
+#endif // USE_EUDAQ2_VERSION
 
 } // namespace eudaq
