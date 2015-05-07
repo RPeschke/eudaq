@@ -488,10 +488,10 @@ namespace eudaq{
 
   int Sync2TLU::CompareEvents(eudaq::Event const & Current_event, eudaq::Event const & tlu_reference_event)
   {
-    if (m_TLUs_found)
-    {
-        return PluginManager::IsSyncWithTLU(Current_event, tlu_reference_event);
-    }
+//     if (m_TLUs_found)
+//     {
+//         return PluginManager::IsSyncWithTLU(Current_event, tlu_reference_event);
+//     }
     return  compareTLU2DUT(tlu_reference_event.GetEventNumber(), Current_event.GetEventNumber());
   }
 

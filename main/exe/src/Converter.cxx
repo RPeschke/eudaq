@@ -46,7 +46,7 @@ int main(int, char ** argv) {
     op.ExtraHelpText(FileWriterFactory::Help_text());
 
 
-    //FileReaderFactory::addComandLineOptions(op);
+    FileReaderFactory::addComandLineOptions(op);
 
     op.ExtraHelpText(FileReaderFactory::Help_text());
 
@@ -94,13 +94,13 @@ int main(int, char ** argv) {
     //p->AddProcessor2Batch(std::move(ProcessorFactory::create("eventOfInterest", events->Value())));
     //p->AddProcessor2Batch(std::move(ProcessorFactory::create("ProcessorFileWriter", "")));
 
-    auto conf = ProConfig::Topic("second") + ProConfig::Filename("..\\data\\run000022_.raw") + ProConfig::Topic("first") + ProConfig::Filename("..\\data\\run000022_.raw");;
-      pro->init(conf);
-
-    pro->ProcessorEvent(ev);
-
-
-    pro->end();
+//     auto conf = ProConfig::Topic("second") + ProConfig::Filename("..\\data\\run000022_.raw") + ProConfig::Topic("first") + ProConfig::Filename("..\\data\\run000022_.raw");;
+//       pro->init(conf);
+// 
+//     pro->ProcessorEvent(ev);
+// 
+// 
+//     pro->end();
 
 
 
@@ -118,7 +118,7 @@ int main(int, char ** argv) {
     ReadAndProcess<eudaq::FileWriter> readProcess;
     readProcess.setEventsOfInterest(parsenumbers(events->Value()));
 
-    //readProcess.addFileReader(FileReaderFactory::create(op));
+    readProcess.addFileReader(FileReaderFactory::create(op));
     readProcess.setWriter(FileWriterFactory::Create());
 
     readProcess.StartRun();
