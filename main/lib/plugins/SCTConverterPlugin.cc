@@ -189,7 +189,7 @@ namespace eudaq {
           ProcessTimeStamp_data(data, sev);
           break;
         default:
-          EUDAQ_THROW("unknown data type");
+         // EUDAQ_THROW("unknown data type");
           break;
         }
       }
@@ -295,26 +295,31 @@ namespace eudaq {
         return false;
       }
 
+      StandardPlane plane(PlaneID+1, EVENT_TYPE_ITS_ABC); 
+      auto size_x = raw->GetBlock(0).size()*8;
 
-      auto block=raw->GetBlock(0);
+      plane.SetSizeZS(size_x, raw->NumBlocks(), 0);
+      for (size_t i = 0; i < raw->NumBlocks(); ++i)
+      {
 
-      std::vector<bool> channels;
-      eudaq::uchar2bool(block.data(), block.data() + block.size(), channels);
+        auto block = raw->GetBlock(i);
 
-      StandardPlane plane(PlaneID, EVENT_TYPE_ITS_ABC);
-      plane.SetSizeZS(channels.size(), 1, 0);
-      unsigned x = 0;
-      unsigned y = 0;
-      for (auto & e : channels){
-        ++x;
-        if (e == true)
-        {
-          plane.PushPixel(x, y, 1);
+        std::vector<bool> channels;
+        eudaq::uchar2bool(block.data(), block.data() + block.size(), channels);
+
+        unsigned x = 0;
+        unsigned y = 0;
+        for (auto & e : channels){
+          ++x;
+          if (e == true)
+          {
+            plane.PushPixel(x, i, 1);
+          }
+
         }
-
       }
-      sev.AddPlane(plane);
-
+        sev.AddPlane(plane);
+      
       sev.SetTag(TDC_data(), ev.GetTag(TDC_data(), ""));
       sev.SetTag(TDC_L0ID(), ev.GetTag(TDC_L0ID(), ""));
       sev.SetTag(TLU_TLUID(), ev.GetTag(TLU_TLUID(), ""));

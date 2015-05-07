@@ -48,15 +48,40 @@ namespace eudaq {
   private:
 
     void process_event(){
-      event_process_ODD_line();
-      event_process_even_lines();
+
+      
+      event_process_header_line(m_line);
+
+      std::getline(*m_eventFile, m_line);
+      auto evendIndex = m_line.find("Event");
+
+      while (evendIndex == std::string::npos)
+      {
+        event_process_even_lines(m_line);
+        std::getline(*m_eventFile, m_line);
+        evendIndex = m_line.find("Event");
+      } 
 
     }
-    void event_process_ODD_line();
-    void event_process_even_lines();
+    void event_process_header_line(const std::string& line);
+    void event_process_even_lines(std::string& line);
     void process_trigger(){
-      Trigger_process_TDC();
+
+      std::getline(*m_triggerFile, m_triggerLine);
+      if (m_triggerLine.empty())
+      {
+        EUDAQ_THROW("unexpected end of file");
+      }
+
+      if (m_triggerLine.find("Trigger data packet") != std::string::npos)
+      {
+        std::getline(*m_triggerFile, m_triggerLine);
+
+      }
+
+ //     Trigger_process_TDC();
       Trigger_process_TLU();
+      std::getline(*m_triggerFile, m_triggerLine);
       Trigger_process_Timestamps();
     }
     void Trigger_process_TDC();
@@ -65,9 +90,9 @@ namespace eudaq {
     void checkForEventNumberMissmatch();
     detEvent_p m_ev;
     rawEvent_p m_raw_ev;
-    unsigned m_ver, m_eventNumber = 0, m_runNum = 0;
+    unsigned m_ver, m_eventNumber = 0, m_runNum = 0, m_blockNr = 0;
     size_t m_subevent_counter = 0;
-    std::string m_triggerFileName;
+    std::string m_triggerFileName,m_line,m_triggerLine;
     std::unique_ptr<std::ifstream> m_eventFile, m_triggerFile;
 
   };
@@ -95,8 +120,9 @@ namespace eudaq {
     m_eventFile = std::unique_ptr<std::ifstream>(new std::ifstream(name));
     m_triggerFile = std::unique_ptr<std::ifstream>(new std::ifstream(m_triggerFileName));
     
-//     std::string line;
-//     std::getline(*m_triggerFile, line);
+    std::getline(*m_eventFile, m_line);
+
+    
   }
 
   FileReaderSCT::FileReaderSCT(Parameter_ref param) :FileReaderSCT(param.Get(getKeyFileName(), ""), param.Get(getKeyFileName(),""))
@@ -184,10 +210,9 @@ namespace eudaq {
 
   }
 
-  void FileReaderSCT::event_process_ODD_line()
+  void FileReaderSCT::event_process_header_line(const std::string& line)
   {
-    std::string line;
-    std::getline(*m_eventFile, line);
+    m_blockNr = 0;
     if (line.empty())
     {
       EUDAQ_THROW("unexpected end of file");
@@ -197,12 +222,10 @@ namespace eudaq {
     m_raw_ev->SetTag(Event_BCID(), to_hex(hex2uint_64(splittedline.at(7)), 4));
   }
 
-  void FileReaderSCT::event_process_even_lines()
+  void FileReaderSCT::event_process_even_lines(std::string& line)
   {
-    std::string line;
-    std::getline(*m_eventFile, line);
-
-    line.erase(0, line.find_first_not_of(" "));
+    line =line.substr(6);
+    line.erase(4, line.find_first_not_of(" "));
     line.erase(line.find_last_not_of(" ") + 1);
 
     if (line.empty())
@@ -230,24 +253,15 @@ namespace eudaq {
     bool2uchar(bool_data, bool_data + size_of_bool_data, char_data);
     delete[] bool_data;
     
-    m_raw_ev->AddBlock(0,char_data);
+    m_raw_ev->AddBlock(m_blockNr++,char_data);
   }
 
   void FileReaderSCT::Trigger_process_TDC()
   {
-    std::string line;
-    std::getline(*m_triggerFile, line);
-    if (line.empty())
-    {
-      EUDAQ_THROW("unexpected end of file");
-    }
 
-    if (line.find("Trigger data packet") != std::string::npos )
-    {
-      Trigger_process_TDC();
-      return;
-    }
-    auto splittedline = split(line, " ");
+
+
+    auto splittedline = split(m_triggerLine, " ");
     m_raw_ev->SetTag(TDC_data(), to_hex(hex2uint_64(*(splittedline.end() - 1)),5) );
     m_raw_ev->SetTag(TDC_L0ID(), to_hex(hex2uint_64(*(splittedline.end() - 2)),4) );
 
@@ -255,26 +269,15 @@ namespace eudaq {
 
   void FileReaderSCT::Trigger_process_TLU()
   {
-    std::string line;
-    std::getline(*m_triggerFile, line);
-    if (line.empty())
-    {
-      EUDAQ_THROW("unexpected end of file");
-    }
-    auto splittedline = split(line, " ");
+   
+    auto splittedline = split(m_triggerLine, " ");
     m_raw_ev->SetTag(TLU_TLUID(), to_hex(hex2uint_64(*(splittedline.end() - 1)) ,4));
     m_raw_ev->SetTag(TLU_L0ID(), to_hex(hex2uint_64(*(splittedline.end() - 3)),4) );
   }
 
   void FileReaderSCT::Trigger_process_Timestamps()
   {
-    std::string line;
-    std::getline(*m_triggerFile, line);
-    if (line.empty())
-    {
-      EUDAQ_THROW("unexpected end of file");
-    }
-    auto splittedline = split(line, " ");
+    auto splittedline = split(m_triggerLine, " ");
 
     m_raw_ev->SetTag(Timestamp_data(), to_hex(hex2uint_64(*(splittedline.end() - 1)),10));
     m_raw_ev->SetTag(Timestamp_L0ID(), to_hex(hex2uint_64(*(splittedline.end() - 2)),4));
