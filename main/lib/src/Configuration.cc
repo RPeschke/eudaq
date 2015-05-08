@@ -182,7 +182,7 @@ namespace eudaq {
 
   void Configuration::Print(std::ostream & os) const
   {
-    for (auto& it = m_cur->begin(); it != m_cur->end(); ++it){
+    for (auto it = m_cur->begin(); it != m_cur->end(); ++it){
       os << it->first << " : " << it->second << std::endl;
     }
   }

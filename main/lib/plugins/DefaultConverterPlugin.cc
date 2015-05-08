@@ -9,6 +9,9 @@
 #  include "IMPL/TrackerRawDataImpl.h"
 #  include "IMPL/LCCollectionVec.h"
 #  include "lcio.h"
+#include "EUTELESCOPE.h"
+#include "EUTelGenericSparsePixel.h"
+#include "EUTelTrackerDataInterfacerImpl.h"
 #endif
 #include "eudaq/Exception.hh"
 #include "eudaq/PluginManager.hh"
@@ -19,7 +22,16 @@ namespace eudaq {
   // The event type for which this converter plugin will be registered
   // Modify this to match your actual event type (from the Producer)
   static const char* EVENT_TYPE = "Default";
+#ifdef USE_LCIO
+  void ConvertPlaneToLCIOGenericPixel(StandardPlane & plane, lcio::TrackerDataImpl& zsFrame)
+  {
+  auto sparseFrame = eutelescope::EUTelTrackerDataInterfacerImpl<eutelescope::EUTelGenericSparsePixel>(&zsFrame);
 
+    for (size_t iPixel = 0; iPixel < plane.HitPixels(); ++iPixel) {
+      eutelescope::EUTelGenericSparsePixel thisHit1(plane.GetX(iPixel), plane.GetY(iPixel), plane.GetPixel(iPixel), 0);
+      sparseFrame.addSparsePixel(&thisHit1);
+    }
+#endif
   // Declare a new class that inherits from DataConverterPlugin
   class DefaultConverterPlugin : public DataConverterPlugin {
 
@@ -54,8 +66,8 @@ namespace eudaq {
 
 #if USE_LCIO
       // This is where the conversion to LCIO is done
-    virtual lcio::LCEvent * GetLCIOEvent(const Event * /*ev*/) const {
-      EUDAQ_THROW("default data convert cannot convert data to LCIO events please provide a data convertert for event: " + Event::id2str(ev.get_id()) + "."+ ev.GetSubType());
+    virtual lcio::LCEvent * GetLCIOEvent(const Event * ev) const {
+      EUDAQ_THROW("default data convert cannot convert data to LCIO events please provide a data convertert for event: " + Event::id2str(ev->get_id()) + "."+ ev->GetSubType());
         return 0;
       }
 #endif

@@ -18,6 +18,14 @@
 
 #include "eudaq/SCT_defs.hh"
 
+
+#ifndef wIN32
+  
+#define max(a,b)    (((a) > (b)) ? (a) : (b))
+#define min(a,b)    (((a) < (b)) ? (a) : (b))
+#endif // !wIN32
+
+
 namespace eudaq {
 
   // The event type for which this converter plugin will be registered
@@ -77,9 +85,10 @@ namespace eudaq {
         plane.SetSizeZS(channels.size(), 1,0);
         unsigned x = 0;
         unsigned y = 0;
-        for(auto & e:channels){
+
+        for (size_t i = 0; i < channels.size();++i ){
           ++x;
-          if (e==true)
+          if (channels[i]==true)
           {
             plane.PushPixel(x,y,1);
           }
@@ -295,7 +304,7 @@ namespace eudaq {
         return false;
       }
 
-      StandardPlane plane(PlaneID+1, EVENT_TYPE_ITS_ABC); 
+      StandardPlane plane(PlaneID, EVENT_TYPE_ITS_ABC); 
       auto size_x = raw->GetBlock(0).size()*8;
 
       plane.SetSizeZS(size_x, raw->NumBlocks(), 0);
@@ -309,7 +318,8 @@ namespace eudaq {
 
         unsigned x = 0;
         unsigned y = 0;
-        for (auto & e : channels){
+
+        for (size_t i = 0; i < channels.size();++i){
           ++x;
           if (e == true)
           {

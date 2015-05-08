@@ -62,6 +62,7 @@
     </plane>
     <plane id="9">
       <ignorHotPixel>
+            <ignorReginY Begin="0" End="6"/>
       </ignorHotPixel>
       <Binning>
         <PixelX LowerBin="0" upperBin="128" binSize="1"/>
