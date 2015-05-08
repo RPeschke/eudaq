@@ -1,4 +1,4 @@
-#include "eudaq/Processor_N_2_m_base.hh"
+#include "eudaq/Processor_N_2_M_base.hh"
 
 
 namespace eudaq{
