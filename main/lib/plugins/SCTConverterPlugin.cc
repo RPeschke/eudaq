@@ -321,7 +321,7 @@ namespace eudaq {
 
         for (size_t i = 0; i < channels.size();++i){
           ++x;
-          if (e == true)
+          if (channels[i] == true)
           {
             plane.PushPixel(x, i, 1);
           }
