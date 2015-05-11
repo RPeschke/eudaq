@@ -58,8 +58,20 @@ namespace eudaq {
 
       virtual int IsSyncWithTLU(eudaq::Event const & ev, const eudaq::Event  & tluEvent) const {
         unsigned triggerID = GetTriggerID(ev);
+        if (triggerID<m_oldID)
+        {
+          triggerID += m_oldID+1;
+        }
         auto tlu_triggerID = tluEvent.GetEventNumber();
-        return compareTLU2DUT(tlu_triggerID, triggerID+1);
+        auto sync= compareTLU2DUT(tlu_triggerID, triggerID);
+
+
+        if (sync == Event_IS_Sync){
+          m_oldID = triggerID;
+
+        }
+
+        return sync;
       }
 
 
@@ -84,7 +96,7 @@ namespace eudaq {
         StandardPlane plane(PlaneID, EVENT_TYPE_ITS_ABC);
         plane.SetSizeZS(channels.size(), 1,0);
         unsigned x = 0;
-        unsigned y = 0;
+        unsigned y = 1;
 
         for (size_t i = 0; i < channels.size();++i ){
           ++x;
@@ -110,13 +122,13 @@ namespace eudaq {
       SCTConverterPlugin_ITS_ABC(): DataConverterPlugin(EVENT_TYPE_ITS_ABC) {}
 
 
+      mutable unsigned m_rollOver,m_oldID = 0;
    
       // The single instance of this converter plugin
   }; // class SCTConverterPlugin
 
   // Instantiate the converter plugin instance
   SCTConverterPlugin_ITS_ABC SCTConverterPlugin_ITS_ABC::m_instance;
-
 
 
 
@@ -141,8 +153,20 @@ namespace eudaq {
     }
     virtual int IsSyncWithTLU(eudaq::Event const & ev, const eudaq::Event  & tluEvent) const {
       unsigned triggerID = GetTriggerID(ev);
+      if (triggerID < m_oldID)
+      {
+        triggerID += m_oldID+1;
+      }
       auto tlu_triggerID = tluEvent.GetEventNumber();
-      return compareTLU2DUT(tlu_triggerID, triggerID + 1);
+      auto sync = compareTLU2DUT(tlu_triggerID, triggerID);
+
+
+      if (sync == Event_IS_Sync){
+        m_oldID = triggerID;
+
+      }
+
+      return sync;
     }
  
 
@@ -248,7 +272,7 @@ namespace eudaq {
     // in order to register this converter for the corresponding conversions
     // Member variables should also be initialized to default values here.
     SCTConverterPlugin_ITS_TTC() : DataConverterPlugin(EVENT_TYPE_ITS_TTC) {}
-
+    mutable unsigned m_rollOver = 0, m_oldID=0;
     // Information extracted in Initialize() can be stored here:
 
     // The single instance of this converter plugin
