@@ -448,7 +448,11 @@ bool ROOTProducer::Producer_PImpl::getOnStart()
 void ROOTProducer::Producer_PImpl::setOnStart(bool newStat)
 {
   std::unique_lock<std::mutex> lck(m_stautus_change);
-  if (ev&&newStat!=onStart_)
+  if (ev
+    &&
+    newStat!=onStart_
+    &&
+    newStat==false)
   {
     sendEvent();
   }
@@ -495,6 +499,7 @@ void ROOTProducer::Producer_PImpl::setOnStop(bool newStat)
     // Send an EORE after all the real events have been sent
     // You can also set tags on it (as with the BORE) if necessary
     SendEvent(EORE);
+    m_errors.clear();
   }
 
 
