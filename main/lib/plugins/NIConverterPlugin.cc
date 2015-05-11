@@ -126,7 +126,7 @@ namespace eudaq {
       return  m_comparer_no_sync_events.compareDUT2TLU(ev, tluEvent);
 #endif // _DEBUG
 #else
-      auto trigID = GetTriggerID(ev);
+      auto trigID = ev.GetEventNumber();// GetTriggerID(ev);
       auto evNR = ev.GetEventNumber();
       // std::cout << "event nr: " << evNR << "  trig nr: " << trigID << std::endl;
       return compareTLU2DUT(tluEvent.GetEventNumber(), trigID);

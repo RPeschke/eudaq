@@ -279,7 +279,7 @@ class USBPixI4ConverterBase : public ATLASFEI4Interpreter<dh_lv1id_msk, dh_bcid_
 
 	StandardPlane ConvertPlane(const std::vector<unsigned char> & data, unsigned id) const
 	{
-		StandardPlane plane(id, EVENT_TYPE, EVENT_TYPE);
+		StandardPlane plane(7, EVENT_TYPE, EVENT_TYPE);
 
 		//check for consistency
 		bool valid = isEventValid(data);
@@ -333,13 +333,19 @@ class USBPixI4ConverterBase : public ATLASFEI4Interpreter<dh_lv1id_msk, dh_bcid_
 				if(getHitData(Word, false, Col, Row, ToT))
 				{
 					if(advancedConfig) transformChipsToModule(Col, Row, moduleIndex.at(id-1) );
+          if (lvl1>0)
+          {
 					plane.PushPixel(Col, Row, ToT, false, lvl1 - 1);
+          }
 				}
 				//Second Hit
 				if(getHitData(Word, true, Col, Row, ToT))
 				{
 					if(advancedConfig) transformChipsToModule(Col, Row, moduleIndex.at(id-1) );
-					plane.PushPixel(Col, Row, ToT, false, lvl1 - 1);
+					if (lvl1>0)
+					{
+          plane.PushPixel(Col, Row, ToT, false, lvl1 - 1);
+					}
 				}
 			}
 		}
@@ -422,6 +428,27 @@ class USBPixI4ConverterPlugin : public DataConverterPlugin , public USBPixI4Conv
 	//Here, the data from the RawDataEvent is extracted into a StandardEvent.
 	//The return value indicates whether the conversion was successful.
 	//Again, this is just an example, adapted it for the actual data layout.
+  virtual int IsSyncWithTLU(eudaq::Event const & ev, const eudaq::Event  & tluEvent) const{
+    auto tluid = tluEvent.GetEventNumber();
+    const RawDataEvent & ev_raw = dynamic_cast<const RawDataEvent &>(ev);
+
+    auto eventTrigger = getTrigger(ev_raw.GetBlock(0));
+    unsigned eventID = ev.GetEventNumber();
+    auto sync = compareTLU2DUT( tluid,eventID);
+
+    if (sync == Event_IS_Sync)
+    {
+
+      StandardEvent sev;
+      GetStandardSubEvent(sev, ev);
+      auto plane = sev.GetPlane(0);
+      auto pixels = plane.HitPixels();
+     
+        std::cout <<"DUT event: "<< ev.GetEventNumber()<<" trigger id "<<eventTrigger<< "  TLU event "<<tluEvent.GetEventNumber()<< "   hits: " << pixels << "  TLU trigger  " << tluEvent.GetTag("trigger", "") << std::endl;
+
+    }
+    return sync;
+  }
 	virtual bool GetStandardSubEvent(StandardEvent & sev, const Event & ev) const
 	{
 		if(ev.IsBORE() || ev.IsEORE())

@@ -95,9 +95,10 @@ bool mCorrelations::ProcessDetectorEvent( const eudaq::DetectorEvent & ev)
 	for (size_t iplane = 0; iplane < sev.NumPlanes(); ++iplane) {
 
 		const eudaq::StandardPlane & plane = sev.GetPlane(iplane);
-		std::vector<double> cds = plane.GetPixels<double>();
 
-		for (size_t ipix = 0; ipix < cds.size(); ++ipix) {
+	//	std::vector<double> cds = plane.GetPixels<double>();
+
+    for (size_t ipix = 0; ipix < plane.HitPixels(); ++ipix) {
 
 			
 
