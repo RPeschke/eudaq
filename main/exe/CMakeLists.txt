@@ -14,24 +14,24 @@ add_executable(TestProducer        src/TestProducer.cxx      )
 add_executable(TestReader          src/TestReader.cxx        )
 add_executable(TestRunControl      src/TestRunControl.cxx    )
 add_executable(SCT_Comparer        src/SCT_Comparer.cxx      )
-
-set_property(TARGET ClusterExtractor   PROPERTY PROJECT_LABEL "BinClusterExtractor") 
-set_property(TARGET Converter          PROPERTY PROJECT_LABEL "BinConverter") 
-set_property(TARGET ExampleProducer    PROPERTY PROJECT_LABEL "BinExampleProducer") 
-set_property(TARGET ExampleReader      PROPERTY PROJECT_LABEL "BinExampleReader") 
-set_property(TARGET FileChecker        PROPERTY PROJECT_LABEL "BinFileChecker") 
-set_property(TARGET IPHCConverter      PROPERTY PROJECT_LABEL "BinIPHCConverter") 
-set_property(TARGET MagicLogBook       PROPERTY PROJECT_LABEL "BinMagicLogBook") 
-set_property(TARGET OptionExample      PROPERTY PROJECT_LABEL "BinOptionExample") 
-set_property(TARGET RunListener        PROPERTY PROJECT_LABEL "BinRunListener") 
-set_property(TARGET TestDataCollector  PROPERTY PROJECT_LABEL "BinTestDataCollector") 
-set_property(TARGET TestLogCollector   PROPERTY PROJECT_LABEL "BinTestLogCollector")
-set_property(TARGET TestMonitor        PROPERTY PROJECT_LABEL "BinTestMonitor") 
-set_property(TARGET TestProducer       PROPERTY PROJECT_LABEL "BinTestProducer") 
-set_property(TARGET TestReader         PROPERTY PROJECT_LABEL "BinTestReader") 
-set_property(TARGET TestRunControl     PROPERTY PROJECT_LABEL "BinTestRunControl") 
-set_property(TARGET SCT_Comparer       PROPERTY PROJECT_LABEL "BinSCT_Comparer") 
-
+add_executable(getConfiguration    src/getConfiguration.cxx  )
+set_property(TARGET ClusterExtractor   PROPERTY PROJECT_LABEL "bin_ClusterExtractor") 
+set_property(TARGET Converter          PROPERTY PROJECT_LABEL "bin_Converter") 
+set_property(TARGET ExampleProducer    PROPERTY PROJECT_LABEL "bin_ExampleProducer") 
+set_property(TARGET ExampleReader      PROPERTY PROJECT_LABEL "bin_ExampleReader") 
+set_property(TARGET FileChecker        PROPERTY PROJECT_LABEL "bin_FileChecker") 
+set_property(TARGET IPHCConverter      PROPERTY PROJECT_LABEL "bin_IPHCConverter") 
+set_property(TARGET MagicLogBook       PROPERTY PROJECT_LABEL "bin_MagicLogBook") 
+set_property(TARGET OptionExample      PROPERTY PROJECT_LABEL "bin_OptionExample") 
+set_property(TARGET RunListener        PROPERTY PROJECT_LABEL "bin_RunListener") 
+set_property(TARGET TestDataCollector  PROPERTY PROJECT_LABEL "bin_TestDataCollector") 
+set_property(TARGET TestLogCollector   PROPERTY PROJECT_LABEL "bin_TestLogCollector")
+set_property(TARGET TestMonitor        PROPERTY PROJECT_LABEL "bin_TestMonitor") 
+set_property(TARGET TestProducer       PROPERTY PROJECT_LABEL "bin_TestProducer") 
+set_property(TARGET TestReader         PROPERTY PROJECT_LABEL "bin_TestReader") 
+set_property(TARGET TestRunControl     PROPERTY PROJECT_LABEL "bin_TestRunControl") 
+set_property(TARGET SCT_Comparer       PROPERTY PROJECT_LABEL "bin_SCT_Comparer") 
+set_property(TARGET getConfiguration   PROPERTY PROJECT_LABEL "bin_getConfiguration")
 
 
 
@@ -52,9 +52,9 @@ target_link_libraries(TestProducer        EUDAQ ${EUDAQ_THREADS_LIB} ${ADDITIONA
 target_link_libraries(TestReader          EUDAQ ${EUDAQ_THREADS_LIB} ${ADDITIONAL_LIBRARIES})
 target_link_libraries(TestRunControl      EUDAQ ${EUDAQ_THREADS_LIB} ${ADDITIONAL_LIBRARIES})
 target_link_libraries(SCT_Comparer      EUDAQ ${EUDAQ_THREADS_LIB} ${ADDITIONAL_LIBRARIES})
+target_link_libraries(getConfiguration      EUDAQ ${EUDAQ_THREADS_LIB} ${ADDITIONAL_LIBRARIES})
 
-
-INSTALL(TARGETS ClusterExtractor  Converter  ExampleProducer  ExampleReader  FileChecker  IPHCConverter  MagicLogBook  OptionExample  RunListener  TestDataCollector  TestLogCollector  TestMonitor  TestProducer  TestReader  TestRunControl SCT_Comparer
+INSTALL(TARGETS ClusterExtractor  Converter  ExampleProducer  ExampleReader  FileChecker  IPHCConverter  MagicLogBook  OptionExample  RunListener  TestDataCollector  TestLogCollector  TestMonitor  TestProducer  TestReader  TestRunControl SCT_Comparer getConfiguration
   RUNTIME DESTINATION bin
   LIBRARY DESTINATION lib
   ARCHIVE DESTINATION lib)
