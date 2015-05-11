@@ -31,12 +31,7 @@ int main(int, char ** argv) {
 
 
 
-	std::cout << ProConfig::Topic("hello") + ProConfig::Tag("tag", "value");
-    std::clock_t    start;
-
-	auto p=Configuration(ProConfig::Topic("hello") + ProConfig::Tag("tag", "value"),"hello");
-	auto tag = p.Get("tag","nix");
-    start = std::clock();
+    std::clock_t    start = std::clock();
     eudaq::OptionParser op("EUDAQ File Converter", "1.0", "", 1);
 
     auto events = ReadAndProcess<eudaq::FileWriter>::add_Command_line_option_EventsOfInterest(op);
@@ -63,10 +58,6 @@ int main(int, char ** argv) {
 
 
   try {
-
-
-
-
 
 
 
