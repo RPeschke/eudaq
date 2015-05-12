@@ -1,8 +1,12 @@
+
+#include "Windows4Root.h"
 #include "eudaq/FileWriter.hh"
 #include "eudaq/FileNamer.hh"
 #include "eudaq/PluginManager.hh"
 #include <iostream>
 #include <fstream>
+#include "TFile.h"
+#include "TTree.h"
 
 #if ((defined WIN32) && (defined __CINT__))
 typedef unsigned long long uint64_t
@@ -13,6 +17,7 @@ typedef int int32_t
 #include <cstdint>
 #endif
 #include "eudaq/Configuration.hh"
+#include "TCanvas.h"
 
 
 namespace eudaq {
@@ -27,11 +32,18 @@ namespace eudaq {
   private:
     std::vector<unsigned> m_channel;
 
-    int m_threshold,m_threshold_readback, Hv;
-    unsigned m_run = 0,m_events;
+    Int_t m_threshold, m_threshold_readback, Hv;
+    UInt_t m_run = 0,m_events;
     std::ofstream *m_out;
     bool firstEvent;
     void print();
+
+    TFile *m_tfile=nullptr;
+    TTree* m_tree = nullptr;
+
+    Double_t m_relhit;
+    Int_t m_channel_root;
+    std::string hitmap_name;
   };
 
 
@@ -50,8 +62,12 @@ namespace eudaq {
     {
       m_out->close();
       m_out = nullptr;
-
+      m_tfile->Write();
+      m_tfile->Close();
+      delete m_tfile;
+      m_tfile = nullptr;
     }
+
 
 
 
@@ -60,6 +76,21 @@ namespace eudaq {
     m_out = new std::ofstream(fname.c_str());
 
     if (!m_out) EUDAQ_THROW("Error opening file: " + fname);
+
+    std::string fname_root(FileNamer(m_filepattern).Set('X', ".root").Set('R', runnumber));
+    m_tfile = new TFile(fname_root.c_str(),"RECREATE");
+
+    m_tree = new TTree("hitmap","hitmap");
+    m_tree->Branch("Channel", &m_channel_root);
+    m_tree->Branch("hv", &Hv);
+    m_tree->Branch("threshold", &m_threshold);
+    m_tree->Branch("threshold_readback", &m_threshold_readback);
+    m_tree->Branch("run", &m_run);
+    m_tree->Branch("relHit", &m_relhit);
+
+    hitmap_name = FileNamer("scurve$6R$X").Set('X', ".pdf").Set('R', runnumber);
+
+
   }
 
   void FileWriterTextHitmap::WriteEvent(const DetectorEvent & devent) {
@@ -139,6 +170,18 @@ namespace eudaq {
         m_out->close();
 
         m_out = nullptr;
+        TCanvas c1;
+        c1.Divide(2, 1);
+        c1.cd(1);
+        m_tree->Draw("relHit:threshold", "Channel==385", "*");
+        auto pad=c1.cd(2);
+        m_tree->Draw("relHit:threshold", "Channel<385", "colz");
+        pad->SetLogz();
+        c1.SaveAs(hitmap_name.c_str());
+        m_tfile->Write();
+        m_tfile->Close();
+        delete m_tfile;
+        m_tfile = nullptr;
       }
     }
 
@@ -149,8 +192,12 @@ namespace eudaq {
         return;
       }
       *m_out << "runNr = " << m_run << "   hv = " << Hv << " threshold = " << m_threshold << "  threshold_read_back =  " << m_threshold_readback<<"  ";
+      int i = 0;
       for (auto & e : m_channel){
         *m_out << (double)e /m_events *100<< ", ";
+        m_relhit = (double)e / m_events * 100;
+        m_channel_root = i++;
+        m_tree->Fill();
       }
 
       *m_out << std::endl;
