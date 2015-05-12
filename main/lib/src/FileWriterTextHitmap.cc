@@ -27,7 +27,7 @@ namespace eudaq {
   private:
     std::vector<unsigned> m_channel;
 
-    int m_threshold, Hv;
+    int m_threshold,m_threshold_readback, Hv;
     unsigned m_run = 0,m_events;
     std::ofstream *m_out;
     bool firstEvent;
@@ -65,14 +65,27 @@ namespace eudaq {
   void FileWriterTextHitmap::WriteEvent(const DetectorEvent & devent) {
 
     if (devent.IsBORE()) {
-      
+
       Configuration conf(devent.GetTag("CONFIG", ""),"Producer.ITS_ABC");
 
       if (!m_channel.empty())
       {
         print();
       }
+      m_threshold_readback = 0;
+      for (size_t i = 0; i < devent.NumEvents(); ++i)
+      {
+        auto st_vthr = devent.GetEvent(i)->GetTag("ST_VTHR ", -1.0);
+        if (st_vthr > -1.0)
+        {
+          m_threshold_readback = (int)st_vthr;
+        }
+      }
       m_threshold = conf.Get("ST_VTHR", 0);
+      if (m_threshold!=m_threshold_readback)
+      {
+        std::cout << "thresholds differ " << m_threshold << " != " << m_threshold_readback << std::endl;
+      }
       Hv = conf.Get("ST_VDET", 0);
       m_run = devent.GetRunNumber();
       eudaq::PluginManager::Initialize(devent);
@@ -135,7 +148,7 @@ namespace eudaq {
       {
         return;
       }
-      *m_out << "runNr = " << m_run<< "   hv = " << Hv << " threshold = " << m_threshold << "   ";
+      *m_out << "runNr = " << m_run << "   hv = " << Hv << " threshold = " << m_threshold << "  threshold_read_back =  " << m_threshold_readback<<"  ";
       for (auto & e : m_channel){
         *m_out << (double)e /m_events *100<< ", ";
       }
