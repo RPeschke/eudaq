@@ -832,6 +832,8 @@ void ROOTProducer::setTag( const char* tagNameTagValue )
   {
     std::string tagName=dummy.substr(0,equalsymbol);
     std::string tagValue=dummy.substr(equalsymbol+1);
+    tagValue = eudaq::trim(tagValue);
+    tagName = eudaq::trim(tagName);
     setTag(tagName.c_str(),tagValue.c_str());
 
   }else{
