@@ -109,7 +109,8 @@ namespace eudaq{
     static Name_t Parallel_file_reader();
     static Name_t Parallel_processor();
 
-
+    static Name_t Print_Configuration();
+    static Name_t SelectEvents();
   };
 
   class DLLEXPORT ProConfig{
@@ -124,12 +125,18 @@ namespace eudaq{
     static Config Filename(const std::string& fileName);
     static Config ProcessorParallelType(const std::string& Name);
     static Config ProcessorParallelPos(size_t pos);
+    static Config getConfig_configuration(const std::string& name, const std::string& sectionANDTAGS);
+    static Config getConfig_ConcatSectionsTag(const std::string& section, const std::string& TAGS);
+    static Config eventSelection_configuration(const std::string& name, const std::string& events, bool doBore=false,bool doEore=false);
+
     static std::string getTag(const ConfigInput& conf, const std::string& section, const std::string& tag,const std::string& def);
     static std::string getFilename(const ConfigInput& conf,const std::string& section,const std::string& def);
     static std::string  getProcessorName(const ConfigInput& conf);
     static std::string  getProcessorType(const ConfigInput& conf);
     static std::string  getProcessorParallelType(const ConfigInput& conf);
     static size_t getProcessorParallelPos(Config conf);
+
+
   };
 }
 #endif // ProcessorBase_h__

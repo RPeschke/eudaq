@@ -67,6 +67,17 @@ namespace eudaq{
 
 
   using Config = ProConfig::Config;
+
+  Name_t ProcessorNames::Print_Configuration()
+  {
+    return "config";
+  }
+
+  Name_t ProcessorNames::SelectEvents()
+  {
+    return "select_events";
+  }
+
   Config ProConfig::Topic(const std::string& name)
   {
 	  return "[" + name + "]\n";
@@ -111,6 +122,21 @@ namespace eudaq{
   Config ProConfig::ProcessorParallelPos(size_t pos)
   {
     return Tag(ProcessorParallelPosTag, to_string(pos));
+  }
+
+  Config ProConfig::getConfig_configuration(const std::string& name, const std::string& sectionTag)
+  {
+    return ProConfig::Topic(name) + ProConfig::Tag("section_and_TAG", sectionTag);
+  }
+
+  Config ProConfig::getConfig_ConcatSectionsTag(const std::string& section, const std::string& TAGS)
+  {
+    return section + "%" + TAGS + "&";
+  }
+
+  Config ProConfig::eventSelection_configuration(const std::string& name, const std::string& events, bool doBore/*=false*/, bool doEore/*=false*/)
+  {
+    return ProConfig::Topic(name) + ProConfig::Tag("events", events) + ProConfig::Tag("doBore", to_string(doBore)) + ProConfig::Tag("doEore", to_string(doEore));
   }
 
   std::string ProConfig::getTag(const ConfigInput& conf, const std::string& section, const std::string& tag, const std::string& def)
