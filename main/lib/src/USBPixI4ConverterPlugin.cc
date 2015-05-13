@@ -444,7 +444,7 @@ class USBPixI4ConverterPlugin : public DataConverterPlugin , public USBPixI4Conv
       auto plane = sev.GetPlane(0);
       auto pixels = plane.HitPixels();
      
-        std::cout <<"DUT event: "<< ev.GetEventNumber()<<" trigger id "<<eventTrigger<< "  TLU event "<<tluEvent.GetEventNumber()<< "   hits: " << pixels << "  TLU trigger  " << tluEvent.GetTag("trigger", "") << std::endl;
+      //  std::cout <<"DUT event: "<< ev.GetEventNumber()<<" trigger id "<<eventTrigger<< "  TLU event "<<tluEvent.GetEventNumber()<< "   hits: " << pixels << "  TLU trigger  " << tluEvent.GetTag("trigger", "") << std::endl;
 
     }
     return sync;
