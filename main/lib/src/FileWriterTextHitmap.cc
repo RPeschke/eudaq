@@ -109,6 +109,13 @@ namespace eudaq {
         auto st_vthr = devent.GetEvent(i)->GetTag("ST_VTHR ", -1.0);
         if (st_vthr > -1.0)
         {
+          std::cout << " old style " << st_vthr << std::endl;
+          m_threshold_readback = (int)st_vthr;
+        }
+        st_vthr = devent.GetEvent(i)->GetTag("ST_VTHR", -1.0);
+        if (st_vthr > -1.0)
+        {
+          std::cout << " new style " << st_vthr << std::endl;
           m_threshold_readback = (int)st_vthr;
         }
       }
