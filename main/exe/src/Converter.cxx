@@ -88,7 +88,7 @@ int main(int, char ** argv) {
 //     auto conf = ProConfig::Topic("second") + ProConfig::Filename("..\\data\\run000022_.raw") + ProConfig::Topic("first") + ProConfig::Filename("..\\data\\run000022_.raw");;
 //       pro->init(conf);
 // 
-//     pro->ProcessorEvent(ev);
+//     pro->ProcessEvent(ev);
 // 
 // 
 //     pro->end();

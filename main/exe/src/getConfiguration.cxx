@@ -43,9 +43,9 @@ int main(int /*argc*/, const char ** argv) {
   pro->pushProducer(ProcessorFactory::create(ProcessorNames::show_event_nr(), "event_nr"));
 
 
-  auto conf = ProConfig::Topic("first") + ProConfig::Filename(op.GetArg(0)) + ProConfig::getConfig_configuration("config", ProConfig::getConfig_ConcatSectionsTag("Producer.TLU", "AndMask")) +ProConfig::eventSelection_configuration("eventOfintresst","1,2,3",1,1);
+  auto conf = ProConfig::Topic("first") + ProConfig::Filename(op.GetArg(0)) + ProConfig::getConfig_configuration("config", ProConfig::getConfig_ConcatSectionsTag("", "")) +ProConfig::eventSelection_configuration("eventOfintresst","1,2,3",1,1);
   pro->init(conf);
-  pro->ProcessorEvent(nullptr);
+  pro->ProcessEvent(nullptr);
   pro->end();
   }
   catch (...) {

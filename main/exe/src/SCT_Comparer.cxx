@@ -89,7 +89,7 @@ int main(int, char ** argv) {
     auto conf = ProConfig::Topic("second") + ProConfig::Filename(sct->Value()+"$sct") + ProConfig::Topic("first") + ProConfig::Filename(op.GetArg(0));;
     pro->init(conf);
 
-    pro->ProcessorEvent(ev);
+    pro->ProcessEvent(ev);
 
 
     pro->end();
