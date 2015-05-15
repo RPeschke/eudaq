@@ -225,6 +225,8 @@ int main(int /*argc*/, const char ** argv) {
     op.Parse(argv);
     // Set the Log level for displaying messages based on command-line
     EUDAQ_LOG_LEVEL(level.Value());
+    std::cout << "Example Producer name = \"" << name.Value() << "\" connected to " << rctrl.Value() << std::endl;
+    eudaq::mSleep(1500);
     // Create a producer
     ExampleProducer producer(name.Value(), rctrl.Value());
     // And set it running...

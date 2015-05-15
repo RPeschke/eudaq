@@ -73,9 +73,11 @@ int main(int /*argc*/, const char ** argv) {
       "The address on which to listen for Log connections");
   eudaq::Option<std::string> level(op, "l", "log-level", "INFO", "level",
       "The minimum level for displaying log messages");
+  eudaq::mSleep(1000);
   try {
     op.Parse(argv);
     EUDAQ_LOG_LEVEL("NONE");
+    std::cout << "Log Collector  Connected to \"" << rctrl.Value() << "\"" << std::endl;
     TestLogCollector fw(rctrl.Value(), addr.Value(), eudaq::Status::String2Level(level.Value()));
     //g_ptr = &fw;
     //std::signal(SIGINT, &ctrlc_handler);

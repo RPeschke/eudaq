@@ -157,6 +157,8 @@ int main(int /*argc*/, const char ** argv) {
           rc.Terminate();
           break;
         case 'q':
+          rc.Terminate();
+          eudaq::mSleep(500);
           done = true;
           break;
         case 'p':
