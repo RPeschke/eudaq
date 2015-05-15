@@ -14,7 +14,7 @@ namespace eudaq{
 
   }
 
-  ReturnParam Proccessor_Buffer::ProcessorEvent(event_sp ev)
+  ReturnParam Proccessor_Buffer::ProcessEvent(event_sp ev)
   {
     if (m_queue.size()>m_bufferSize)
     {

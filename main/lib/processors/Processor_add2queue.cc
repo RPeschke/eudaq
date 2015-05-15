@@ -6,7 +6,7 @@ namespace eudaq{
     m_status = running;
   }
 
-  ReturnParam eudaq::Processor_add2queue::ProcessorEvent(event_sp ev)
+  ReturnParam eudaq::Processor_add2queue::ProcessEvent(event_sp ev)
   {
     if (m_status==running)
     {

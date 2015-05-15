@@ -14,7 +14,7 @@ namespace eudaq{
 		
 		virtual void initialize(Configuration_ref conf) = 0;
     virtual void finish() = 0;
-		virtual ReturnParam ProcessorEvent(event_sp ev) = 0;
+		
 
 
 

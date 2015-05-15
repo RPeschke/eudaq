@@ -14,7 +14,7 @@ namespace eudaq{
 	virtual void initialize(Configuration_ref conf) override;
   virtual void finish() override;
 
-    virtual ReturnParam ProcessorEvent(event_sp ev);
+    virtual ReturnParam ProcessEvent(event_sp ev);
     virtual void print(std::ostream& os);
   private:
     Processor_up m_reader = nullptr;

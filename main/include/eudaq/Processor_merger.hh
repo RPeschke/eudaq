@@ -11,7 +11,7 @@ namespace eudaq{
   class SyncBase;
   class Processor_merger :public Processor_N_x_M{
   public:
-    virtual ReturnParam ProcessorEvent(ConnectionName_ref name, event_sp ev) ;
+    virtual ReturnParam ProcessEvent(ConnectionName_ref name, event_sp ev) ;
     Processor_merger(Parameter_ref);
     virtual ~Processor_merger(){}
     virtual void initialize(Configuration_ref conf);

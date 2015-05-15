@@ -50,7 +50,7 @@ namespace eudaq {
     os << getName();
   }
 
-  ReturnParam Processor_batch::ProcessorEvent(event_sp ev)
+  ReturnParam Processor_batch::ProcessEvent(event_sp ev)
   {
     ReturnParam ret =sucess;
     if (ev)
@@ -60,7 +60,7 @@ namespace eudaq {
     }
     do 
     {
-      ret = m_processors.front()->ProcessorEvent(ev);
+      ret = m_processors.front()->ProcessEvent(ev);
 
       if (ret == ret_error){
         std::cout << "an error occurred " << std::endl;

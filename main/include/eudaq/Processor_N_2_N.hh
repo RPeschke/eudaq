@@ -27,7 +27,7 @@ namespace eudaq{
     
   protected:
   
-    virtual ReturnParam ProcessorEvent(event_sp ev) { return ProcessorBase::ret_error; }
+    virtual ReturnParam ProcessEvent(event_sp ev) { return ProcessorBase::ret_error; }
 
   };
 

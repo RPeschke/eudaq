@@ -10,7 +10,7 @@ namespace eudaq{
   public:
 
     
-    virtual ReturnParam ProcessorEvent(event_sp ev) = 0;
+    virtual ReturnParam ProcessEvent(event_sp ev) = 0;
 
     virtual void print(std::ostream& os) ;
     virtual void clearProducer() {};

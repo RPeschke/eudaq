@@ -47,7 +47,7 @@ namespace eudaq{
     ProcessorBase(Parameter_ref name);
     virtual ~ProcessorBase() {};
 	virtual void init(Configuration_ref conf) = 0;
-    virtual ReturnParam ProcessorEvent(event_sp ev) = 0;
+    virtual ReturnParam ProcessEvent(event_sp ev) = 0;
     virtual void end() =0;
 
 

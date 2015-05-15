@@ -13,7 +13,7 @@ namespace eudaq{
 
 
 
-  ReturnParam Processor_merger::ProcessorEvent(ConnectionName_ref name, event_sp ev)
+  ReturnParam Processor_merger::ProcessEvent(ConnectionName_ref name, event_sp ev)
   {
     auto it = m_map.find(name);
     if (it == m_map.end()){

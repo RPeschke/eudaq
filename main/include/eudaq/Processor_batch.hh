@@ -13,7 +13,7 @@ namespace eudaq{
     Processor_batch(Parameter_ref name);
     virtual ~Processor_batch(){}
     virtual void initialize(Configuration_ref conf) override;
-    virtual ReturnParam ProcessorEvent(event_sp ev) override;
+    virtual ReturnParam ProcessEvent(event_sp ev) override;
     virtual void Finish()override;
 
 

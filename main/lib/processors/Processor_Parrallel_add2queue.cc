@@ -18,9 +18,9 @@ namespace eudaq{
 
     void setBaseProcessor(Processor_rp base){ m_base = base; }
 
-    virtual ReturnParam ProcessorEvent(event_sp ev) {
+    virtual ReturnParam ProcessEvent(event_sp ev) {
     
-      auto ret = m_base->ProcessorEvent(nullptr);
+      auto ret = m_base->ProcessEvent(nullptr);
       if (ret!=ReturnParam::sucess)
       {
         return ret;

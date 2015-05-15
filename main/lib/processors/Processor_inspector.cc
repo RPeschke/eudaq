@@ -9,7 +9,7 @@ namespace eudaq{
 
   
 
-  ReturnParam Processor_Inspector::ProcessorEvent(event_sp ev)
+  ReturnParam Processor_Inspector::ProcessEvent(event_sp ev)
   {
     if (!ev)
     {

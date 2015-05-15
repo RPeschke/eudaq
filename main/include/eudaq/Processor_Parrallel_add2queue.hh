@@ -10,7 +10,7 @@ namespace eudaq{
     virtual void initialize (Configuration_ref conf);
     
     virtual Processor_up CreateInterface(ConnectionName_ref name, Parameter_ref conf);
-    virtual ReturnParam ProcessorEvent(event_sp ev)=0;
+ 
 
     virtual void print(std::ostream& os) = 0;
     virtual void finish() = 0;

@@ -395,7 +395,7 @@ namespace eudaq {
   class mergeITSDAQStreams : public Processor{
   public:
     mergeITSDAQStreams(Parameter_ref conf) :Processor(conf){}
-    virtual ReturnParam ProcessorEvent(event_sp ev) override{
+    virtual ReturnParam ProcessEvent(event_sp ev) override{
       if (!ev)
       {
         return ProcessorBase::stop;
@@ -465,7 +465,7 @@ namespace eudaq {
   class SCT_COMPARE : public Processor{
   public:
     SCT_COMPARE(Parameter_ref conf) :Processor(conf){}
-    virtual ReturnParam ProcessorEvent(event_sp ev) override{
+    virtual ReturnParam ProcessEvent(event_sp ev) override{
       bool same = true;
       if (ev->IsBORE())
       {

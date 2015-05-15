@@ -8,7 +8,7 @@ namespace eudaq{
   public:
     ProcessorFileWriter(Parameter_ref conf);
     virtual void initialize(Configuration_ref conf) override;
-    virtual ReturnParam ProcessorEvent(event_sp ev) override;
+    virtual ReturnParam ProcessEvent(event_sp ev) override;
 
 
 
@@ -35,7 +35,7 @@ namespace eudaq{
     m_first = true;
   }
 
-  ReturnParam ProcessorFileWriter::ProcessorEvent(event_sp ev)
+  ReturnParam ProcessorFileWriter::ProcessEvent(event_sp ev)
   {
     if (m_first)
     {

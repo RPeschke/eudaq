@@ -16,7 +16,7 @@ namespace eudaq{
     auto next = getNextProcessor(name);
     if (next)
     {
-      return next->ProcessorEvent(std::move(ev));
+      return next->ProcessEvent(std::move(ev));
     }
     
     return ProcessorBase::ret_error;
@@ -44,9 +44,9 @@ namespace eudaq{
     return processor;
   }
 
-  ReturnParam Processor_N_x_M::ProcessorEvent(event_sp ev)
+  ReturnParam Processor_N_x_M::ProcessEvent(event_sp ev)
   {
-   return ProcessorEvent(getName(), ev);
+   return ProcessEvent(getName(), ev);
   }
 
 

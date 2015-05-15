@@ -9,7 +9,7 @@ namespace eudaq{
   class Processor_splitter :public Processor_N_x_M{
 
   public:
-    virtual ReturnParam ProcessorEvent(ConnectionName_ref name, event_sp ev) override;
+    virtual ReturnParam ProcessEvent(ConnectionName_ref name, event_sp ev) override;
     virtual void initialize(Configuration_ref conf);
     virtual void finish(){}
     Processor_splitter(Parameter_ref);

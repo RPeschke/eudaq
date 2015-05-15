@@ -9,7 +9,7 @@ namespace eudaq{
     Processor_N_x_M_input_interface(Parameter_ref name);
     virtual ~Processor_N_x_M_input_interface() {};
 	virtual void init(Configuration_ref conf){}
-    virtual ReturnParam ProcessorEvent(event_sp ev);
+    virtual ReturnParam ProcessEvent(event_sp ev);
     virtual void end(){}
     virtual void clearProducer(){}
 

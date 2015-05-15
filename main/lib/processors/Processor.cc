@@ -62,7 +62,7 @@ namespace eudaq{
   {
     if (m_next)
     {
-      return m_next->ProcessorEvent(ev);
+      return m_next->ProcessEvent(ev);
     }
     return sucess;  // reach the end of the chain therefore it was sucess full 
   }

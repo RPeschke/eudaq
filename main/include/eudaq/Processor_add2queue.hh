@@ -23,7 +23,7 @@ namespace eudaq{
 
 
 
-    ReturnParam ProcessorEvent(event_sp ev) override;
+    ReturnParam ProcessEvent(event_sp ev) override;
     ReturnParam m_last_ret;
     enum status
     {
