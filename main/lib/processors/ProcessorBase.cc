@@ -83,11 +83,80 @@ namespace eudaq{
 	  return "[" + name + "]\n";
   }
 
+
   registerBaseClassDef(ProcessorBase);
 
+  std::string ProcessorOptions::getName() const
+  {
+    return m_name;
+  }
+
+
+  void ProcessorOptions::setName(const std::string & name)
+  {
+    m_name = name;
+  }
+
+  void ProcessorOptions::addNext(ProcessorOptions_up next)
+  {
+
+
+    if (!m_next)
+    {
+      m_next = std::move(next);
+      return;
+    }
+    auto local_next = this;
+    while (local_next)
+    {
+      local_next = local_next->getNext();
+    }
+    local_next->addNext(std::move(next));
+  }
+
+
+  ProcessorOptions_rp ProcessorOptions::getByName(const std::string& name) const
+  {
+    auto next = this;
+    while (name != next->getName())
+    {
+      next = next->getNext();
+
+      if (!next)
+      {
+        return nullptr;
+      }
+    }
+  }
+
+
+  ProcessorOptions_rp ProcessorOptions::getNext() const
+  {
+    if (!m_next)
+    {
+      return nullptr;
+    }
+    return m_next.get();
+  }
 
   static const std::string ProcessorNameTag = "ProcessorName";
+
+  void ProcessorOptions::SetTag(const std::string & name, const std::string & val)
+  {
+    m_tags[name] = val;
+  }
+
   static const std::string FileNameTag = "FileName";
+
+  std::string ProcessorOptions::GetTag(const std::string & name, const std::string & def /*= ""*/) const
+  {
+    auto i = m_tags.find(name);
+    if (i == m_tags.end()) {
+      return def;
+    }
+    return i->second;
+  }
+
   static const std::string ProcessorTypeTag = "ProcessorType";
   static const std::string ProcessorBaseTopic = "base";
   static const std::string ProcessorParallelTypeTag = "ParrallelType";
@@ -215,6 +284,12 @@ namespace eudaq{
   {
     static ProcessorFactory::Impl m_impl;
     return m_impl;
+  }
+
+  ProcessorOptions_up operator+(ProcessorOptions_up a, ProcessorOptions_up b)
+  {
+    a->addNext(std::move(b));
+    return a;
   }
 
   template<>
