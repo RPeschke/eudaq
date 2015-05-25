@@ -19,18 +19,48 @@ typedef int int32_t
 #include "eudaq/Configuration.hh"
 #include "TCanvas.h"
 
+
+template <typename T>
 class pixelHit{
 public:
-  pixelHit(int x, int y) :m_x(x), m_y(y){}
+  pixelHit(T x, T y) :m_x(x), m_y(y){}
 
-  int m_x, m_y;
+  T m_x, m_y;
 };
-int hitDistance(const pixelHit& h1, const pixelHit& h2){
-  int xdiff = (h1.m_x - h2.m_x);
-  int ydiff = (h1.m_y - h2.m_y);
-  int dif = sqrt(xdiff*xdiff + ydiff*ydiff);
+
+template <typename  T>
+T hitDistance(const pixelHit<T>& h1, const pixelHit<T>& h2){
+  T xdiff = (h1.m_x - h2.m_x);
+  T ydiff = (h1.m_y - h2.m_y);
+  T dif = sqrt(xdiff*xdiff + ydiff*ydiff);
   return dif;
 }
+
+
+template <typename T>
+class Cluster{
+public:
+  using pixelHit_t = pixelHit < T > ;
+    Cluster(const pixelHit_t& h){
+    m_hits.push_back(h);
+  }
+  bool pushHit(const pixelHit_t& h){
+
+    for (auto& e : m_hits){
+      if (hitDistance(h, e) < 2)
+      {
+        m_hits.push_back(h);
+        return true;
+      }
+    }
+    return false;
+  }
+  const  pixelHit_t & getPos(){
+    return m_hits.front();
+  }
+  std::vector<pixelHit_t> m_hits;
+};
+template <typename T>
 class clusterMaker{
 public:
   void reset(){
@@ -63,7 +93,7 @@ public:
     }
     return s;
   }
-  void push_pixel(const pixelHit& h){
+  void push_pixel(const pixelHit<T>& h){
     bool clusterFound=false;
     for (auto& e : m_cluster)
     {
@@ -82,29 +112,9 @@ public:
   }
 
 
-  class Cluster{
-  public:
-    Cluster(const pixelHit& h){
-      m_hits.push_back(h);
-    }
-    bool pushHit(const pixelHit& h){
+  
 
-      for (auto& e : m_hits){
-        if (hitDistance(h, e) < 2)
-        {
-          m_hits.push_back(h);
-          return true;
-        }
-      }
-      return false;
-    }
-    const pixelHit& getPos(){
-      return m_hits.front();
-    }
-    std::vector<pixelHit> m_hits;
-  };
-
-  std::vector<Cluster> m_cluster;
+  std::vector<Cluster<T>> m_cluster;
 };
 
 namespace eudaq {
@@ -134,7 +144,7 @@ namespace eudaq {
     TFile *m_tfile = nullptr;
     TTree* m_tree = nullptr;
 
-    clusterMaker m_cluster;
+    clusterMaker<int> m_cluster;
     Double_t m_relhit;
     Int_t m_channel_root;
     std::string hitmap_name;
@@ -293,7 +303,7 @@ namespace eudaq {
           if (x > 0)
           {
             m_channel[x]++;
-            m_cluster.push_pixel(pixelHit(x, 1));
+            m_cluster.push_pixel(pixelHit<int>(x, 1));
             hit = true;
           }
         }
