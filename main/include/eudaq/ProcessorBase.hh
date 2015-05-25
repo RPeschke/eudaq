@@ -8,6 +8,7 @@
 #include "eudaq/Configuration.hh"
 #include "eudaq/factory.hh"
 #include <memory>
+#include <map>
 
 #define RegisterProcessor(derivedClass,ID) registerClass(eudaq::ProcessorBase,derivedClass,ID)
 
@@ -17,7 +18,7 @@ namespace eudaq{
   
   class OptionParser;
   class ProcessorBase;
- 
+  class ProcessorOptions;
 
 
   using Processor_sp = std::shared_ptr < ProcessorBase >; 
@@ -25,6 +26,34 @@ namespace eudaq{
 
   using Processor_rp =ProcessorBase*;  //reference pointer 
 
+  using ProcessorOptions_up = std::unique_ptr < ProcessorOptions > ;
+  using ProcessorOptions_rp =  ProcessorOptions*;
+
+  class ProcessorOptions{
+  public:
+    ProcessorOptions(std::string name):m_name(std::move(name)){ }
+    std::string getName() const;
+    void setName(const std::string & name);
+    void addNext(ProcessorOptions_up next);
+
+    ProcessorOptions_rp getByName(const std::string& name) const;
+    ProcessorOptions_rp getNext() const;
+
+    void SetTag(const std::string & name, const std::string & val);
+    std::string GetTag(const std::string & name, const std::string & def = "") const;
+    static ProcessorOptions_up create(std::string name)
+    {
+      return ProcessorOptions_up(new ProcessorOptions(std::move(name)));
+    }
+  private:
+    typedef std::map<std::string, std::string> map_t;
+    map_t m_tags;
+    ProcessorOptions_up m_next;
+    std::string m_name;
+  };
+  
+  DLLEXPORT ProcessorOptions_up operator+(ProcessorOptions_up a, ProcessorOptions_up b);
+  
   class DLLEXPORT ProcessorBase{
   public:
     enum ReturnParam:int
