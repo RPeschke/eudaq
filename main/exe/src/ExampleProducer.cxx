@@ -10,6 +10,11 @@
 #include <ostream>
 #include <vector>
 
+#ifdef _DEBUG
+#define DEBUG_OUT(x)  std::cout<<x<<std::endl
+#else
+#define DEBUG_OUT(x)
+#endif
 // A name to identify the raw data format of the events generated
 // Modify this to something appropriate for your producer.
 static const std::string EVENT_TYPE = "Example";
@@ -111,16 +116,16 @@ public:
   }
 
   void state_waiting(){
-    std::cout << "<waiting>" << std::endl;
+    DEBUG_OUT("<waiting>");
     while (m_stat != started&&m_stat!=doTerminat)
     {
       eudaq::mSleep(20);
     }
-    std::cout << "</waiting>" << std::endl;
+    DEBUG_OUT("</waiting>");
   }
 
   void state_running(){
-    std::cout << "<starting>" << std::endl;
+    DEBUG_OUT("<starting>");
     while (m_stat == started){
 
       if (!makeAndSendEvents())
@@ -129,11 +134,11 @@ public:
       }
      
     }
-    std::cout << "</starting>" << std::endl;
+    DEBUG_OUT("</starting>");
   }
 
   void state_stopping(){
-    std::cout << "<stopping>" << std::endl;
+    DEBUG_OUT("<stopping>");
     while (m_stat == stopping){
       if (!makeAndSendEvents())
       {
@@ -141,7 +146,7 @@ public:
         m_stat = stopped;
       }
     }
-    std::cout << "</stopping>" << std::endl;
+    DEBUG_OUT("</stopping>");
   }
   bool makeAndSendEvents(){
    
