@@ -95,6 +95,7 @@ class LogCollectorGUI : public QMainWindow,
       }
       virtual void OnConnect(const eudaq::ConnectionInfo & id) {
         CheckRegistered();
+        eudaq::mSleep(100);
         EUDAQ_INFO("Connection from " + to_string(id));
         AddSender(id.GetType(), id.GetName());
       }
