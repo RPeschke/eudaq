@@ -4,9 +4,14 @@
 #include <map>
 #include <vector>
 #include <memory>
-#include "Platform.hh"
+#ifdef WIN32
+  #define CLASSFACTORY_DLLEXPORT  __declspec( dllexport ) 
+  #include <stdint.h>
+#else
+  #define CLASSFACTORY_DLLEXPORT  
+#endif
 
-#define registerClass(baseClass,derivedClass,identifier)    namespace {static EUDAQ_Utilities::Registerbase<baseClass,derivedClass> reg##derivedClass(identifier); } int EUDAQ_DUMMY_VARIABLE_DO_NOT_USE##derivedClass=0 
+#define registerClass(baseClass,derivedClass,identifier)    namespace {static Class_factory_Utilities::Registerbase<baseClass,derivedClass> reg##derivedClass(identifier); } int Class_factory_DUMMY_VARIABLE_DO_NOT_USE##derivedClass=0 
 
 
 #define RegisterSmartClass(baseClass,derivedClass)  registerClass(baseClass,derivedClass,derivedClass::id())
@@ -14,10 +19,10 @@
 
 
 
-namespace EUDAQ_Utilities{
+namespace Class_factory_Utilities{
 
   template <typename baseClassType>
-  class DLLEXPORT Factory {
+  class CLASSFACTORY_DLLEXPORT Factory {
   public:
 
     using MainType = typename baseClassType::MainType;
@@ -54,7 +59,7 @@ namespace EUDAQ_Utilities{
 
 
   template <typename baseClass, typename DerivedClass>
-  class DLLEXPORT Registerbase {
+  class CLASSFACTORY_DLLEXPORT Registerbase {
   public:
     using MainType = typename baseClass::MainType;
 

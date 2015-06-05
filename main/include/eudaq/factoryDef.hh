@@ -2,18 +2,24 @@
 #define factoryDefinitionen_h__
 
 #include "factory.hh"
+#include <iostream>
+
+#ifndef  Class_factory_Utilities_THROW
+  #define  Class_factory_Utilities_THROW(msg) std::cout<< "[Factory<baseClassType>::Create" <<":" << __LINE__<<"]"<<msg<<std::endl;
+#endif
+
 
 #define registerBaseClassDef(BaseClass) namespace{\
                                          void dummy_register_function_##BaseClass(){\
                                            BaseClass::MainType mType{};\
                                            BaseClass::Parameter_ref pType{};\
-                                           EUDAQ_Utilities::Factory<BaseClass>::Create(mType,pType );       \
-                                           EUDAQ_Utilities::Factory<BaseClass>::GetTypes();          \
-                                           EUDAQ_Utilities::Factory<BaseClass>::getInstance();\
+                                           Class_factory_Utilities::Factory<BaseClass>::Create(mType,pType );       \
+                                           Class_factory_Utilities::Factory<BaseClass>::GetTypes();          \
+                                           Class_factory_Utilities::Factory<BaseClass>::getInstance();\
                                            }}  \
-                                     int EUDAQ_DUMMY_VARIABLE_DO_NOT_USE##BaseClass=0
+                                     int Class_factory_VARIABLE_DO_NOT_USE##BaseClass=0
 
-namespace EUDAQ_Utilities{
+namespace Class_factory_Utilities{
   template <typename baseClassType>
   typename Factory<baseClassType>::MainType_V Factory<baseClassType>::GetTypes()
   {
@@ -29,7 +35,7 @@ namespace EUDAQ_Utilities{
   {
     auto it = getInstance().find(name);
     if (it == getInstance().end()) {
-      EUDAQ_THROW("unknown class: <"+ name+">");
+      Class_factory_Utilities_THROW("unknown class: <" + name + ">");
       return nullptr;
     }
     return (it->second)(params);
