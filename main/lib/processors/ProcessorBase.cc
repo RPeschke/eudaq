@@ -255,7 +255,7 @@ namespace eudaq{
   std::unique_ptr<ProcessorBase> ProcessorFactory::create(ProcessorBase::MainType type, ProcessorBase::Parameter_ref param)
   {
 
-    return EUDAQ_Utilities::Factory<ProcessorBase>::Create(type, ProConfig::Topic(ProcessorBaseTopic) +ProConfig::ProcessorType(type)  + param );
+    return Class_factory_Utilities::Factory<ProcessorBase>::Create(type, ProConfig::Topic(ProcessorBaseTopic) +ProConfig::ProcessorType(type)  + param );
   }
 
   void ProcessorFactory::addComandLineOptions(eudaq::OptionParser & op)

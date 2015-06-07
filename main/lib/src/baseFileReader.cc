@@ -208,7 +208,7 @@ namespace eudaq {
 
   std::unique_ptr<baseFileReader> FileReaderFactory::create(baseFileReader::MainType type, baseFileReader::Parameter_ref param)
   {
-    return EUDAQ_Utilities::Factory<baseFileReader>::Create(type, param);
+    return Class_factory_Utilities::Factory<baseFileReader>::Create(type, param);
   }
 
   std::string FileReaderFactory::Help_text()
@@ -232,7 +232,7 @@ namespace eudaq {
     ret += "example:\n";
     ret += "../data/run000001.raw#raw2\n \n";
     ret += "\"file pattern\" = ../data/run$6R.raw#raw2 \n \n";
-    ret += "possible \"file readers\" are " + to_string(EUDAQ_Utilities::Factory<baseFileReader>::GetTypes(), ", ")+"\n";
+    ret += "possible \"file readers\" are " + to_string(Class_factory_Utilities::Factory<baseFileReader>::GetTypes(), ", ")+"\n";
 
 
     return ret;

@@ -33,7 +33,7 @@ namespace eudaq {
 
   std::unique_ptr<FileWriter> FileWriterFactory::Create(const std::string & name, const std::string & params /*= ""*/)
   {
-    return EUDAQ_Utilities::Factory<FileWriter>::Create(name, params);
+    return Class_factory_Utilities::Factory<FileWriter>::Create(name, params);
   }
 
   std::unique_ptr<FileWriter> FileWriterFactory::Create()
@@ -46,7 +46,7 @@ namespace eudaq {
 
   std::vector<std::string> FileWriterFactory::GetTypes()
   {
-    return EUDAQ_Utilities::Factory<FileWriter>::GetTypes();
+    return Class_factory_Utilities::Factory<FileWriter>::GetTypes();
   }
 
 

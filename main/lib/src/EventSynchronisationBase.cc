@@ -46,9 +46,9 @@ namespace eudaq{
   {
     if (name.empty())
     {
-      return EUDAQ_Utilities::Factory<SyncBase>::Create(getDefaultSync(), sync);
+      return Class_factory_Utilities::Factory<SyncBase>::Create(getDefaultSync(), sync);
     }
-    return EUDAQ_Utilities::Factory<SyncBase>::Create(name, sync);
+    return Class_factory_Utilities::Factory<SyncBase>::Create(name, sync);
   }
 
   std::unique_ptr<SyncBase> EventSyncFactory::create()
@@ -64,7 +64,7 @@ namespace eudaq{
 
   std::vector<std::string> EventSyncFactory::GetTypes()
   {
-    return EUDAQ_Utilities::Factory<SyncBase>::GetTypes();
+    return Class_factory_Utilities::Factory<SyncBase>::GetTypes();
   }
 
   std::string EventSyncFactory::Help_text()
