@@ -193,8 +193,12 @@ namespace eudaq {
       std::string combinedFiles = "";
         for (size_t i = 0; i < op.NumArgs(); ++i)
         {
+          if (!combinedFiles.empty())
+          {
+            combinedFiles += ',';
+          }
           combinedFiles += op.GetArg(i);
-          combinedFiles += ',';
+
           
         }
         combinedFiles += "$multi";
