@@ -10,9 +10,7 @@
 
 
 #define registerBaseClassDef(BaseClass) namespace{\
-                                         void dummy_register_function_##BaseClass(){\
-                                           BaseClass::MainType mType{};\
-                                           BaseClass::Parameter_ref pType{};\
+                                         void dummy_register_function_##BaseClass(BaseClass::MainType mType,BaseClass::Parameter_ref pType){\
                                            Class_factory_Utilities::Factory<BaseClass>::Create(mType,pType );       \
                                            Class_factory_Utilities::Factory<BaseClass>::GetTypes();          \
                                            Class_factory_Utilities::Factory<BaseClass>::getInstance();\
