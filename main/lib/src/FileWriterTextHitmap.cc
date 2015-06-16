@@ -148,6 +148,7 @@ namespace eudaq {
     Double_t m_relhit;
     Int_t m_channel_root;
     std::string hitmap_name;
+    void reset();
   };
 
 
@@ -194,7 +195,7 @@ namespace eudaq {
 
 
     hitmap_name = FileNamer("scurve$6R$X").Set('X', ".pdf").Set('R', runnumber);
-
+    reset();
 
   }
 
@@ -272,11 +273,13 @@ namespace eudaq {
     eudaq::PluginManager::Initialize(devent);
     firstEvent = true;
     m_events = 0;
+    reset();
   }
 
   void FileWriterTextHitmap::ProcessEORE(const DetectorEvent &)
   {
     print();
+    reset();
   }
 
   void FileWriterTextHitmap::ProcessEvent(const DetectorEvent & devent)
@@ -354,6 +357,15 @@ namespace eudaq {
     m_tree->Fill();
     
     *m_out << std::endl;
+    m_channel.clear();
+  }
+
+  void FileWriterTextHitmap::reset()
+  {
+    m_events = 0;
+    m_orEvents = 0;
+    m_clustersize_1 = 0;
+    m_clustersize_larger1 = 0;
     m_channel.clear();
   }
 
