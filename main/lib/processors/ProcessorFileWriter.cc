@@ -7,7 +7,7 @@ namespace eudaq{
   class  ProcessorFileWriter :public Processor{
   public:
     ProcessorFileWriter(Parameter_ref conf);
-    virtual void initialize(Configuration_ref conf) override;
+    virtual void initialize() override;
     virtual ReturnParam ProcessEvent(event_sp ev) override;
 
 
@@ -29,7 +29,7 @@ namespace eudaq{
     m_write = FileWriterFactory::Create("native", ".raw");
   }
 
-  void ProcessorFileWriter::initialize(Configuration_ref conf)
+  void ProcessorFileWriter::initialize()
   {
     std::cout << "   void ProcessorFileWriter::init() " << std::endl;
     m_first = true;

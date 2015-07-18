@@ -53,7 +53,7 @@ namespace eudaq{
 
   }
 
-  void Processor_splitter::initialize(Configuration_ref conf)
+  void Processor_splitter::initialize()
   {
 
   }

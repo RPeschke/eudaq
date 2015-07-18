@@ -12,7 +12,7 @@ namespace eudaq{
 		Processor_N_2_M_base(Parameter_ref name);
 		virtual ~Processor_N_2_M_base() {};
 		
-		virtual void initialize(Configuration_ref conf) = 0;
+		virtual void initialize() = 0;
     virtual void finish() = 0;
 		
 
@@ -32,7 +32,7 @@ namespace eudaq{
 		virtual void clearProducer() final;
     virtual void AddProcessor(Processor_rp next, ConnectionName_ref name = "") final;
 		virtual Processor_rp getProcessor(ConnectionName_ref name = "") final;
-    virtual void init(Configuration_ref conf) final;
+    virtual void init() final;
 		virtual void end() final;
 
 

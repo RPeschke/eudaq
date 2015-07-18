@@ -8,7 +8,7 @@ namespace eudaq{
     Processor_parallel(Parameter_ref conf) :Processor_N_2_N(conf){}
     virtual ~Processor_parallel(){}
     virtual void finish();
-    virtual void initialize(Configuration_ref conf) override;
+    virtual void initialize() override;
     virtual Processor_up CreateInterface(ConnectionName_ref name, Parameter_ref conf);
     virtual std::string getName();
     virtual void print(std::ostream& os);

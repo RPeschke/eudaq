@@ -43,7 +43,7 @@ namespace eudaq{
 
   }
 
-  void Processor_merger::initialize(Configuration_ref conf)
+  void Processor_merger::initialize()
   {
     m_counter = 0;
     m_map.clear();

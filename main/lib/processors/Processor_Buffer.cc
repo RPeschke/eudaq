@@ -56,7 +56,7 @@ namespace eudaq{
     return ProcessorBase::sucess;
   }
 
-  void Proccessor_Buffer::initialize(Configuration_ref conf)
+  void Proccessor_Buffer::initialize()
   {
     m_queue.clear();
   }

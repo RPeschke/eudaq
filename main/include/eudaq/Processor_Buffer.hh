@@ -13,7 +13,7 @@ namespace eudaq{
     Proccessor_Buffer(Parameter_ref conf);
     ~Proccessor_Buffer(){}
     virtual ReturnParam ProcessEvent(event_sp ev) ;
-	virtual void initialize(Configuration_ref conf) override;
+	virtual void initialize() override;
 
 
 

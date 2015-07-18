@@ -11,7 +11,7 @@ namespace eudaq{
     
     Processor_parallel_file(Parameter_ref conf);
     virtual ~Processor_parallel_file(){}
-	virtual void initialize(Configuration_ref conf) override;
+	virtual void initialize() override;
   virtual void finish() override;
 
     virtual ReturnParam ProcessEvent(event_sp ev);

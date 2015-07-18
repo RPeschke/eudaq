@@ -552,7 +552,7 @@ namespace eudaq {
       return ProcessNext(m_second);
     }
 
-    virtual void initialize(Configuration_ref conf)override{
+    virtual void initialize()override{
 
       m_first.reset();
       m_second.reset();

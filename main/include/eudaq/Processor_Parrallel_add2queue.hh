@@ -7,7 +7,7 @@ namespace eudaq{
   public:
     Processor_Parrallel_add2queue(Parameter_ref conf);
     virtual ~Processor_Parrallel_add2queue(){}
-    virtual void initialize (Configuration_ref conf);
+    virtual void initialize ();
     
     virtual Processor_up CreateInterface(ConnectionName_ref name, Parameter_ref conf);
  

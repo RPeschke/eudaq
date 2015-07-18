@@ -14,7 +14,7 @@ namespace eudaq{
     virtual ReturnParam ProcessEvent(ConnectionName_ref name, event_sp ev) ;
     Processor_merger(Parameter_ref);
     virtual ~Processor_merger(){}
-    virtual void initialize(Configuration_ref conf);
+    virtual void initialize();
     virtual void finish() override;
   private:
     std::map<ConnectionName_t, unsigned> m_map;

@@ -10,7 +10,7 @@ namespace eudaq{
 
   public:
     virtual ReturnParam ProcessEvent(ConnectionName_ref name, event_sp ev) override;
-    virtual void initialize(Configuration_ref conf);
+    virtual void initialize();
     virtual void finish(){}
     Processor_splitter(Parameter_ref);
     virtual ~Processor_splitter(){}

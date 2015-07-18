@@ -9,7 +9,7 @@ namespace eudaq{
 
   }
 
-  void Processor_parallel::initialize(Configuration_ref conf)
+  void Processor_parallel::initialize()
   {
     m_type = ProConfig::getTag(conf, getName(), "type", "");
 

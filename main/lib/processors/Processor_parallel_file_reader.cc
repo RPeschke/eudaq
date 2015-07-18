@@ -30,10 +30,10 @@ namespace eudaq{
 
   }
 
-  void Processor_parallel_file::initialize(Configuration_ref conf)
+  void Processor_parallel_file::initialize()
   {
     m_reader = ProcessorFactory::create(ProcessorNames::file_reader(), m_conf);
-    m_reader->init(conf);
+    m_reader->init();
     m_reader->AddProcessor(getNextProcessor(getName()), getName());
   }
 

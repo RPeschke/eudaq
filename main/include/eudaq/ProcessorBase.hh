@@ -75,7 +75,7 @@ namespace eudaq{
 	using Configuration_ref = const Configuration_t&;
     ProcessorBase(Parameter_ref name);
     virtual ~ProcessorBase() {};
-	virtual void init(Configuration_ref conf) = 0;
+	virtual void init() = 0;
     virtual ReturnParam ProcessEvent(event_sp ev) = 0;
     virtual void end() =0;
 

@@ -7,10 +7,10 @@ namespace eudaq{
   using ReturnParam = ProcessorBase::ReturnParam;
 
 
-  void Processor::init(Configuration_ref conf)
+  void Processor::init()
   {
     //std::cout << " init "<<conf << std::endl;
-    initialize(conf);
+    initialize();
   }
 
 

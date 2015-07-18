@@ -102,16 +102,16 @@ namespace eudaq{
 		return nullptr;
 	}
 
-  void Processor_N_2_M_base::init(Configuration_ref conf)
+  void Processor_N_2_M_base::init()
   {
     
 
     for (auto &e:m_interfaces)
     {
-      e.second->init(conf);
+      e.second->init();
     }
 
-    initialize(conf);
+    initialize();
   }
 
   void Processor_N_2_M_base::end()

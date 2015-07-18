@@ -10,7 +10,7 @@ namespace eudaq{
   public:
     
     interfaceProducer(Parameter_ref conf):Processor(conf) {}
-    virtual void init(){
+    virtual void initialize(){
 
       auto base = dynamic_cast<Processor_Parrallel_add2queue*>(m_base);
       m_next = base->getNextProcessor(getName());
@@ -51,11 +51,11 @@ namespace eudaq{
 
   }
 
-  void Processor_Parrallel_add2queue::initialize(Configuration_ref conf)
+  void Processor_Parrallel_add2queue::initialize()
   {
     for (auto& e:m_inputInterface)
     {
-      e.second->init(conf);
+      e.second->init();
     }
     
   }
