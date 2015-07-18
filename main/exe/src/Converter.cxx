@@ -21,6 +21,7 @@ class test : public Processor_Inspector{
 public:
   test(Parameter_ref conf) :Processor_Inspector(conf){}
   virtual ReturnParam inspecktEvent(const Event&) { std::cout << "hello from test" << std::endl; return ProcessorBase::sucess; };
+ static std::unique_ptr<test> create(Parameter_ref conf){ return   std::unique_ptr<test>(new test(conf)); }
 };
 std::string testName(){
   return "test";
@@ -80,6 +81,7 @@ int main(int, char ** argv) {
     pro->pushProcessorBase(ProcessorFactory::create(ProcessorNames::busy_test(), ""));
     pro->pushProcessorBase(ProcessorFactory::create(ProcessorNames::show_event_nr(), "busy"));
     pro->pushProcessorBase(ProcessorFactory::create(ProcessorNames::file_writer(), ""));
+ auto tst=   pro->pushProcessor(test::create(ProConfig::ProcessorName("first")));
     //auto p = (eudaq::Processor_batch*) pro.get();
     //p->AddProcessor2Batch(std::move(ProcessorFactory::create("eventOfInterest", events->Value())));
     //p->AddProcessor2Batch(std::move(ProcessorFactory::create("ProcessorFileWriter", "")));
