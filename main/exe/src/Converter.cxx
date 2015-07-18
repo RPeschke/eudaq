@@ -63,24 +63,23 @@ int main(int, char ** argv) {
 
     auto pro = ProcessorFactory::create(ProcessorNames::batch(), "");
     event_sp ev = std::dynamic_pointer_cast<Event>(std::make_shared<eudaq::RawDataEvent>("tesT", 1, 1));
-    pro->pushProducer(ProcessorFactory::create(ProcessorNames::Parallel_file_reader(), ProConfig::ProcessorName("first")));
-    pro->pushProducer(ProcessorFactory::create(ProcessorNames::Parallel_file_reader(), ProConfig::ProcessorName("second")));
+    pro->pushProcessorBase(ProcessorFactory::create(ProcessorNames::Parallel_file_reader(), ProConfig::ProcessorName("first")));
+    pro->pushProcessorBase(ProcessorFactory::create(ProcessorNames::Parallel_file_reader(), ProConfig::ProcessorName("second")));
 
 
   //  pro->pushProducer(ProcessorFactory::create("test", ""));
-    pro->pushProducer(ProcessorFactory::create(ProcessorNames::Parallel_processor(), ProConfig::ProcessorParallelType(ProcessorNames::show_event_nr())));
-    pro->pushProducer(ProcessorFactory::create(ProcessorNames::splitter(), ""));
-    pro->pushProducer(ProcessorFactory::create(ProcessorNames::Parallel_processor(), ProConfig::ProcessorParallelType(ProcessorNames::show_event_nr())));
-    pro->pushProducer(ProcessorFactory::create(ProcessorNames::multi_buffer(), ""));
+    pro->pushProcessorBase(ProcessorFactory::create(ProcessorNames::Parallel_processor(), ProConfig::ProcessorParallelType(ProcessorNames::show_event_nr())));
+    pro->pushProcessorBase(ProcessorFactory::create(ProcessorNames::splitter(), ""));
+    pro->pushProcessorBase(ProcessorFactory::create(ProcessorNames::Parallel_processor(), ProConfig::ProcessorParallelType(ProcessorNames::show_event_nr())));
+    pro->pushProcessorBase(ProcessorFactory::create(ProcessorNames::multi_buffer(), ""));
 
-    pro->pushProducer(ProcessorFactory::create(ProcessorNames::merger(), ""));
-    pro->pushProducer(ProcessorFactory::create(ProcessorNames::events_of_intresst(), ProConfig::Tag("events", events->Value())));
-    pro->pushProducer(ProcessorFactory::create(ProcessorNames::show_event_nr(), ProConfig::ProcessorName("buffer")));
-    pro->pushProducer(ProcessorFactory::create(ProcessorNames::buffer(), ""));
-    pro->pushProducer(ProcessorFactory::create(ProcessorNames::busy_test(), ""));
-    pro->pushProducer(ProcessorFactory::create(ProcessorNames::show_event_nr(), "busy"));
-    pro->pushProducer(ProcessorFactory::create(ProcessorNames::file_writer(), ""));
-
+    pro->pushProcessorBase(ProcessorFactory::create(ProcessorNames::merger(), ""));
+    pro->pushProcessorBase(ProcessorFactory::create(ProcessorNames::events_of_intresst(), ProConfig::Tag("events", events->Value())));
+    pro->pushProcessorBase(ProcessorFactory::create(ProcessorNames::show_event_nr(), ProConfig::ProcessorName("buffer")));
+    pro->pushProcessorBase(ProcessorFactory::create(ProcessorNames::buffer(), ""));
+    pro->pushProcessorBase(ProcessorFactory::create(ProcessorNames::busy_test(), ""));
+    pro->pushProcessorBase(ProcessorFactory::create(ProcessorNames::show_event_nr(), "busy"));
+    pro->pushProcessorBase(ProcessorFactory::create(ProcessorNames::file_writer(), ""));
     //auto p = (eudaq::Processor_batch*) pro.get();
     //p->AddProcessor2Batch(std::move(ProcessorFactory::create("eventOfInterest", events->Value())));
     //p->AddProcessor2Batch(std::move(ProcessorFactory::create("ProcessorFileWriter", "")));
