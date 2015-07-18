@@ -87,7 +87,19 @@ namespace eudaq{
     
     std::string getName();
     virtual void print(std::ostream& os)=0;
-    virtual void pushProducer(Processor_up processor) =0;
+    virtual void pushProcessorBase(Processor_up processor) =0;
+
+    template <typename T> 
+    T* pushProcessor(std::unique_ptr<T> processor){
+      T* ret = processor.get();
+
+      Processor_up baseProcessor = Processor_up(dynamic_cast<ProcessorBase*> (processor.release()));
+
+      pushProcessorBase(std::move(baseProcessor));
+
+      return ret;
+    }
+
     virtual void clearProcessor() = 0;
   protected:
     Parameter_t m_conf;
