@@ -11,7 +11,7 @@ namespace eudaq{
 	virtual void init(Configuration_ref conf){}
     virtual ReturnParam ProcessEvent(event_sp ev);
     virtual void end(){}
-    virtual void clearProducer(){}
+    virtual void clearProcessor(){}
 
 
     virtual ProcessorBase* getProcessor(ConnectionName_ref name = "");

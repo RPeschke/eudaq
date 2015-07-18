@@ -48,7 +48,7 @@ namespace eudaq{
     m_interfaces[processor->getName()] = std::move(processor);
   }
 
-  void Processor_N_2_M_base::clearProducer()
+  void Processor_N_2_M_base::clearProcessor()
   {
     m_interfaces.clear();
     m_internal_map.clear();

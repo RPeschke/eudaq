@@ -13,7 +13,7 @@ namespace eudaq{
     virtual ReturnParam ProcessEvent(event_sp ev) = 0;
 
     virtual void print(std::ostream& os) ;
-    virtual void clearProducer() {};
+    virtual void clearProcessor() {};
 
     Processor(Parameter_ref);
     virtual ~Processor(){}

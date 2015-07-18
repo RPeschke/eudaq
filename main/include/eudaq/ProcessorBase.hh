@@ -88,7 +88,7 @@ namespace eudaq{
     std::string getName();
     virtual void print(std::ostream& os)=0;
     virtual void pushProducer(Processor_up processor) =0;
-    virtual void clearProducer() = 0;
+    virtual void clearProcessor() = 0;
   protected:
     Parameter_t m_conf;
     std::string m_name;
