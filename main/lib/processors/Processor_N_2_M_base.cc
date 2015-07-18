@@ -43,7 +43,7 @@ namespace eudaq{
 	}
 
 
-  void Processor_N_2_M_base::pushProducer(Processor_up processor)
+  void Processor_N_2_M_base::pushProcessorBase(Processor_up processor)
   {
     m_interfaces[processor->getName()] = std::move(processor);
   }

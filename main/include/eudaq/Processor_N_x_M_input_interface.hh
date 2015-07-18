@@ -8,7 +8,7 @@ namespace eudaq{
   public:
     Processor_N_x_M_input_interface(Parameter_ref name);
     virtual ~Processor_N_x_M_input_interface() {};
-	virtual void init(Configuration_ref conf){}
+	virtual void init(){}
     virtual ReturnParam ProcessEvent(event_sp ev);
     virtual void end(){}
     virtual void clearProcessor(){}
@@ -20,7 +20,7 @@ namespace eudaq{
 
     virtual std::string getName();
     virtual void print(std::ostream& os);
-    virtual void pushProducer(Processor_up processor) {}
+    virtual void pushProcessorBase(Processor_up processor) {}
   private:
 
     Processor_N_x_M* m_baseProcessor = nullptr;

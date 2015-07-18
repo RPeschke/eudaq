@@ -24,12 +24,12 @@ namespace eudaq{
 
     
     virtual void print(std::ostream& os);
-    virtual void pushProducer(std::unique_ptr<ProcessorBase> processor);
+    virtual void pushProcessorBase(std::unique_ptr<ProcessorBase> processor);
 
   private:
-    std::vector<std::unique_ptr<ProcessorBase>> m_processors;
+    std::vector<Processor_up> m_processors;
 
-    ProcessorBase *m_next = nullptr;
+    Processor_rp m_next = nullptr;
   };
 }
 #endif // Processor_batch_h__

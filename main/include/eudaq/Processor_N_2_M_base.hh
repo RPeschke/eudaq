@@ -28,7 +28,7 @@ namespace eudaq{
 		virtual void print(std::ostream& os) = 0;
 
 
-    virtual void pushProducer(Processor_up processor) final;
+    virtual void pushProcessorBase(Processor_up processor) final;
     virtual void clearProcessor() final;
     virtual void AddProcessor(Processor_rp next, ConnectionName_ref name = "") final;
 		virtual Processor_rp getProcessor(ConnectionName_ref name = "") final;

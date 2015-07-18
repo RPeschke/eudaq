@@ -70,7 +70,7 @@ namespace eudaq {
     return ret;
   }
 
-  void Processor_batch::pushProducer(std::unique_ptr<ProcessorBase> processor)
+  void Processor_batch::pushProcessorBase(std::unique_ptr<ProcessorBase> processor)
   {
     if (processor&&!m_processors.empty())
     {
