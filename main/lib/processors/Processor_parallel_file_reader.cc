@@ -1,6 +1,6 @@
 #include "eudaq/Processor_parallel_file_reader.hh"
 #include "eudaq/ProcessorBase.hh"
-
+#include "eudaq/ProcessorFileReader.hh"
 
 namespace eudaq{
 
@@ -32,7 +32,9 @@ namespace eudaq{
 
   void Processor_parallel_file::initialize()
   {
-    m_reader = ProcessorFactory::create(ProcessorNames::file_reader(), m_conf);
+    m_reader = __make_unique<ProcessorFileReader>(m_conf);
+      
+      
     m_reader->init();
     m_reader->AddProcessor(getNextProcessor(getName()), getName());
   }
