@@ -179,5 +179,10 @@ namespace eudaq{
 
 
   };
+template <class T, class... Args>
+  std::unique_ptr<T> __make_unique (Args&&... args){
+    return std::unique_ptr<T>(new T(args...));
+  }
+
 }
 #endif // ProcessorBase_h__
