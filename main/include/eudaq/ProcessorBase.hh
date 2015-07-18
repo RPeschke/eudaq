@@ -92,11 +92,7 @@ namespace eudaq{
     template <typename T> 
     T* pushProcessor(std::unique_ptr<T> processor){
       T* ret = processor.get();
-
-      Processor_up baseProcessor = Processor_up(dynamic_cast<ProcessorBase*> (processor.release()));
-
-      pushProcessorBase(std::move(baseProcessor));
-
+      pushProcessorBase(std::move(processor));
       return ret;
     }
 
