@@ -62,7 +62,7 @@ namespace eudaq{
 
   ShowEventNR::ShowEventNR(Parameter_ref conf) :Processor_Inspector(conf)
   {
-    m_pos =4* ProConfig::getProcessorParallelPos(conf);
+    m_pos =4* conf.getPos();
   }
 
 
