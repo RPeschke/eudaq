@@ -5,7 +5,7 @@
 
 namespace eudaq{
 
-  class Processor_parallel_file :public Processor_Parrallel_add2queue{
+  class DLLEXPORT Processor_parallel_file :public Processor_Parrallel_add2queue{
 
   public:
     

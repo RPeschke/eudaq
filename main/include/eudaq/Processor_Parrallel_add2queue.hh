@@ -3,7 +3,7 @@
 #include "eudaq/Processor_N_2_M_base.hh"
 
 namespace eudaq{
-  class Processor_Parrallel_add2queue :public Processor_N_2_M_base{
+  class DLLEXPORT Processor_Parrallel_add2queue :public Processor_N_2_M_base{
   public:
     Processor_Parrallel_add2queue(Parameter_ref conf);
     virtual ~Processor_Parrallel_add2queue(){}

@@ -7,7 +7,7 @@
 #include <memory>
 namespace eudaq{
 
-  class  Processor_batch :public Processor{
+  class DLLEXPORT Processor_batch :public Processor{
 
   public:
     Processor_batch(Parameter_ref name);

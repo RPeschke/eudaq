@@ -6,7 +6,7 @@
 namespace eudaq{
 
 
-	class Processor_N_2_M_base :public ProcessorBase{
+	class DLLEXPORT Processor_N_2_M_base :public ProcessorBase{
 		
 	public:
 		Processor_N_2_M_base(Parameter_ref name);
