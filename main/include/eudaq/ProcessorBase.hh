@@ -53,6 +53,25 @@ namespace eudaq{
   
   DLLEXPORT ProcessorOptions_up operator+(ProcessorOptions_up a, ProcessorOptions_up b);
   
+class DLLEXPORT ProcessorConf{
+public:
+explicit ProcessorConf(const std::string& name):m_name(name){}
+explicit ProcessorConf(const char* name):m_name(name){}
+std::string getName() const{
+  return m_name;
+}
+ProcessorConf& setPos(int pos){
+  m_pos = pos;
+  return *this;
+}
+int getPos()const {
+  return m_pos;
+}
+private:
+std::string m_name;
+int m_pos = 0;
+};
+
   class DLLEXPORT ProcessorBase{
   public:
     enum ReturnParam:int
@@ -66,7 +85,7 @@ namespace eudaq{
 
     };
     using MainType = std::string;
-    using Parameter_t = std::string;
+    using Parameter_t = ProcessorConf;
     using Parameter_ref = const Parameter_t&;
     using ConnectionName_t=std::string;
     using ConnectionName_ref = const ConnectionName_t &;
