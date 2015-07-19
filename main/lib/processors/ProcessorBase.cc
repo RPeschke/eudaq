@@ -12,7 +12,7 @@ namespace eudaq{
   {
 	  return "[" + name + "]\n";
   }
-
+ 
 
   registerBaseClassDef(ProcessorBase);
 
@@ -173,7 +173,7 @@ namespace eudaq{
 
   ProcessorBase::ProcessorBase(Parameter_ref name) :m_conf(name)
   {
-    m_name = ProConfig::getProcessorName(m_conf);
+    m_name =m_conf.getName();
   }
 
   std::string ProcessorBase::getName()

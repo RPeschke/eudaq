@@ -33,7 +33,7 @@ namespace eudaq{
 
   Processor_up Processor_N_x_M::CreateInterface(ConnectionName_ref name, Parameter_ref conf)
   {
-    auto processor=Processor_up(new Processor_N_x_M_input_interface(name));
+    auto processor = Processor_up(new Processor_N_x_M_input_interface(ProcessorConf(name)));
     
     Processor_N_x_M_input_interface* dummy_interface = dynamic_cast<Processor_N_x_M_input_interface*> (processor.get());
     if (dummy_interface)

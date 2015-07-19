@@ -67,7 +67,7 @@ namespace eudaq{
   Processor_up Processor_Parrallel_add2queue::CreateInterface(ConnectionName_ref name, Parameter_ref conf)
   {
   
-      auto proc= Processor_up(new Processor_Parrallel_add2queue::interfaceProducer(name));
+      auto proc= Processor_up(new Processor_Parrallel_add2queue::interfaceProducer(ProcessorConf(name)));
     
       
       auto p_raw = dynamic_cast<interfaceProducer*>(proc.get());
