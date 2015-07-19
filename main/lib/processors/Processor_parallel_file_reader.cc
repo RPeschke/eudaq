@@ -24,14 +24,16 @@ namespace eudaq{
     os << getName();
   }
 
-  Processor_parallel_file::Processor_parallel_file(Parameter_ref conf) :Processor_Parrallel_add2queue(conf)
+
+
+  Processor_parallel_file::Processor_parallel_file(Parameter_ref conf, const fileName& fName) : Processor_Parrallel_add2queue(conf), m_fileName(fName)
   {
 
   }
 
   void Processor_parallel_file::initialize()
   {
-    m_reader = __make_unique<ProcessorFileReader>(m_conf);
+    m_reader = __make_unique<ProcessorFileReader>(m_conf,m_fileName);
       
       
     m_reader->init();
