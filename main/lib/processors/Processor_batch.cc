@@ -4,21 +4,15 @@
 
 namespace eudaq {
   using ReturnParam = ProcessorBase::ReturnParam;
-  Processor_batch::Processor_batch(Parameter_ref name) :Processor(name)
+  Processor_batch::Processor_batch(Parameter_ref name) :Processor(name), m_processors(__make_unique<std::vector<Processor_up>>())
   {
     
-//     auto splitted_names = eudaq::split(name,",");
-//     for (auto& e:splitted_names)
-//     {
-// 
-//       pushProducer(ProcessorFactory::create(e, ""));
-//     }
 
   }
 
   void Processor_batch::initialize()
   {
-    for (auto& e:m_processors)
+    for (auto& e:*m_processors)
     {
       e->init();
     }
@@ -27,7 +21,7 @@ namespace eudaq {
   void Processor_batch::Finish()
   {
 
-    for (auto& e : m_processors)
+    for (auto& e : *m_processors)
     {
       e->end();
     }
@@ -42,7 +36,7 @@ namespace eudaq {
   void Processor_batch::AddProcessor(ProcessorBase* next,const std::string& name/*= ""*/)
   {
     m_next = next;
-    m_processors.back()->AddProcessor(next, name);
+    m_processors->back()->AddProcessor(next, name);
   }
 
   void Processor_batch::print(std::ostream& os)
@@ -60,7 +54,7 @@ namespace eudaq {
     }
     do 
     {
-      ret = m_processors.front()->ProcessEvent(ev);
+      ret = m_processors->front()->ProcessEvent(ev);
 
       if (ret == ret_error){
         std::cout << "an error occurred " << std::endl;
@@ -72,13 +66,13 @@ namespace eudaq {
 
   void Processor_batch::pushProcessorBase(std::unique_ptr<ProcessorBase> processor)
   {
-    if (processor&&!m_processors.empty())
+    if (processor&&!m_processors->empty())
     {
 
       AddProcessor(processor.get(),processor->getName());
     }
-    m_processors.push_back(std::move(processor));
-    m_next = m_processors.back().get();
+    m_processors->push_back(std::move(processor));
+    m_next = m_processors->back().get();
   }
 
 

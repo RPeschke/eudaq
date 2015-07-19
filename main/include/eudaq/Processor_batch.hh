@@ -27,7 +27,7 @@ namespace eudaq{
     virtual void pushProcessorBase(std::unique_ptr<ProcessorBase> processor);
 
   private:
-    std::vector<Processor_up> m_processors;
+  std::unique_ptr< std::vector<Processor_up>> m_processors;
 
     Processor_rp m_next = nullptr;
   };

@@ -42,7 +42,7 @@ namespace eudaq{
 
   
 		using Processor_map = std::map < ConnectionName_t, Processor_rp > ;
-    using Processor_up_map = std::map < ConnectionName_t, Processor_up >;
+    using Processor_up_map = std::unique_ptr<std::map < ConnectionName_t, Processor_up >>;
 		
 		Processor_map m_external_map , m_internal_map;
 
