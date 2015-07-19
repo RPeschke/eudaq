@@ -9,20 +9,14 @@ namespace eudaq{
 
 
 
-
-
-  ProcessorFileReader::ProcessorFileReader(Parameter_ref conf) :Processor_add2queue(conf)
+  ProcessorFileReader::ProcessorFileReader(Parameter_ref conf, const fileName& Fname) :Processor_add2queue(conf), m_fName(Fname)
   {
-    
-    
+
   }
-
-
-
 
   void ProcessorFileReader::print(std::ostream& os)
   {
-    std::cout << m_conf << std::endl;
+    std::cout << m_conf.getName() << std::endl;
   }
 
 
@@ -53,10 +47,10 @@ namespace eudaq{
 
 
 
-  void ProcessorFileReader::initialize(Configuration_ref conf)
+  void ProcessorFileReader::initialize()
   {
     m_status = running;
-    m_reader = FileReaderFactory::create(ProConfig::getFilename(conf,getName(),""));
+    m_reader = FileReaderFactory::create(m_fName.get());
   }
 
 }
