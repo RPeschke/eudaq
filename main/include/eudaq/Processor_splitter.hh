@@ -6,7 +6,7 @@
 namespace eudaq{
 
 
-  class Processor_splitter :public Processor_N_x_M{
+  class DLLEXPORT Processor_splitter :public Processor_N_x_M{
 
   public:
     virtual ReturnParam ProcessEvent(ConnectionName_ref name, event_sp ev) override;
