@@ -59,7 +59,6 @@ namespace eudaq{
       return ProConfig::Tag("tag", tag);
     }
   };
-  RegisterProcessor(getConfig, ProcessorNames::Print_Configuration());
 
 
   class select_events :public Processor_Inspector{
@@ -104,5 +103,4 @@ namespace eudaq{
     std::vector<unsigned> m_eventsOfInterest;
   };
 
-  RegisterProcessor(select_events, ProcessorNames::SelectEvents());
 }

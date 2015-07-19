@@ -83,5 +83,4 @@ namespace eudaq {
 
 
 
-  RegisterProcessor(Processor_batch, ProcessorNames::batch());
 }

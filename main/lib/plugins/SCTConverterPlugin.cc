@@ -460,7 +460,6 @@ namespace eudaq {
 
 
 
-  RegisterProcessor(mergeITSDAQStreams, sct::mergeITSDAQStreamsName());
 
   class SCT_COMPARE : public Processor{
   public:
@@ -577,7 +576,6 @@ namespace eudaq {
 
 
 
-  RegisterProcessor(SCT_COMPARE, sct::SCT_COMPARE_Name());
 #endif // USE_EUDAQ2_VERSION
 
 } // namespace eudaq

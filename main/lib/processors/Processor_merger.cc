@@ -9,7 +9,6 @@ namespace eudaq{
 
 
 
-  RegisterProcessor(Processor_merger, ProcessorNames::merger());
 
 
 

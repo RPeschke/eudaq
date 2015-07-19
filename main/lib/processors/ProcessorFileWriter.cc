@@ -23,7 +23,6 @@ namespace eudaq{
     ProcessorBase* m_next=nullptr;
     unsigned m_run;
   };
-  RegisterProcessor(ProcessorFileWriter, ProcessorNames::file_writer());
   ProcessorFileWriter::ProcessorFileWriter(Parameter_ref conf) :Processor(conf)
   {
     m_write = FileWriterFactory::Create("native", ".raw");

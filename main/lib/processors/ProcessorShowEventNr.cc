@@ -49,7 +49,6 @@ namespace eudaq{
     size_t m_pos;
     bool firstEvent = true;
   };
-  RegisterProcessor(ShowEventNR, ProcessorNames::show_event_nr());
 
 
 

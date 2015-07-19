@@ -10,7 +10,6 @@
 #include <memory>
 #include <map>
 
-#define RegisterProcessor(derivedClass,ID) registerClass(eudaq::ProcessorBase,derivedClass,ID)
 
 
 

@@ -5,7 +5,6 @@
 #include <string>
 namespace eudaq{
   using ReturnParam = ProcessorBase::ReturnParam;
-  RegisterProcessor(Processor_splitter, ProcessorNames::splitter());
   ReturnParam eudaq::Processor_splitter::ProcessEvent(ConnectionName_ref name, event_sp ev)
   {
     auto ret = ProcessorBase::sucess;

@@ -7,7 +7,6 @@ namespace eudaq{
 
   using ReturnParam = ProcessorBase::ReturnParam;
 
-  RegisterProcessor(Processor_parallel_file, ProcessorNames::Parallel_file_reader());
 
 
   void Processor_parallel_file::finish()

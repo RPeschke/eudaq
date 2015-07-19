@@ -4,7 +4,6 @@
 
 
 namespace eudaq{
-  RegisterProcessor(Proccessor_Buffer, ProcessorNames::buffer());
   using ReturnParam = ProcessorBase::ReturnParam;
 
 
