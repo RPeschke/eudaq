@@ -123,50 +123,13 @@ int m_pos = 0;
 
  
   
-  class DLLEXPORT ProcessorFactory{
-  public:
 
-
-    static std::unique_ptr<ProcessorBase> create(ProcessorBase::MainType type, ProcessorBase::Parameter_ref  param);
-
-
-
-    static void addComandLineOptions(eudaq::OptionParser & op);
-    static std::string Help_text();
-    static ProcessorBase::Parameter_t getDefault();
-
-  private:
-
-    class Impl;
-    static Impl& getImpl();
-
-  };
   template<typename T>
   ProcessorBase::ConnectionName_t concatenate(ProcessorBase::ConnectionName_ref first, T second){
     return first + std::to_string(second);
   }
   template<>
   ProcessorBase::ConnectionName_t concatenate<std::string>(ProcessorBase::ConnectionName_ref first, std::string second);
-  class DLLEXPORT ProcessorNames{
-  public:
-    using  Name_t = ProcessorBase::MainType;
-
-    static Name_t batch();
-    static Name_t buffer();
-    static Name_t multi_buffer();
-    static Name_t busy_test();
-    static Name_t file_reader();
-    static Name_t file_writer();
-    static Name_t show_event_nr();
-    static Name_t events_of_intresst();
-    static Name_t splitter(); 
-    static Name_t merger();
-    static Name_t Parallel_file_reader();
-    static Name_t Parallel_processor();
-
-    static Name_t Print_Configuration();
-    static Name_t SelectEvents();
-  };
 
   class DLLEXPORT ProConfig{
   public:
