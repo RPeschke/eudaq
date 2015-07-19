@@ -18,7 +18,7 @@ namespace eudaq{
 
 
     
-    Process_eventOfInterest(Parameter_ref);
+    Process_eventOfInterest(Parameter_ref, const std::vector <unsigned>& );
     
   private:
     std::vector <unsigned> m_events;
@@ -33,12 +33,12 @@ namespace eudaq{
     os << getName();
   }
 
-  Process_eventOfInterest::Process_eventOfInterest(Parameter_ref conf) :Processor_Inspector("EventsOfIntrest")
+
+
+  Process_eventOfInterest::Process_eventOfInterest(Parameter_ref conf, const std::vector <unsigned>& events) :Processor_Inspector(conf), m_events(events)
   {
-    m_events = parsenumbers(ProConfig::getTag(conf,"base","events",""));
+
   }
-
-
 
   ReturnParam Process_eventOfInterest::inspecktEvent(const Event& ev)
   {
