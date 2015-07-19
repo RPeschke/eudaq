@@ -114,6 +114,11 @@ int m_pos = 0;
       return ret;
     }
 
+template <class T, class... Args>
+    T* pushNewProcessor(Args&&... args){
+      auto processor=__make_unique<T>(args...);
+      return pushProcessor(std::move(processor));
+    }
     virtual void clearProcessor() = 0;
   protected:
     Parameter_t m_conf;
