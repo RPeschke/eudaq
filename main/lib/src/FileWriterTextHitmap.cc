@@ -1,3 +1,6 @@
+#ifdef USE_ROOT
+
+
 
 #include "Windows4Root.h"
 #include "eudaq/FileWriter.hh"
@@ -118,7 +121,67 @@ public:
 };
 
 namespace eudaq {
+  class outputEvent{
+  public:
+    outputEvent(){
 
+
+    }
+
+    void pushChannel(Double_t channel_x, Double_t channel_y, Double_t Effi, Double_t NumberOfEvents,Double_t ID_)
+    {
+      m_id.push_back(ID_);
+      m_x.push_back(channel_x);
+      m_y.push_back(channel_y);
+      m_occupancy.push_back(Effi);
+      m_numOfEvents.push_back(NumberOfEvents);
+    }
+    void reset(){
+      m_totalNumOfEvents = 0;
+      m_total_efficiency = 0;
+      m_residual = 0;
+      m_offset = 0;
+      m_Threshold = 0;
+      m_RunNumber = 0;
+
+       m_id.clear();
+       m_x.clear();
+       m_y.clear();
+       m_occupancy.clear();
+       m_numOfEvents.clear();
+    }
+   double m_totalNumOfEvents=0;
+   double m_total_efficiency=0;
+   double m_total_efficiency_2plus = 0;
+   double m_residual=0;
+   double m_offset=0;
+   double m_Threshold=0;
+   double m_RunNumber=0;
+   double m_HV = 0;
+   void Save2Tree(TTree* tree){
+     tree->Branch("totalNumOfEvents", &m_totalNumOfEvents);
+     tree->Branch("total_efficiency", &m_total_efficiency);
+     tree->Branch("total_efficiency_2plus", &m_total_efficiency_2plus);
+     tree->Branch("residual", &m_residual);
+     tree->Branch("offset", &m_offset);
+     tree->Branch("Threshold", &m_Threshold);
+     tree->Branch("RunNumber", &m_RunNumber);
+     tree->Branch("HV", &m_HV);
+
+
+     tree->Branch("x", &m_x);
+     tree->Branch("y", &m_y);
+     tree->Branch("ID", &m_id);
+     tree->Branch("Occupancy", &m_occupancy);
+     tree->Branch("NumOfEvents", &m_numOfEvents);
+   }
+  private:
+    std::vector<double> m_id;
+    std::vector<double> m_x;
+    std::vector<double> m_y;
+    std::vector<double> m_occupancy;
+    std::vector<double> m_numOfEvents;
+  };
   class FileWriterTextHitmap : public FileWriter {
   public:
     FileWriterTextHitmap(const std::string &);
@@ -145,8 +208,8 @@ namespace eudaq {
     TTree* m_tree = nullptr;
 
     clusterMaker<int> m_cluster;
-    Double_t m_relhit;
-    Int_t m_channel_root;
+    outputEvent m_outEvent;
+
     std::string hitmap_name;
     void reset();
   };
@@ -186,13 +249,7 @@ namespace eudaq {
     m_tfile = new TFile(fname_root.c_str(), "RECREATE");
 
     m_tree = new TTree("hitmap", "hitmap");
-    m_tree->Branch("Channel", &m_channel_root);
-    m_tree->Branch("hv", &Hv);
-    m_tree->Branch("threshold", &m_threshold);
-    m_tree->Branch("threshold_readback", &m_threshold_readback);
-    m_tree->Branch("run", &m_run);
-    m_tree->Branch("relHit", &m_relhit);
-
+    m_outEvent.Save2Tree(m_tree);
 
     hitmap_name = FileNamer("scurve$6R$X").Set('X', ".pdf").Set('R', runnumber);
     reset();
@@ -227,9 +284,9 @@ namespace eudaq {
       TCanvas c1;
       c1.Divide(2, 1);
       c1.cd(1);
-      m_tree->Draw("relHit:threshold", "Channel==385", "*");
+      m_tree->Draw("total_efficiency:Threshold", "", "*");
       auto pad = c1.cd(2);
-      m_tree->Draw("relHit:threshold", "Channel<385", "colz");
+      m_tree->Draw("Occupancy:Threshold", "", "colz");
       pad->SetLogz();
       c1.SaveAs(hitmap_name.c_str());
       m_tfile->Write();
@@ -332,28 +389,33 @@ namespace eudaq {
     {
       return;
     }
-    *m_out << "runNr = " << m_run << "   hv = " << Hv << " threshold = " << m_threshold << "  threshold_read_back =  " << m_threshold_readback << "  ";
+    *m_out << "runNr = " << m_run << "   hv = " << Hv << " threshold = " << m_threshold << "  threshold_read_back =  " << m_threshold_readback << " Number_of_Events =  "<<m_events <<"  ";
     int i = 0;
+    m_outEvent.m_Threshold = m_threshold_readback;
+    m_outEvent.m_totalNumOfEvents = m_events;
+    m_outEvent.m_total_efficiency = (double)m_orEvents / m_events ;
+    m_outEvent.m_HV = Hv;
+    m_outEvent.m_RunNumber = m_run;
     for (auto & e : m_channel){
-      m_relhit = (double)e / m_events * 100;
+      auto m_relhit = (double)e / m_events ;
+      m_outEvent.pushChannel(i++, 0, m_relhit, m_events,0);
       *m_out << m_relhit << ", ";
-      m_channel_root = i++;
-      m_tree->Fill();
+      
     }
-    m_relhit = (double)m_orEvents / m_events * 100;
-    m_channel_root = i++;
-    *m_out << m_relhit << ", ";
-    m_tree->Fill();
-
-    m_relhit = (double)m_clustersize_1 / m_events * 100;
-    m_channel_root = i++;
-    *m_out << m_relhit << ", ";
-    m_tree->Fill();
+   
 
 
-    m_relhit = (double)m_clustersize_larger1 / m_events * 100;
-    m_channel_root = i++;
-    *m_out << m_relhit << ", ";
+
+
+//     m_relhit = (double)m_clustersize_1 / m_events * 100;
+//     m_channel_root = i++;
+//     *m_out << m_relhit << ", ";
+//     m_tree->Fill();
+
+
+    m_outEvent.m_total_efficiency_2plus = (double)m_clustersize_larger1 / m_events ;
+
+    *m_out << m_outEvent.m_total_efficiency_2plus << ", ";
     m_tree->Fill();
     
     *m_out << std::endl;
@@ -367,8 +429,10 @@ namespace eudaq {
     m_clustersize_1 = 0;
     m_clustersize_larger1 = 0;
     m_channel.clear();
+    m_outEvent.reset();
   }
 
   uint64_t FileWriterTextHitmap::FileBytes() const { return m_out->tellp(); }
 
 }
+#endif // USE_ROOT
