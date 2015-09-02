@@ -210,7 +210,7 @@ void ROOTProducer::Producer_PImpl::OnConfigure(const eudaq::Configuration & conf
 
 
   // At the end, set the status that will be displayed in the Run Control.
-  SetStatus(eudaq::Status::LVL_OK, "Configured (" + config.Name() + ")");
+  SetStatus(eudaq::Status::STATE_CONF, "Configured (" + config.Name() + ")");
 }
 
 eudaq::Configuration& ROOTProducer::Producer_PImpl::getConfiguration()
@@ -258,7 +258,7 @@ void ROOTProducer::Producer_PImpl::OnStartRun(unsigned param)
  
   // At the end, set the status that will be displayed in the Run Control.
   
-  SetStatus(eudaq::Status::LVL_OK, "Running");
+  SetStatus(eudaq::Status::STATE_RUNNING, "Running");
 }
 
 bool ROOTProducer::Producer_PImpl::timeout(int tries)
