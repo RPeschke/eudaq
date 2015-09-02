@@ -6,11 +6,12 @@
 #include <map>
 #include "eudaq/Status.hh"
 #include "eudaq/TransportBase.hh"
+#include "eudaq/Platform.hh"
 
 
 namespace eudaq
 {
-	class MachineState
+	class DLLEXPORT MachineState
 
 	{
 	public:

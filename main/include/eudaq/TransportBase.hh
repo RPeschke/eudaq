@@ -13,13 +13,14 @@
 #include <iosfwd>
 #include <cstring>
 #include <iostream>
+#include "eudaq/Platform.hh"
 
 namespace eudaq {
 
   /** Represents an individual connection on a Transport.
    *
    */
-  class ConnectionInfo {
+  class DLLEXPORT ConnectionInfo {
   public:
     explicit ConnectionInfo(const std::string &name = "")
         : m_state(0), m_name(name) {}
