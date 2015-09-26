@@ -11,23 +11,30 @@
 
 #include "eudaq/SCT_defs.hh"
 #include "eudaq/Processor_inspector.hh"
+#include "eudaq/Processor_batch.hh"
 
 using namespace eudaq;
 unsigned dbg = 0;
-class printOut : public Processor_Inspector{
-public:
-  printOut(Parameter_ref conf) :Processor_Inspector(conf){}
-  virtual ReturnParam inspecktEvent(const Event& ev) { 
-    
-    ev.Print(std::cout);
-    return ProcessorBase::sucess;
-  };
-};
-std::string printOutName(){
-  return "printOut";
-}
+// class printOut : public Processor_Inspector{
+// public:
+//   printOut(Parameter_ref conf) :Processor_Inspector(conf){}
+//   virtual ReturnParam inspecktEvent(const Event& ev) { 
+//     
+//     ev.Print(std::cout);
+//     return ProcessorBase::sucess;
+//   };
+// };
+// std::string printOutName(){
+//   return "printOut";
+// }
+// 
+// RegisterProcessor(printOut, printOutName());
 
-RegisterProcessor(printOut, printOutName());
+ProcessorBase::ReturnParam inspecktEvent(const Event& ev) {
+   
+   ev.Print(std::cout);
+   return ProcessorBase::sucess;
+ };
 
 int main(int, char ** argv) {
 
@@ -76,24 +83,48 @@ int main(int, char ** argv) {
       EUDAQ_THROW("no sct ref file");
     }
 
-    auto pro = ProcessorFactory::create(ProcessorNames::batch(), "");
-    event_sp ev = std::dynamic_pointer_cast<Event>(std::make_shared<eudaq::RawDataEvent>("tesT", 1, 1));
-    pro->pushProducer(ProcessorFactory::create(ProcessorNames::file_reader(), ProConfig::ProcessorName("first")));
-    pro->pushProducer(ProcessorFactory::create(sct::mergeITSDAQStreamsName(), ""));
+  auto pro = std::unique_ptr<Processor_batch>(new Processor_batch(ProcessorConf("name")));
+
+  auto && eee= [](const Event& ev) {
+
+    ev.Print(std::cout);
+    return ProcessorBase::sucess;
+
+  };
+ // pro->pushProcessor(make_Processor1(std::move(eee)));
+  auto t = processor_T< decltype(eee)>(std::move(eee));
+//   auto t = make_p(
+//     [](const Event& ev) {
+// 
+//     ev.Print(std::cout);
+//     return ProcessorBase::sucess;
+// 
+//   }
+//   
+//   );
+
+  pro->pushProcessor(make_Processor(ProcessorConf("asda"),
     
-    pro->pushProducer(ProcessorFactory::create(ProcessorNames::file_reader(), ProConfig::ProcessorName("second")));
-    pro->pushProducer(ProcessorFactory::create(ProcessorNames::show_event_nr(), ProConfig::ProcessorName("event Nr:")));
-    pro->pushProducer(ProcessorFactory::create(sct::SCT_COMPARE_Name(), ""));
-    pro->pushProducer(ProcessorFactory::create(printOutName(), ""));
+    [](const Event& ev) {
 
-    auto conf = ProConfig::Topic("second") + ProConfig::Filename(sct->Value()+"$sct") + ProConfig::Topic("first") + ProConfig::Filename(op.GetArg(0));;
-    pro->init(conf);
+    ev.Print(std::cout);
+    return ProcessorBase::sucess;
 
-    pro->ProcessEvent(ev);
+  }
+    ));
+  pro->pushProcessor(make_Processor(
 
+    [](const Event& ev) {
 
-    pro->end();
+    ev.Print(std::cout);
+    return ProcessorBase::sucess;
 
+  }
+  ));
+  pro->pushProcessor(make_Processor(
+
+ &inspecktEvent
+  ));
 
 
   }

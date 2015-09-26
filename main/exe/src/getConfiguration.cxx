@@ -34,19 +34,19 @@ int main(int /*argc*/, const char ** argv) {
   EUDAQ_LOG_LEVEL(level.Value());
 
 
-
-  auto pro = ProcessorFactory::create(ProcessorNames::batch(), "");
-  pro->pushProducer(ProcessorFactory::create(ProcessorNames::file_reader(), ProConfig::ProcessorName("first")));
-  
-  pro->pushProducer(ProcessorFactory::create(ProcessorNames::Print_Configuration(), ProConfig::ProcessorName("config")));
-  pro->pushProducer(ProcessorFactory::create(ProcessorNames::SelectEvents(), ProConfig::ProcessorName("eventOfintresst")));
-  pro->pushProducer(ProcessorFactory::create(ProcessorNames::show_event_nr(), "event_nr"));
+// 
+//   auto pro = ProcessorFactory::create(ProcessorNames::batch(), "");
+//   pro->pushProducer(ProcessorFactory::create(ProcessorNames::file_reader(), ProConfig::ProcessorName("first")));
+//   
+//   pro->pushProducer(ProcessorFactory::create(ProcessorNames::Print_Configuration(), ProConfig::ProcessorName("config")));
+//   pro->pushProducer(ProcessorFactory::create(ProcessorNames::SelectEvents(), ProConfig::ProcessorName("eventOfintresst")));
+//   pro->pushProducer(ProcessorFactory::create(ProcessorNames::show_event_nr(), "event_nr"));
 
 
   auto conf = ProConfig::Topic("first") + ProConfig::Filename(op.GetArg(0)) + ProConfig::getConfig_configuration("config", ProConfig::getConfig_ConcatSectionsTag("", "")) +ProConfig::eventSelection_configuration("eventOfintresst","1,2,3",1,1);
-  pro->init(conf);
-  pro->ProcessEvent(nullptr);
-  pro->end();
+//   pro->init(conf);
+//   pro->ProcessEvent(nullptr);
+//   pro->end();
   }
   catch (...) {
     std::cout << "Time: " << (std::clock() - start) / (double)(CLOCKS_PER_SEC / 1000) << " ms" << std::endl;
