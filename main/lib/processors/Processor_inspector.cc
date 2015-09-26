@@ -30,5 +30,9 @@ namespace eudaq{
 
   }
 
+  Processor_Inspector::Processor_Inspector() : Processor(Parameter_t("DAS")) {
+
+  }
+
 }
 

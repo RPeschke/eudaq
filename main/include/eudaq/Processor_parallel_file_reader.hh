@@ -24,7 +24,19 @@ namespace eudaq{
     fileName m_fileName;
   };
 
+
+  class parallel_fileReader{
+  public:
+    parallel_fileReader(const std::string& name) :m_name(name){}
+
+    std::unique_ptr<Processor_parallel_file> FileName(const std::string& filename){
+      auto ret = __make_unique<Processor_parallel_file>(ProcessorConf(m_name), fileName(filename));
+    
+      return ret;
+    }
+    const std::string& m_name;
   };
+
 
 }
 

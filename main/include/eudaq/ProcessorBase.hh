@@ -9,7 +9,9 @@
 #include "eudaq/factory.hh"
 #include <memory>
 #include <map>
+#include <string>
 
+//#define RegisterProcessor(derivedClass,ID) registerClass(eudaq::ProcessorBase,derivedClass,ID)
 
 
 
@@ -72,6 +74,7 @@ std::string m_name;
 int m_pos = 0;
 };
 
+
   class DLLEXPORT ProcessorBase{
   public:
     enum ReturnParam:int
@@ -89,11 +92,11 @@ int m_pos = 0;
     using Parameter_ref = const Parameter_t&;
     using ConnectionName_t=std::string;
     using ConnectionName_ref = const ConnectionName_t &;
-	using Configuration_t = std::string;
-	using Configuration_ref = const Configuration_t&;
+  using Configuration_t = std::string;
+  using Configuration_ref = const Configuration_t&;
     ProcessorBase(Parameter_ref name);
     virtual ~ProcessorBase() {};
-	virtual void init() = 0;
+  virtual void init() = 0;
     virtual ReturnParam ProcessEvent(event_sp ev) = 0;
     virtual void end() =0;
 
@@ -138,11 +141,11 @@ template <class T, class... Args>
 
   class DLLEXPORT ProConfig{
   public:
-	  using Config = ProcessorBase::Configuration_t;
+    using Config = ProcessorBase::Configuration_t;
     using ConfigInput = ProcessorBase::Configuration_t;
 
-	  static Config Topic(const std::string& name);
-	  static Config Tag(const std::string& tagName, const std::string& tagValue);
+    static Config Topic(const std::string& name);
+    static Config Tag(const std::string& tagName, const std::string& tagValue);
     static Config ProcessorName(const std::string& Name);
     static Config ProcessorType(const std::string& Name);
     static Config Filename(const std::string& fileName);

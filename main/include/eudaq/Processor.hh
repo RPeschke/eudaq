@@ -17,7 +17,7 @@ namespace eudaq{
 
     Processor(Parameter_ref);
     virtual ~Processor(){}
-	virtual void init() override final;
+  virtual void init() override final;
   virtual void initialize() {}
 
    virtual void end()override final;
