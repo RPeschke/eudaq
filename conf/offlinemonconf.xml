@@ -69,6 +69,14 @@
         <PixelY LowerBin="0" upperBin="21" binSize="1"/>
       </Binning>
     </plane>
+        <plane id="7">
+      <ignorHotPixel>
+      </ignorHotPixel>
+      <Binning>
+        <PixelX LowerBin="0" upperBin="150" binSize="1"/>
+        <PixelY LowerBin="0" upperBin="350" binSize="1"/>
+      </Binning>
+    </plane>
   </planes>
 
   <Correlations>
@@ -83,14 +91,14 @@
     </Correlation>
     <Correlation>
       <CorrX planeId="2" plane_axis="x"/>
-      <CorrY planeId="9" plane_axis="y"/>
+      <CorrY planeId="7" plane_axis="y"/>
       <cutOffCondition>
         <!--x*A+y*B+C < D-->
       </cutOffCondition>
     </Correlation>
     <Correlation>
-      <CorrX planeId="2" plane_axis="x"/>
-      <CorrY planeId="9" plane_axis="x"/>
+      <CorrX planeId="2" plane_axis="y"/>
+      <CorrY planeId="7" plane_axis="x"/>
       <cutOffCondition>
         <!--x*A+y*B+C < D-->
       </cutOffCondition>

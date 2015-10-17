@@ -15,12 +15,16 @@ namespace eudaq{
   ReturnParam Processor_merger::ProcessEvent(ConnectionName_ref name, event_sp ev)
   {
     auto it = m_map.find(name);
+    size_t index = 0;
     if (it == m_map.end()){
-
+      index = m_counter;
       m_map[name] = m_counter++;
+
+    } else {
+      index =it->second;
     }
 
-    if (!m_sync->pushEvent(ev, m_map[name])){
+    if (!m_sync->pushEvent(ev, index)){
 
       return ProcessorBase::stop;
     }
