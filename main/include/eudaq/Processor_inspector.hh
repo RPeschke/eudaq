@@ -35,7 +35,7 @@ namespace eudaq {
     
 
     virtual ReturnParam inspecktEvent(const Event& e) override {
-
+      
       return m_proc(e);
     }
   private:

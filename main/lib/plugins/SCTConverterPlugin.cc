@@ -19,7 +19,7 @@
 #include "eudaq/SCT_defs.hh"
 
 
-#ifndef wIN32
+#ifndef WIN32
   
 #define max(a,b)    (((a) > (b)) ? (a) : (b))
 #define min(a,b)    (((a) < (b)) ? (a) : (b))
@@ -234,8 +234,8 @@ namespace eudaq {
       uint32_t hsioID = (uint32_t)(data >> 40) & 0xffff;
       uint64_t TLUID = data & 0xffff;
 
-      sev.SetTag(TLU_TLUID(), to_hex(TLUID, 4));
-      sev.SetTag(TDC_data(), to_hex(hsioID, 4));
+      sev.SetTag(TLU_TLUID(), TLUID);
+      sev.SetTag(TLU_L0ID(), hsioID);
 
     }
     template<typename T>
@@ -243,8 +243,8 @@ namespace eudaq {
 
       uint32_t L0ID = (uint32_t)(data >> 40) & 0xffff;
       uint64_t TDC = data & 0xfffff;
-      sev.SetTag(TDC_data(), to_hex(TDC, 5));
-      sev.SetTag(TDC_L0ID(), to_hex(L0ID, 4));
+      sev.SetTag(TDC_data(),TDC);
+      sev.SetTag(TDC_L0ID(), L0ID);
     }
     template<typename T>
     static void ProcessTimeStamp_data(uint64_t data, T & sev) {
@@ -252,8 +252,8 @@ namespace eudaq {
        
         uint64_t  timestamp = data & 0x000000ffffffffffULL;
         uint32_t L0ID = (uint32_t)(data >> 40) & 0xffff;
-        sev.SetTag(Timestamp_data(), to_hex(timestamp, 10));
-        sev.SetTag(Timestamp_L0ID(), to_hex(L0ID ,4));
+        sev.SetTag(Timestamp_data(), timestamp);
+        sev.SetTag(Timestamp_L0ID(),L0ID );
      
 
     }

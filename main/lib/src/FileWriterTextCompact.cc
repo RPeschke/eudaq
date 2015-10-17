@@ -75,9 +75,20 @@ namespace eudaq {
       TLU_start_Time = sev.GetTimestamp()-50000;
       firstEvent = false;
     }
- 
+    auto t = sev.GetTag("TLU.L0ID", "");
 
-    *m_out << sev.GetTimestamp() - TLU_start_Time << "; " << sev.GetTag("TLU_trigger") << ";" << sev.GetTag("TLU_event_nr",(uint64_t)0) << "; " << sev.GetTag("ni_time", (uint64_t) 0) - DUT_start_time << "; " << sev.GetTag("ni_event_nr", (uint64_t) 0) << std::endl;
+    *m_out << sev.GetTimestamp() - TLU_start_Time
+      << "; "
+      << sev.GetTag("TLU_trigger") << ";"
+      << sev.GetTag("TLU_event_nr", (uint64_t)0) << "; "
+      << sev.GetTag("ni_time", (uint64_t)0) - DUT_start_time << "; "
+      << sev.GetTag("ni_event_nr", (uint64_t)0) << "; "
+      << sev.GetTag("TDC.L0ID", "") << "; "
+      << sev.GetTag("TLU.TLUID", "") << "; "
+      << sev.GetTag("TLU.L0ID", "") << "; "
+      << sev.GetTag("Timestamp.L0ID", "") << "; "
+      << sev.GetTag("TDC.data", "")
+      << std::endl;
 
   
     

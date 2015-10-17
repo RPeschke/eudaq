@@ -10,24 +10,13 @@
 
 #include "eudaq/ProcessorBase.hh"
 #include "eudaq/RawDataEvent.hh"
-#include "eudaq/Processor_inspector.hh"
-#include "eudaq/Processor_parallel_file_reader.hh"
-#include "eudaq/Processor_batch.hh"
 #include "eudaq/Platform.hh"
 
 
 using namespace eudaq;
 unsigned dbg = 0;
 
-class test : public Processor_Inspector{
-public:
-  test(Parameter_ref conf) :Processor_Inspector(conf){}
-  virtual ReturnParam inspecktEvent(const Event&) { std::cout << "hello from test" << std::endl; return ProcessorBase::sucess; };
- static std::unique_ptr<test> create(Parameter_ref conf){ return   std::unique_ptr<test>(new test(conf)); }
-};
-std::string testName(){
-  return "test";
-}
+
 
 int main(int, char ** argv) {
 
@@ -52,76 +41,20 @@ int main(int, char ** argv) {
     eudaq::Option<std::string> level(op, "l", "log-level", "INFO", "level",
                                      "The minimum level for displaying log messages locally");
 
+  try {
     op.Parse(argv);
     EUDAQ_LOG_LEVEL(level.Value());
-
-
-
-
-
-  try {
-
-
-
-    auto pro = std::unique_ptr<Processor_batch>( new Processor_batch(ProcessorConf("name")));
-    event_sp ev = std::dynamic_pointer_cast<Event>(std::make_shared<eudaq::RawDataEvent>("tesT", 1, 1));
-
-    pro->pushNewProcessor<Processor_parallel_file>(ProcessorConf("first"), fileName("..\\data\\run000022_.raw"));
-    pro->pushNewProcessor<Processor_parallel_file>(ProcessorConf("second"), fileName("..\\data\\run000022_.raw"));
-
-//     pro->pushProcessorBase(ProcessorFactory::create(ProcessorNames::Parallel_file_reader(), ProConfig::ProcessorName("first")));
-//     pro->pushProcessorBase(ProcessorFactory::create(ProcessorNames::Parallel_file_reader(), ProConfig::ProcessorName("second")));
-// 
-// 
-//   //  pro->pushProducer(ProcessorFactory::create("test", ""));
-//     pro->pushProcessorBase(ProcessorFactory::create(ProcessorNames::Parallel_processor(), ProConfig::ProcessorParallelType(ProcessorNames::show_event_nr())));
-//     pro->pushProcessorBase(ProcessorFactory::create(ProcessorNames::splitter(), ""));
-//     pro->pushProcessorBase(ProcessorFactory::create(ProcessorNames::Parallel_processor(), ProConfig::ProcessorParallelType(ProcessorNames::show_event_nr())));
-//     pro->pushProcessorBase(ProcessorFactory::create(ProcessorNames::multi_buffer(), ""));
-// 
-//     pro->pushProcessorBase(ProcessorFactory::create(ProcessorNames::merger(), ""));
-//     pro->pushProcessorBase(ProcessorFactory::create(ProcessorNames::events_of_intresst(), ProConfig::Tag("events", events->Value())));
-//     pro->pushProcessorBase(ProcessorFactory::create(ProcessorNames::show_event_nr(), ProConfig::ProcessorName("buffer")));
-//     pro->pushProcessorBase(ProcessorFactory::create(ProcessorNames::buffer(), ""));
-//     pro->pushProcessorBase(ProcessorFactory::create(ProcessorNames::busy_test(), ""));
-//     pro->pushProcessorBase(ProcessorFactory::create(ProcessorNames::show_event_nr(), "busy"));
-//     pro->pushProcessorBase(ProcessorFactory::create(ProcessorNames::file_writer(), ""));
-//     auto tst = pro->pushProcessor(test::create(ProConfig::ProcessorName("first")));
-    //auto p = (eudaq::Processor_batch*) pro.get();
-    //p->AddProcessor2Batch(std::move(ProcessorFactory::create("eventOfInterest", events->Value())));
-    //p->AddProcessor2Batch(std::move(ProcessorFactory::create("ProcessorFileWriter", "")));
-
-//     auto conf = ProConfig::Topic("second") + ProConfig::Filename("..\\data\\run000022_.raw") + ProConfig::Topic("first") + ProConfig::Filename("..\\data\\run000022_.raw");;
-       pro->init();
-// 
-     pro->ProcessEvent(ev);
-// 
-// 
-//     pro->end();
-
-
-
-
-
-
-
-
-
-
-
-
-
 
     ReadAndProcess<eudaq::FileWriter> readProcess;
     readProcess.setEventsOfInterest(parsenumbers(events->Value()));
 
     readProcess.addFileReader(FileReaderFactory::create(op));
     readProcess.setWriter(FileWriterFactory::Create());
-
+    
     readProcess.StartRun();
     readProcess.process();
     readProcess.EndRun();
-
+    
   }
   catch (...) {
     std::cout << "Time: " << (std::clock() - start) / (double) (CLOCKS_PER_SEC / 1000) << " ms" << std::endl;
