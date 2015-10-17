@@ -12,18 +12,18 @@ namespace eudaq {
 
 
 
-  class DLLEXPORT Processor_Inspector :public Processor {
+  class DLLEXPORT Processor_Inspector :public ProcessorBase {
   public:
 
 
     Processor_Inspector(Parameter_ref conf);
     Processor_Inspector();
 
-    virtual ReturnParam inspecktEvent(const Event&) = 0;
+    virtual ReturnParam inspecktEvent(const Event&, ConnectionName_ref con) = 0;
 
 
 
-    ReturnParam ProcessEvent(event_sp ev) override;
+    ReturnParam ProcessEvent(event_sp ev, ConnectionName_ref con) override;
   };
 
   template <typename T>

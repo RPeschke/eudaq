@@ -7,13 +7,11 @@ namespace eudaq{
   class ProcessorFileReader : public Processor_add2queue
   {
   public:
-    ProcessorFileReader(Parameter_ref conf,const fileName& Fname);
+    ProcessorFileReader(Parameter_ref conf, const fileName& Fname, ConnectionName_ref con_);
     void setFileName(const fileName& fName);
     virtual ReturnParam add2queue(event_sp& ev);
     virtual void initialize() override;
 
-
-    virtual void print(std::ostream& os);
   private:
 
     std::unique_ptr<baseFileReader> m_reader;

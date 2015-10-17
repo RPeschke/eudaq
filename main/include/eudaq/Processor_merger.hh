@@ -1,25 +1,28 @@
 #ifndef Processor_merger_h__
 #define Processor_merger_h__
 
-#include "eudaq/Processor_N_x_M.hh"
-
+#include "eudaq/ProcessorBase.hh"
+#include "eudaq/EventSynchronisationBase.hh"
 
 
 namespace eudaq{
 
 
   class SyncBase;
-  class Processor_merger :public Processor_N_x_M{
+  class Processor_merger :public ProcessorBase{
   public:
-    virtual ReturnParam ProcessEvent(ConnectionName_ref name, event_sp ev) ;
-    Processor_merger(Parameter_ref);
+    virtual ReturnParam ProcessEvent(event_sp ev,ConnectionName_ref name) override;
+    Processor_merger(ProcessorBase::Parameter_ref name, const SyncBase::MainType& type_, SyncBase::Parameter_ref param_ = SyncBase::Parameter_t());
     virtual ~Processor_merger(){}
-    virtual void initialize();
-    virtual void finish() override;
+    virtual void init() override;
+    virtual void end() override;
   private:
     std::map<ConnectionName_t, unsigned> m_map;
     unsigned m_counter = 0;
     std::unique_ptr < SyncBase > m_sync;
+
+    SyncBase::MainType m_type;
+    SyncBase::Parameter_t m_param;
   };
 }
 

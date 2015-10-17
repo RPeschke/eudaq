@@ -5,23 +5,23 @@
 
 
 
-namespace eudaq{
+namespace eudaq {
 
 
-  class Proccessor_Buffer :public Processor{
-  public:
-    Proccessor_Buffer(Parameter_ref conf);
-    ~Proccessor_Buffer(){}
-    virtual ReturnParam ProcessEvent(event_sp ev) ;
-	virtual void initialize() override;
+class Proccessor_Buffer :public ProcessorBase {
+public:
+  Proccessor_Buffer(Parameter_ref conf);
+  ~Proccessor_Buffer() {}
+  virtual ReturnParam ProcessEvent(event_sp ev, ConnectionName_ref con) override;
+  virtual void init() override;
+  virtual void end() override {}
 
 
+private:
+  std::deque<event_sp> m_queue; 
+  size_t m_bufferSize = 100;        //Magic number for now 
 
-  private:
-    std::deque<event_sp> m_queue; // this is a vector to make it possible to access elements in the middle 
-    size_t m_bufferSize = 100;        //Magic number for now 
-
-  };
+};
 
 }
 

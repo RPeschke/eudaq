@@ -4,7 +4,7 @@
 
 
 
-#include "eudaq/Processor.hh"
+#include "eudaq/ProcessorBase.hh"
 
 
 
@@ -12,19 +12,20 @@ namespace eudaq{
 
 
 
-  class  Processor_add2queue :public Processor{
+  class  Processor_add2queue :public ProcessorBase{
   public:
 
 
-    Processor_add2queue(Parameter_ref conf);
+    Processor_add2queue(Parameter_ref conf, ConnectionName_ref con_);
+
+    void init() override;
+    virtual void initialize() = 0;
+    
 
 
-    virtual ReturnParam add2queue(event_sp& ev) = 0;
 
-
-
-    ReturnParam ProcessEvent(event_sp ev) override;
-    ReturnParam m_last_ret;
+    ReturnParam ProcessEvent(event_sp ev, ConnectionName_ref con) override;
+  
     enum status
     {
       configuring,
@@ -35,7 +36,9 @@ namespace eudaq{
 
   private:
 
+    virtual ReturnParam add2queue(event_sp& ev) = 0;
     void handelReturn(ReturnParam ret);
+    ConnectionName_t m_con;
   };
 
 

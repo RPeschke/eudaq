@@ -8,46 +8,39 @@ namespace eudaq{
 
 
 
-  Proccessor_Buffer::Proccessor_Buffer(Parameter_ref conf) :Processor(conf)
+  Proccessor_Buffer::Proccessor_Buffer(Parameter_ref conf) :ProcessorBase(conf)
   {
 
   }
 
-  ReturnParam Proccessor_Buffer::ProcessEvent(event_sp ev)
-  {
-    if (m_queue.size()>m_bufferSize)
-    {
+ 
+
+  ReturnParam Proccessor_Buffer::ProcessEvent(event_sp ev, ConnectionName_ref con) {
+    if (m_queue.size() > m_bufferSize) {
       return ProcessorBase::busy_skip;
     }
 
-    if (m_queue.empty())
-    {
-      auto ret= ProcessNext(ev);
-      if (ret==ProcessorBase::busy_retry)
-      {
+    if (m_queue.empty()) {
+      auto ret = processNext(ev,con);
+      if (ret == ProcessorBase::busy_retry) {
         m_queue.push_back(ev);
         return ProcessorBase::sucess;
       }
       return ret;
-      
+
     }
-   
+
     m_queue.push_back(ev);
-    
+
     ReturnParam ret = ProcessorBase::sucess;
-    while (!m_queue.empty() )
-    {
+    while (!m_queue.empty()) {
       auto ev1 = m_queue.front();
-      ret = ProcessNext(ev1);
-      if (ret != busy_retry)
-      {
+      ret = processNext(ev1,con);
+      if (ret != busy_retry) {
         m_queue.pop_front();
-      }
-      else if (ret ==ProcessorBase::busy_retry)
-      {
+      } else if (ret == ProcessorBase::busy_retry) {
         return ProcessorBase::sucess;
-      }else if(ret!= ProcessorBase::sucess)
-      {
+      } else if (ret != ProcessorBase::sucess) {
         return ret;
       }
 
@@ -55,10 +48,10 @@ namespace eudaq{
     return ProcessorBase::sucess;
   }
 
-  void Proccessor_Buffer::initialize()
-  {
+  void Proccessor_Buffer::init() {
     m_queue.clear();
   }
+
 
   
 }

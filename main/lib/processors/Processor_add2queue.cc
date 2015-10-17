@@ -1,44 +1,47 @@
 #include "eudaq/Processor_add2queue.hh"
 namespace eudaq{
   using ReturnParam = ProcessorBase::ReturnParam;
-  eudaq::Processor_add2queue::Processor_add2queue(Parameter_ref conf) :Processor(conf)
+  eudaq::Processor_add2queue::Processor_add2queue(Parameter_ref conf, ConnectionName_ref con_) :ProcessorBase(conf), m_con(con_)
   {
     m_status = running;
   }
 
-  ReturnParam eudaq::Processor_add2queue::ProcessEvent(event_sp ev)
-  {
-    if (m_status==running)
-    {
+  void Processor_add2queue::init() {
+    m_status = running;
+    initilize();
+  }
+
+
+
+  ReturnParam Processor_add2queue::ProcessEvent(event_sp ev, ConnectionName_ref con) {
+    if (m_status == running) {
       event_sp ev1;
       auto ret = add2queue(ev1);
-      if (ret==stop)
-      {
+      if (ret == stop) {
         m_status = stopping;
       }
-      if (ret != sucess)
-      {
+      if (ret != sucess) {
         return ret;
       }
-      handelReturn(ProcessNext(std::move(ev1))); 
+      handelReturn(processNext(std::move(ev1),m_con));
 
 
 
+
+      if (ev) {
+        return processNext(std::move(ev),con);
+      }
+
+    } else if (m_status == stopping) {
+      return processNext(std::move(ev),con);
     }
-    if (ev)
-    {
-      return ProcessNext(std::move(ev));
-    }else if (m_status==stopping)
-    {
-      return ProcessNext(std::move(ev));
-    }
-     
+
     return sucess;
   }
 
   void Processor_add2queue::handelReturn(ReturnParam ret)
   {
-    m_last_ret = ret;
+
     switch (ret)
     {
     case eudaq::ProcessorBase::stop:

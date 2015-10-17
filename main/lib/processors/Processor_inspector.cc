@@ -7,30 +7,27 @@ namespace eudaq{
   using ReturnParam = ProcessorBase::ReturnParam;
 
 
-  
 
-  ReturnParam Processor_Inspector::ProcessEvent(event_sp ev)
-  {
-    if (!ev)
-    {
+
+  ReturnParam Processor_Inspector::ProcessEvent(event_sp ev, ConnectionName_ref con) {
+    if (!ev) {
       return stop;
     }
-    auto ret = inspecktEvent(*ev);
+    auto ret = inspecktEvent(*ev,con);
 
-    if (ret!=sucess)
-    {
+    if (ret != sucess) {
       return ret;
     }
 
-   return ProcessNext(std::move(ev));
+    return processNext(std::move(ev),con);
   }
 
-  Processor_Inspector::Processor_Inspector(Parameter_ref conf) :Processor(conf)
+  Processor_Inspector::Processor_Inspector(Parameter_ref conf) :ProcessorBase(conf)
   {
 
   }
 
-  Processor_Inspector::Processor_Inspector() : Processor(Parameter_t("DAS")) {
+  Processor_Inspector::Processor_Inspector() : ProcessorBase(Parameter_t("unnamed")) {
 
   }
 
