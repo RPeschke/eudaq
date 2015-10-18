@@ -8,14 +8,10 @@
 #include <iostream>
 #include "eudaq/EventSynchronisationDetectorEvents.hh"
 
-#include "eudaq/ProcessorBase.hh"
 #include "eudaq/RawDataEvent.hh"
 #include "eudaq/Platform.hh"
 #include "eudaq/Processor_batch.hh"
-#include "eudaq/ProcessorFileReader.hh"
-#include "eudaq/Processor_inspector.hh"
-#include "eudaq/ProcessorFileWriter.hh"
-#include "eudaq/Processor_eventSelectors.hh"
+#include "eudaq/Processors.hh"
 using namespace eudaq;
 unsigned dbg = 0;
 
@@ -48,18 +44,12 @@ int main(int, char ** argv) {
     op.Parse(argv);
     EUDAQ_LOG_LEVEL(level.Value());
 
-    Processor_batch batch(ProcessorBase::Parameter_t(""));
+    Processor_batch batch;
 
-    batch.pushNewProcessor<ProcessorFileReader>(op);
-    batch.pushProcessor(make_Processor([](const Event& ev, ProcessorBase::ConnectionName_ref con) {
-      if (ev.GetEventNumber()%1000==0)
-      {
-        std::cout << ev.GetEventNumber() << "  " <<con << std::endl;
-      }
-      return ProcessorBase::sucess;
-     }));
-    batch.pushNewProcessor<select_events>(parsenumbers(events->Value()));
-    batch.pushNewProcessor<ProcessorFileWriter>();
+    batch.pushProcessor(Processors::fileReader(op));
+    batch.pushProcessor(Processors::ShowEventNR(1000));
+    batch.pushProcessor(Processors::eventSelector(parsenumbers(events->Value())));
+    batch.pushProcessor(Processors::fileWriter());
 
     batch.init();
     batch.run();

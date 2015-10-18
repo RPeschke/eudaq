@@ -3,8 +3,13 @@
 #include "eudaq/Utils.hh"
 #include "eudaq/Processor_eventSelectors.hh"
 
+#include "eudaq/Processors.hh"
+
 namespace eudaq{
- 
+std::unique_ptr<eudaq::ProcessorBase> Processors::eventSelector(const std::vector<unsigned>& eventsOfIntresst, bool doBore , bool doEORE ) {
+  return __make_unique<select_events>(eventsOfIntresst, doBore, doEORE);
+
+}
 
 select_events::select_events(const std::vector<unsigned>& eventsOfIntresst, bool doBore /*= true*/, bool doEORE /*= true*/) :Processor_Inspector(ProcessorBase::Parameter_t("")), m_eventsOfInterest(eventsOfIntresst), m_do_bore(doBore), m_do_eore(doEORE) {
 

@@ -2,10 +2,14 @@
 #include <iostream>
 
 #include "eudaq/ProcessorFileWriter.hh"
+#include "eudaq/Processors.hh"
 
 namespace eudaq{
   using ReturnParam = ProcessorBase::ReturnParam;
 
+  Processors::processor_up Processors::fileWriter() {
+    return __make_unique<ProcessorFileWriter>();
+  }
 
   ProcessorFileWriter::ProcessorFileWriter(const std::string & name, const std::string & params /*= ""*/):Processor_Inspector(Parameter_t(""))  {
 

@@ -4,11 +4,14 @@
 #include "eudaq/ProcessorFileReader.hh"
 #include "eudaq/OptionParser.hh"
 #include "eudaq/baseFileReader.hh"
+#include "eudaq/Processors.hh"
 
 namespace eudaq {
 using ReturnParam = ProcessorBase::ReturnParam;
 
-
+Processors::processor_up Processors::fileReader(const fileConfig & op) {
+  return __make_unique<ProcessorFileReader>(op);
+}
 
 
 ProcessorFileReader::ProcessorFileReader(const fileConfig & op) : Processor_add2queue(Parameter_t(""),random_connection()),  m_fName(op) {

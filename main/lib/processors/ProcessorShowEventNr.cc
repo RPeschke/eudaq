@@ -90,6 +90,9 @@ namespace eudaq{
    
     return sucess;
   }
+  Processors::processor_up Processors::ShowEventNR(size_t repetition) {
+    return __make_unique<eudaq::ShowEventNR>(repetition);
+  }
 
 }
 
