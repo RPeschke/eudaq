@@ -11,6 +11,10 @@ Processor_batch::Processor_batch(Parameter_ref name) :ProcessorBase(name), m_pro
 
 
 
+Processor_batch::Processor_batch():Processor_batch(Parameter_t("")) {
+
+}
+
 ReturnParam Processor_batch::ProcessEvent(event_sp ev, ConnectionName_ref con) {
   return m_first->ProcessEvent(ev, con);
 }
