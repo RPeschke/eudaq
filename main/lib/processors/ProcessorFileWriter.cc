@@ -1,67 +1,53 @@
 #include "eudaq/FileWriter.hh"
 #include <iostream>
-#include "eudaq/Processor.hh"
+
+#include "eudaq/ProcessorFileWriter.hh"
 
 namespace eudaq{
   using ReturnParam = ProcessorBase::ReturnParam;
-  class  ProcessorFileWriter :public Processor{
-  public:
-    ProcessorFileWriter(Parameter_ref conf);
-    virtual void initialize() override;
-    virtual ReturnParam ProcessEvent(event_sp ev) override;
 
 
+  ProcessorFileWriter::ProcessorFileWriter(const std::string & name, const std::string & params /*= ""*/):Processor_Inspector(Parameter_t(""))  {
 
-
-
-
-    virtual void print(std::ostream& os);
-
-  private:
-    std::unique_ptr<FileWriter> m_write;
-    bool m_first = true;
-    ProcessorBase* m_next=nullptr;
-    unsigned m_run;
-  };
-  ProcessorFileWriter::ProcessorFileWriter(Parameter_ref conf) :Processor(conf)
-  {
-    m_write = FileWriterFactory::Create("native", ".raw");
   }
 
-  void ProcessorFileWriter::initialize()
-  {
-    std::cout << "   void ProcessorFileWriter::init() " << std::endl;
+  ProcessorFileWriter::ProcessorFileWriter() : Processor_Inspector(Parameter_t("")) ,m_default(true) {
+
+  }
+
+
+
+  void ProcessorFileWriter::init() {
+    if (m_default) {
+      m_write = FileWriterFactory::Create();
+    } else {
+      m_write = FileWriterFactory::Create(m_name, m_params);
+    }
     m_first = true;
   }
 
-  ReturnParam ProcessorFileWriter::ProcessEvent(event_sp ev)
-  {
-    if (m_first)
-    {
-      m_first = false;
-      m_run = ev->GetRunNumber();
-      m_write->StartRun(m_run);
-    }
-
-    m_write->WriteBaseEvent(*ev);
 
 
-    return ProcessNext(ev);
-
-
+  void ProcessorFileWriter::end() {
+    m_write.reset();
   }
-
-
-
-  void ProcessorFileWriter::print(std::ostream& os)
-  {
-    os << "ProcessorFileWriter" << std::endl;
-  }
-
 
 
  
 
 
+
+  ReturnParam ProcessorFileWriter::inspecktEvent(const Event& ev, ConnectionName_ref con) {
+
+    if (m_first) {
+      m_first = false;
+      m_write->StartRun(ev.GetRunNumber());
+    }
+
+    m_write->WriteBaseEvent(ev);
+
+
+    return sucess;
+  }
 
 }
