@@ -11,7 +11,7 @@
 #  include "lcio.h"
 #endif
 #ifdef USE_EUDAQ2_VERSION
-#include "eudaq/Processor.hh"
+#include "eudaq/ProcessorBase.hh"
 #endif // USE_EUDAQ2_VERSION
 
 #include "eudaq/PluginManager.hh"
@@ -392,21 +392,21 @@ namespace eudaq {
 
 
 
-  class mergeITSDAQStreams : public Processor{
+  class mergeITSDAQStreams : public ProcessorBase{
   public:
-    mergeITSDAQStreams(Parameter_ref conf) :Processor(conf){}
-    virtual ReturnParam ProcessEvent(event_sp ev) override{
+    mergeITSDAQStreams(Parameter_ref conf) :ProcessorBase(conf){}
+    virtual ReturnParam ProcessEvent(event_sp ev, ConnectionName_ref con) override {
       if (!ev)
       {
         return ProcessorBase::stop;
       }
       if (ev->IsBORE())
       {
-        return ProcessNext(ev);
+        return processNext(ev,con);
       }
       if (ev->IsEORE())
       {
-        return ProcessNext(ev);
+        return processNext(ev,con);
       }
       auto det = dynamic_cast<DetectorEvent*>(ev.get());
 
@@ -449,7 +449,7 @@ namespace eudaq {
       {
         det->AddEvent(e);
       }
-      return ProcessNext(ev);
+      return processNext(ev,con);
     }
 
   };
@@ -461,18 +461,18 @@ namespace eudaq {
 
 
 
-  class SCT_COMPARE : public Processor{
+  class SCT_COMPARE : public ProcessorBase{
   public:
-    SCT_COMPARE(Parameter_ref conf) :Processor(conf){}
-    virtual ReturnParam ProcessEvent(event_sp ev) override{
+    SCT_COMPARE(Parameter_ref conf) :ProcessorBase(conf){}
+    virtual ReturnParam ProcessEvent(event_sp ev, ConnectionName_ref con) override {
       bool same = true;
       if (ev->IsBORE())
       {
-        return ProcessNext(ev);
+        return processNext(ev,con);
       }
       if (ev->IsEORE())
       {
-        return ProcessNext(ev);
+        return processNext(ev,con);
       }
 
       if (m_ev != ev->GetEventNumber())
@@ -541,17 +541,17 @@ namespace eudaq {
       }
       
 
-      auto ret=ProcessNext(m_first);
+      auto ret=processNext(m_first,con);
 
       if (ret!=ProcessorBase::sucess)
       {
         return ret;
       }
 
-      return ProcessNext(m_second);
+      return processNext(m_second,con);
     }
 
-    virtual void initialize()override{
+    virtual void init()override{
 
       m_first.reset();
       m_second.reset();
