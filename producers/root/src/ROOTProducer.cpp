@@ -33,6 +33,81 @@ const int gTimeout_statusChanged = gTimeout_wait* 10; //milli seconds
 #define  streamOut m_streamOut <<"[" << m_ProducerName<<"]: "
 
 
+enum fsm_producer {
+  unconfigured,
+  configuring,
+  configured,
+  starting,
+  started,
+  stopping,
+  stopped,
+  terminating,
+  terminated
+};
+
+enum returnParam {
+  return_success,
+  return_error
+};
+
+template <class State>
+class fsm_satus{
+public:
+  fsm_satus(State start_, clock_t timeout_ = clock_t(-1)) :m_status(start_), timeOut_in_ms(timeout_) {}
+
+
+  returnParam setStatus(State newStatus) {
+    returnParam ret = return_success;
+    if (m_status == newStatus)
+    {
+      ret = return_error;
+    }
+    m_status = newStatus;
+    return ret;
+  }
+  State getStatus() const {
+    return m_status;
+  }
+  returnParam waitForChange() {
+    auto oldStatus = m_status;
+    auto start = clock();
+    while (getStatus() == oldStatus) {
+      if (isTimedOut(start)) {
+        return return_error;
+      }
+      eudaq::mSleep(gTimeout_wait);
+    }
+    return return_success;
+  }
+  returnParam waitFor(State newStatus) {
+    auto start = clock();
+    while (getStatus()!= newStatus ) {
+      if (isTimedOut(start) )
+      {
+        return return_error;
+      }
+      eudaq::mSleep(gTimeout_wait);
+    }
+    return return_success;
+  }
+  returnParam transition(State intermediate_state, State final_state) {
+    setStatus(intermediate_state);
+    auto ret = waitFor(final_state);
+    setStatus(final_state);
+    return ret;
+  }
+  void setTimeOut(clock_t time_) {
+    timeOut_in_ms = time_;
+  }
+private:
+  bool isTimedOut(clock_t startTime) const {
+    return  ((double)(clock() - startTime) / CLOCKS_PER_SEC * 1000 < timeOut_in_ms);
+  }
+  State m_status;
+
+  clock_t timeOut_in_ms ;
+};
+
 class ROOTProducer::Producer_PImpl : public eudaq::Producer {
 public:
 	Producer_PImpl(const std::string & name, const std::string & runcontrol);
@@ -44,7 +119,8 @@ public:
 	// It receives the new run number as a parameter
 virtual	void OnStartRun(unsigned param);
 	// This gets called whenever a run is stopped
-bool timeout(int tries);
+
+void timeout_log(const std::string& log);
 virtual	void OnStopRun();
 
 	// This gets called when the Run Control is terminating,
@@ -64,24 +140,22 @@ void setTimeOutTime(int timeout);
 
 	void sendEvent();
 	void sendEvent(int eventNr);
-  void setConfStatus(bool newStat);
-	bool ConfigurationSatus();
 
-	bool getOnStart();
-	void setOnStart(bool newStat);
 
-	bool getOnConfigure();
-	void setOnconfigure(bool newStat);
+  bool isConfigurting() ;
+  void setConfigured(); 
 
-	bool getOnStop();
-	void setOnStop(bool newStat);
+  bool isStarting(); 
+  void setStarted(); 
 
-  bool getDoStop();
-  void setDoStop(bool);
+  bool isStopping();
+  void setStopped();
 
-	bool getOnTerminate();
-	void setOnTerminate(bool newStat);
+  bool isTerminating();
+  void setTerminated();
 
+
+  bool ConfigurationSatus();
 
   const std::string& getName() const;
 	bool isCorrectEventNR(int evNummer);
@@ -118,7 +192,6 @@ void setTimeOutTime(int timeout);
 
   std::atomic<unsigned> m_run;
 	unsigned  m_ev;
-	bool isConfigured;
 
 	std::unique_ptr<eudaq::RawDataEvent> ev;
 		
@@ -133,11 +206,10 @@ void setTimeOutTime(int timeout);
 
   std::vector<std::string> m_errors;
   
-	bool onStart_,
-		onConfigure_,
-		onStop_,doStop_,
-		OnTerminate_;
-  int m_Timeout_delay = 1000; //milli seconds
+  fsm_satus<fsm_producer> m_state = fsm_satus<fsm_producer>(unconfigured, gTimeout_statusChanged);
+
+
+
   std::stringstream m_streamOut;
 };
 
@@ -181,7 +253,7 @@ void ROOTProducer::Producer_PImpl::Data_pointer_bool::addDataBlock2Event(eudaq::
 }
 
 ROOTProducer::Producer_PImpl::Producer_PImpl(const std::string & name, const std::string & runcontrol) : eudaq::Producer(name, runcontrol),
-m_run(0), m_ev(0), isConfigured(false), m_ProducerName(name), onConfigure_(false), onStart_(false), onStop_(false), OnTerminate_(false)
+m_run(0), m_ev(0), m_ProducerName(name)
 {
   streamOut << "hallo from " << name << " producer" << std::endl;
 }
@@ -190,25 +262,17 @@ void ROOTProducer::Producer_PImpl::OnConfigure(const eudaq::Configuration & conf
 {
   m_config = config;
 
-  setConfStatus(true);
+  
   streamOut << "Configuring: " << getConfiguration().Name() << std::endl;
 
 
   config.Print(m_streamOut);
-  //m_interface->send_onConfigure();
 
-  setOnconfigure(true);
-  int j = 0;
-  while (getOnConfigure() && !timeout(++j))
-  {
-    eudaq::mSleep(gTimeout_wait);
+  if (m_state.transition(configuring, configured)!=return_success) {
+    timeout_log(" configuration timed out");
   }
-  setOnconfigure(false);
-  // Do any configuration of the hardware here
-  // Configuration file values are accessible as config.Get(name, default)
 
 
-  // At the end, set the status that will be displayed in the Run Control.
   SetStatus(eudaq::Status::LVL_OK, "Configured (" + config.Name() + ")");
 }
 
@@ -224,8 +288,7 @@ unsigned ROOTProducer::Producer_PImpl::getRunNumber()
 
 void ROOTProducer::Producer_PImpl::OnStartRun(unsigned param)
 {
-  // version 0.1 Susanne from LatencyScan.cpp
-  //	streamOut<<"virtual void OnStartRun(unsigned param)"<<std::endl;
+
   streamOut << "starting Run:" << m_run;
   m_run = param;
   m_ev = 0;
@@ -244,15 +307,9 @@ void ROOTProducer::Producer_PImpl::OnStartRun(unsigned param)
 
   // Send the event to the Data Collector
 
-
-
-  setOnStart(true);
-  int j = 0;
-  while (getOnStart() && !timeout(++j))
-  {
-    eudaq::mSleep(gTimeout_wait);
+  if (m_state.transition(starting, started) != return_success) {
+    timeout_log(" starting timed out");
   }
-  setOnStart(false);
  
  
   // At the end, set the status that will be displayed in the Run Control.
@@ -260,67 +317,27 @@ void ROOTProducer::Producer_PImpl::OnStartRun(unsigned param)
   SetStatus(eudaq::Status::LVL_OK, "Running");
 }
 
-bool ROOTProducer::Producer_PImpl::timeout(int tries)
-{
-  if (tries > (m_Timeout_delay / gTimeout_wait))
-  {
 
-    std::string timeoutWaring;
-    timeoutWaring += "[Producer." + m_ProducerName + "] waring: status changed timed out: ";
-    if (getOnStart())
-    {
-      timeoutWaring += " onStart timed out";
-    }
-    if (getOnConfigure())
-    {
-      timeoutWaring += " onConfigure timed out";
-    }
-    if (getOnStop())
-    {
-      timeoutWaring += " onStop timed out";
-    }
-    if (getOnTerminate())
-    {
-      timeoutWaring += " OnTerminate timed out";
-    }
-    streamOut << timeoutWaring << std::endl;
-    Producer_warning(timeoutWaring);
-    return true;
-  }
-  return false;
-}
 
 void ROOTProducer::Producer_PImpl::OnStopRun()
 {
   streamOut << "virtual void OnStopRun()" << std::endl;
-  //	m_interface->send_onStop();
+
   streamOut << "received at event: "<< m_ev << std::endl;
-  setOnStop(true);
-  setDoStop(false);
-  int j = 0;
-  while (!getDoStop() && !timeout(++j))
-  {
-    eudaq::mSleep(gTimeout_wait);
+
+  if (m_state.transition(stopping, stopped) != return_success) {
+    timeout_log(" onStop timed out");
   }
-  setOnStop(false);
   // Set a flag to signal to the polling loop that the run is over
-
-
-
- 
 }
 
 void ROOTProducer::Producer_PImpl::OnTerminate()
 {
   streamOut << "virtual void OnTerminate()" << std::endl;
-  //m_interface->send_OnTerminate();
-  setOnTerminate(true);
-  int j = 0;
-  while (getOnTerminate() && !timeout(++j))
-  {
-    eudaq::mSleep(gTimeout_wait);
+  
+  if (m_state.transition(terminating, terminated) != return_success) {
+    timeout_log(" onTerminate timed out");
   }
-  setOnTerminate(false);
 }
 
 void ROOTProducer::Producer_PImpl::createNewEvent()
@@ -427,109 +444,9 @@ void ROOTProducer::Producer_PImpl::sendEvent(int eventNr)
   sendEvent();
 }
 
-void ROOTProducer::Producer_PImpl::setConfStatus(bool newStat)
-{
-  std::unique_lock<std::mutex> lck(m_stautus_change);
-  isConfigured = newStat;
-}
-
-bool ROOTProducer::Producer_PImpl::ConfigurationSatus()
-{
-  std::unique_lock<std::mutex> lck(m_stautus_change);
-  return isConfigured;
-}
-
-bool ROOTProducer::Producer_PImpl::getOnStart()
-{
-  std::unique_lock<std::mutex> lck(m_stautus_change);
-  return onStart_;
-}
-
-void ROOTProducer::Producer_PImpl::setOnStart(bool newStat)
-{
-  std::unique_lock<std::mutex> lck(m_stautus_change);
-  if (ev
-    &&
-    newStat!=onStart_
-    &&
-    newStat==false)
-  {
-    sendEvent();
-  }
-  onStart_ = newStat;
-}
-
-bool ROOTProducer::Producer_PImpl::getOnConfigure()
-{
-  std::unique_lock<std::mutex> lck(m_stautus_change);
-  return onConfigure_;
-}
-
-void ROOTProducer::Producer_PImpl::setOnconfigure(bool newStat)
-{
-  std::unique_lock<std::mutex> lck(m_stautus_change);
-  onConfigure_ = newStat;
-}
-
-bool ROOTProducer::Producer_PImpl::getOnStop()
-{
-  std::unique_lock<std::mutex> lck(m_stautus_change);
-  return onStop_;
-}
-
-void ROOTProducer::Producer_PImpl::setOnStop(bool newStat)
-{
-  std::unique_lock<std::mutex> lck(m_stautus_change);
-  if (newStat==false && newStat!=onStart_)
-  {
-
-    streamOut << m_ev << " Events Processed" << std::endl;
 
 
-    auto EORE = eudaq::RawDataEvent::EORE(m_ProducerName, m_run, ++m_ev);
-    if (!m_errors.empty())
-    {
-      streamOut << "warnings recorded:" << std::endl;
-      for (auto& e : m_errors)
-      {
-        streamOut << e << std::endl;
-      }
-      EORE.SetTag("recorded_messages", m_streamOut.str());
-    }
-    // Send an EORE after all the real events have been sent
-    // You can also set tags on it (as with the BORE) if necessary
-    SendEvent(EORE);
-    m_errors.clear();
-  }
 
-
-  onStop_ = newStat;
-}
-
-bool ROOTProducer::Producer_PImpl::getDoStop() 
-{
-  std::unique_lock<std::mutex> lck(m_stautus_change);
-  return doStop_;
-}
-
-
-void ROOTProducer::Producer_PImpl::setDoStop(bool newStatus)
-{
-  std::unique_lock<std::mutex> lck(m_stautus_change);
-  doStop_ = newStatus;
-}
-
-bool ROOTProducer::Producer_PImpl::getOnTerminate()
-{
-  std::unique_lock<std::mutex> lck(m_stautus_change);
-  return OnTerminate_;
-}
-
-void ROOTProducer::Producer_PImpl::setOnTerminate(bool newStat)
-{
-  std::unique_lock<std::mutex> lck(m_stautus_change);
-  OnTerminate_ = newStat;
-}
 
 bool ROOTProducer::Producer_PImpl::isCorrectEventNR(int evNummer)
 {
@@ -554,7 +471,7 @@ const std::string& ROOTProducer::Producer_PImpl::getName() const
 void ROOTProducer::Producer_PImpl::setTimeOutTime(int timeOut)
 {
   if (timeOut > 0){
-    m_Timeout_delay = timeOut;
+   m_state.setTimeOut(timeOut);
   }
   else
   {
@@ -566,6 +483,93 @@ void ROOTProducer::Producer_PImpl::resetDataPointer()
 {
   m_data_bool.clear();
   m_data_char.clear();
+}
+
+void ROOTProducer::Producer_PImpl::timeout_log(const std::string& log) {
+  std::string timeoutWaring;
+  timeoutWaring += "[Producer." + m_ProducerName + "] waring: status changed timed out: " + log;
+  
+
+  streamOut << timeoutWaring << std::endl;
+  Producer_warning(timeoutWaring);
+  
+}
+
+bool ROOTProducer::Producer_PImpl::isConfigurting()  {
+  std::unique_lock<std::mutex> lck(m_stautus_change);
+  return m_state.getStatus() == configuring;
+}
+
+void ROOTProducer::Producer_PImpl::setConfigured() {
+  std::unique_lock<std::mutex> lck(m_stautus_change);
+  if (m_state.getStatus() == configuring) {
+    m_state.setStatus(configured);
+  } else {
+    streamOut << " setConfigured: illegal transition " << std::endl;
+  }
+}
+
+bool ROOTProducer::Producer_PImpl::isStarting()  {
+  std::unique_lock<std::mutex> lck(m_stautus_change);
+  return m_state.getStatus() == starting;
+}
+
+void ROOTProducer::Producer_PImpl::setStarted() {
+  std::unique_lock<std::mutex> lck(m_stautus_change);
+  if (m_state.getStatus()==starting){
+    if (ev) {
+      sendEvent();
+    }
+    m_state.setStatus(started);
+  }else {
+    streamOut << " setStarted: illegal transition " << std::endl;
+  }
+}
+
+bool ROOTProducer::Producer_PImpl::isStopping()  {
+  std::unique_lock<std::mutex> lck(m_stautus_change);
+  return m_state.getStatus() == stopping;
+
+}
+
+void ROOTProducer::Producer_PImpl::setStopped() {
+  std::unique_lock<std::mutex> lck(m_stautus_change);
+  if (m_state.getStatus()==stopping) {
+
+    streamOut << m_ev << " Events Processed" << std::endl;
+
+
+    auto EORE = eudaq::RawDataEvent::EORE(m_ProducerName, m_run, ++m_ev);
+    if (!m_errors.empty()) {
+      streamOut << "warnings recorded:" << std::endl;
+      for (auto& e : m_errors) {
+        streamOut << e << std::endl;
+      }
+      EORE.SetTag("recorded_messages", m_streamOut.str());
+    }
+    // Send an EORE after all the real events have been sent
+    // You can also set tags on it (as with the BORE) if necessary
+    SendEvent(EORE);
+    m_errors.clear();
+    m_state.setStatus(stopped);
+  }
+  else {
+    streamOut << " setStopped: illegal transition " << std::endl;
+  }
+}
+
+bool ROOTProducer::Producer_PImpl::isTerminating() {
+  std::unique_lock<std::mutex> lck(m_stautus_change);
+  return m_state.getStatus() == terminating;
+}
+
+void ROOTProducer::Producer_PImpl::setTerminated() {
+  std::unique_lock<std::mutex> lck(m_stautus_change);
+  m_state.setStatus(terminated);
+}
+
+bool ROOTProducer::Producer_PImpl::ConfigurationSatus() {
+  return m_state.getStatus() > unconfigured;
 }
 
 // The constructor must call the eudaq::Producer constructor with the name
@@ -846,57 +850,70 @@ void ROOTProducer::setTag( const char* tagNameTagValue )
 
 bool ROOTProducer::getOnStart()
 {
-	return m_prod->getOnStart();
+	return m_prod->isStarting();
 }
 
 
 
-void ROOTProducer::setOnStart( bool newStat )
-{
-	m_prod->setOnStart(newStat);
+
+
+void ROOTProducer::setOnStart(bool newStat) {
+  if (!newStat)
+  {
+    m_prod->setStarted();
+  }
 }
 
 bool ROOTProducer::getOnConfigure()
 {
-	return m_prod->getOnConfigure();
+	return m_prod->isConfigurting();
 }
 
 
 
-void ROOTProducer::setOnconfigure( bool newStat )
-{
-		m_prod->setOnconfigure(newStat);
+
+
+void ROOTProducer::setOnconfigure(bool newStat) {
+  if (!newStat)
+  {
+    m_prod->setConfigured();
+  }
 }
 
 bool ROOTProducer::getOnStop()
 {
-	return m_prod->getOnStop();
+	return m_prod->isStopping();
 }
 
 
 
-void ROOTProducer::setOnStop( bool newStat )
-{
-	m_prod->setOnStop(newStat);
-}
 
+
+
+void ROOTProducer::setOnStop(bool newStat) {
+  std::cout << "function not used anymore " << std::endl;
+}
 
 void ROOTProducer::setStatusToStopped()
 {
 
- m_prod->setDoStop(true);
+ m_prod->setStopped();
 }
 
 bool ROOTProducer::getOnTerminate()
 {
-	return m_prod->getOnTerminate();
+	return m_prod->isTerminating();
 }
 
 
 
-void ROOTProducer::setOnTerminate( bool newStat )
-{
-	m_prod->setOnTerminate(newStat);
+
+
+void ROOTProducer::setOnTerminate(bool newStat) {
+  if (!newStat)
+  {
+    m_prod->setTerminated();
+  }
 }
 
 void ROOTProducer::checkStatus()
@@ -920,7 +937,7 @@ void ROOTProducer::checkStatus()
 
 	if(getOnStop()){
 		send_onStop();
-    setOnStop(false);
+  
     eudaq::mSleep(gTimeout_statusChanged);
     send_statusChanged();
 	}
