@@ -309,8 +309,10 @@ void ROOTProducer::Producer_PImpl::OnStopRun() {
 
   streamOut << "received at event: " << m_ev << std::endl;
 
-  if (m_state.transition(stopping, stopped) != return_success) {
+  m_state.setStatus(stopping);
+  if (m_state.waitFor(stopped) != return_success) {
     timeout_log(" onStop timed out");
+    setStopped();
   }
   // Set a flag to signal to the polling loop that the run is over
 }
