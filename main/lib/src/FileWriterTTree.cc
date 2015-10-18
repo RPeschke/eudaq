@@ -60,7 +60,7 @@ public:
   virtual uint64_t FileBytes() const override;
   virtual ~FileWriterTTree();
 private:
-  TFile * m_tfile; // book the pointer to a file (to store the otuput)
+  TFile * m_tfile =nullptr; // book the pointer to a file (to store the otuput)
   TTree * outTtreem_ttree; // book the tree (to store the needed event info)
   std::string m_fileName;
   std::shared_ptr<rootEvent> m_event;
@@ -129,7 +129,14 @@ uint64_t FileWriterTTree::FileBytes() const {
 }
 
 FileWriterTTree::~FileWriterTTree() {
-  m_tfile->Write();
+ 
+ if (m_tfile)
+ {
+  m_tfile->Close();
+  delete m_tfile;
+  m_tfile = nullptr;
+ }
+ 
 }
 
 }

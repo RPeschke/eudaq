@@ -25,7 +25,7 @@ void Processor_batch::init() {
 
 void Processor_batch::end() {
   for (auto& e : *m_processors) {
-    e->init();
+    e->end();
   }
 }
 
