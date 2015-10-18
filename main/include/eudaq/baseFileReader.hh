@@ -13,6 +13,7 @@ namespace eudaq{
   class Event;
   class OptionParser;
   class baseFileReader;
+  class fileConfig;
   using FileReader_up = std::unique_ptr < baseFileReader > ;
   class DLLEXPORT baseFileReader{
   public:
@@ -51,7 +52,7 @@ namespace eudaq{
     static FileReader_up create(const std::string & filename);
     static FileReader_up create(baseFileReader::MainType type, baseFileReader::Parameter_ref  param);
     static FileReader_up create(eudaq::OptionParser & op);
-
+    static FileReader_up create(const fileConfig& file_conf_);
 
     static void addComandLineOptions(eudaq::OptionParser & op);
     static std::string Help_text();
@@ -62,6 +63,15 @@ namespace eudaq{
     class Impl;
     static Impl& getImpl();
 
+  };
+
+  class DLLEXPORT fileConfig {
+  public:
+    fileConfig(eudaq::OptionParser & op);
+    explicit fileConfig(const std::string& fileName);
+    std::string get() const;
+  private:
+    std::string m_type;
   };
 }
 

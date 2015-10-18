@@ -66,9 +66,39 @@ namespace eudaq {
 
 
 
+  fileConfig::fileConfig(const std::string& fileName):m_type(fileName) {
+
+  }
+
   registerBaseClassDef(baseFileReader);
 
 
+
+  fileConfig::fileConfig(eudaq::OptionParser & op) {
+    if (op.NumArgs() == 1) {
+       m_type =  op.GetArg(0);
+       return;
+    } else {
+
+      std::string combinedFiles = "";
+      for (size_t i = 0; i < op.NumArgs(); ++i) {
+        if (!combinedFiles.empty()) {
+          combinedFiles += ',';
+        }
+        combinedFiles += op.GetArg(i);
+
+
+      }
+      combinedFiles += "$multi";
+
+      m_type = combinedFiles;
+      return;
+    }
+  }
+
+  std::string fileConfig::get() const {
+    return m_type;
+  }
 
   baseFileReader::Parameter_t baseFileReader::getConfiguration(const std::string& fileName, const std::string& filePattern)
   {
@@ -213,6 +243,10 @@ namespace eudaq {
   std::unique_ptr<baseFileReader> FileReaderFactory::create(baseFileReader::MainType type, baseFileReader::Parameter_ref param)
   {
     return Class_factory_Utilities::Factory<baseFileReader>::Create(type, param);
+  }
+
+  FileReader_up FileReaderFactory::create(const fileConfig& file_conf_) {
+    return eudaq::FileReaderFactory::create(file_conf_.get());
   }
 
   std::string FileReaderFactory::Help_text()
