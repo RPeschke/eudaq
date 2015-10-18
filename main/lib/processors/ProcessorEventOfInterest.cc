@@ -14,7 +14,7 @@ namespace eudaq{
     virtual ReturnParam inspecktEvent(const Event&);
 
   
-    virtual void print(std::ostream& os);
+
 
 
     
@@ -28,10 +28,6 @@ namespace eudaq{
 
 
 
-  void Process_eventOfInterest::print(std::ostream& os)
-  {
-    os << getName();
-  }
 
 
 
