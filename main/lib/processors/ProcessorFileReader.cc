@@ -2,6 +2,8 @@
 
 
 #include "eudaq/ProcessorFileReader.hh"
+#include "eudaq/OptionParser.hh"
+#include "eudaq/baseFileReader.hh"
 
 namespace eudaq {
 using ReturnParam = ProcessorBase::ReturnParam;
@@ -9,18 +11,9 @@ using ReturnParam = ProcessorBase::ReturnParam;
 
 
 
-ProcessorFileReader::ProcessorFileReader(
-  Parameter_ref conf,
-  const fileName& Fname,
-  ConnectionName_ref con_
-  )
-  : Processor_add2queue(conf, con_),
-  m_fName(Fname) {
+ProcessorFileReader::ProcessorFileReader(const fileConfig & op) : Processor_add2queue(Parameter_t(""),random_connection()),  m_fName(op) {
 
 }
-
-
-
 
 ReturnParam ProcessorFileReader::add2queue(event_sp& ev) {
   ReturnParam ret = sucess;
@@ -46,7 +39,14 @@ ReturnParam ProcessorFileReader::add2queue(event_sp& ev) {
 
 void ProcessorFileReader::initialize() {
   m_first = true;
-  m_reader = FileReaderFactory::create(m_fName.get());
+  if (!m_reader)
+  {
+    m_reader = FileReaderFactory::create(m_fName);
+  }
+}
+
+void ProcessorFileReader::end() {
+
 }
 
 }

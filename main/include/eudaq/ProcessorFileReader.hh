@@ -4,19 +4,20 @@
 #include "eudaq/Processor_add2queue.hh"
 #include "eudaq/types/fileName.hh"
 namespace eudaq{
-  class ProcessorFileReader : public Processor_add2queue
+  class DLLEXPORT ProcessorFileReader : public Processor_add2queue
   {
   public:
-    ProcessorFileReader(Parameter_ref conf, const fileName& Fname, ConnectionName_ref con_);
+    ProcessorFileReader(const fileConfig & op);
     void setFileName(const fileName& fName);
     virtual ReturnParam add2queue(event_sp& ev);
     virtual void initialize() override;
-
+    virtual void end() override;
   private:
 
     std::unique_ptr<baseFileReader> m_reader;
     bool m_first = true;
-    fileName m_fName;
+    fileConfig m_fName;
+
   };
 }
 #endif // ProcessorFileReader_h__
