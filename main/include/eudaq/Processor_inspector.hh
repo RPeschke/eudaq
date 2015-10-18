@@ -1,7 +1,7 @@
 #ifndef Processor_inspector_h__
 #define Processor_inspector_h__
 
-#include "eudaq/Processor.hh"
+#include "eudaq/ProcessorBase.hh"
 #include "eudaq/Platform.hh"
 #include <type_traits> 
 #include <utility>
@@ -19,6 +19,8 @@ namespace eudaq {
     Processor_Inspector(Parameter_ref conf);
     Processor_Inspector();
 
+    void init() override {}
+    void end() override {}
     virtual ReturnParam inspecktEvent(const Event&, ConnectionName_ref con) = 0;
 
 
@@ -34,9 +36,9 @@ namespace eudaq {
     processor_T(T&& proc_) : m_proc(std::forward<T>(proc_)) {}
     
 
-    virtual ReturnParam inspecktEvent(const Event& e) override {
+    virtual ReturnParam inspecktEvent(const Event& e, ConnectionName_ref con) override {
       
-      return m_proc(e);
+      return m_proc(e,con);
     }
   private:
     T m_proc;

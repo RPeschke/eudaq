@@ -1,21 +1,21 @@
-#include "eudaq/Processor.hh"
+#include "eudaq/ProcessorBase.hh"
 #include "eudaq/PluginManager.hh"
 #include "eudaq/StandardEvent.hh"
 
 namespace eudaq{
 
 
-  class Processor_convert_2_StandardEvent :public Processor{
-    Processor_convert_2_StandardEvent(Parameter_t conf) :Processor(std::move(conf)){}
+  class Processor_convert_2_StandardEvent :public ProcessorBase{
+    Processor_convert_2_StandardEvent(Parameter_t conf) :ProcessorBase(std::move(conf)){}
 
-    virtual ReturnParam ProcessEvent(event_sp ev);
+    virtual ReturnParam ProcessEvent(event_sp ev, ConnectionName_ref con) override;
   };
 
 
 
   using ReturnParam = ProcessorBase::ReturnParam;
 
-  ReturnParam Processor_convert_2_StandardEvent::ProcessEvent(event_sp ev)
+  ReturnParam Processor_convert_2_StandardEvent::ProcessEvent(event_sp ev, ConnectionName_ref con)
   {
     auto devent = dynamic_cast<const DetectorEvent*>(ev.get());
     if (ev->IsBORE())
@@ -23,7 +23,7 @@ namespace eudaq{
       eudaq::PluginManager::Initialize(*devent);
     }
     auto sev = event_sp(new StandardEvent(std::move(eudaq::PluginManager::ConvertToStandard(*devent))));
-    return ProcessNext(sev);
+    return processNext(sev,con);
   }
   
 }

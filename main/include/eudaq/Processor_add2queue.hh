@@ -12,7 +12,7 @@ namespace eudaq{
 
 
 
-  class  Processor_add2queue :public ProcessorBase{
+  class DLLEXPORT Processor_add2queue :public ProcessorBase{
   public:
 
 

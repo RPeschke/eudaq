@@ -8,7 +8,7 @@ namespace eudaq{
 
   void Processor_add2queue::init() {
     m_status = running;
-    initilize();
+    initialize();
   }
 
 

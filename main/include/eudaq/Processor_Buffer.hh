@@ -1,6 +1,6 @@
 #ifndef Processor_Buffer_h__
 #define Processor_Buffer_h__
-#include "Processor.hh"
+#include "ProcessorBase.hh"
 #include <deque>
 
 
