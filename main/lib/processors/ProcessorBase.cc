@@ -28,4 +28,13 @@ ProcessorBase::ReturnParam ProcessorBase::processNext(event_sp ev, ConnectionNam
   return sucess;
 }
 
+ProcessorBase::ConnectionName_t default_connection() {
+  return 0;
+}
+
+ProcessorBase::ConnectionName_t random_connection() {
+  static int i = 100;
+  return ++i;
+}
+
 }

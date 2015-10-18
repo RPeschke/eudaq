@@ -62,6 +62,7 @@ public:
     skip_event
 
   };
+
   using MainType = std::string;
   using Parameter_t = ProcessorConf;
   using Parameter_ref = const Parameter_t&;
@@ -85,11 +86,14 @@ private:
   Processor_rp m_next = nullptr;
 };
 
-ProcessorBase::ConnectionName_t default_connection() { return 0; }
+DLLEXPORT ProcessorBase::ConnectionName_t default_connection();
+DLLEXPORT ProcessorBase::ConnectionName_t random_connection();
 
-
-
-
+template<class T, class... Args>
+Processor_up make_Processor(Args&&... args) {
+  auto p = new T(std::forward<Args>(args)...);
+  return Processor_up(p);
+}
 
 }
 #endif // ProcessorBase_h__
