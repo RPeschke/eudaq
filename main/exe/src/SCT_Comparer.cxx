@@ -35,8 +35,8 @@ ProcessorBase::ReturnParam inspecktEvent(const Event& ev) {
    ev.Print(std::cout);
    return ProcessorBase::sucess;
  };
-
 int main(int, char ** argv) {
+/*
 
 
 
@@ -134,5 +134,6 @@ int main(int, char ** argv) {
   }
   std::cout << "Time: " << (std::clock() - start) / (double)(CLOCKS_PER_SEC / 1000) << " ms" << std::endl;
   if (dbg > 0)std::cout << "almost done with Converter. exiting" << std::endl;
+*/
   return 0;
 }
