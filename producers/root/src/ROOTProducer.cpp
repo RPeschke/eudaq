@@ -161,7 +161,16 @@ public:
   void addDataPointer(unsigned Block_id, const bool* inputVector, size_t Elements);
 
   void addDataPointer(unsigned Block_id, const UChar_t* inputVector, size_t Elements);
+
+  void addDynamicSizePointer(unsigned Block_id, const UChar_t* inputVector, const size_t& elements);
   void resetDataPointer();
+  struct Data_pointer_char_dynamic {
+    Data_pointer_char_dynamic(unsigned Block_id, const  UChar_t* inputVector, const size_t& Elements);
+    void addDataBlock2Event(eudaq::RawDataEvent& rev);
+    unsigned m_Block_id;
+    const  UChar_t* m_inputVector;
+    const size_t& m_Elements;
+  };
 
   struct Data_pointer_bool {
     Data_pointer_bool(unsigned Block_id, const bool* inputVector, size_t Elements);
@@ -182,6 +191,7 @@ public:
 
   std::vector<Data_pointer_bool> m_data_bool;
   std::vector<Data_pointer_char> m_data_char;
+  std::vector<Data_pointer_char_dynamic> m_data_char_dynamic;
 
 
   clock_t startTime_;
@@ -208,6 +218,22 @@ public:
 
   std::stringstream m_streamOut;
 };
+
+ROOTProducer::Producer_PImpl::Data_pointer_char_dynamic::Data_pointer_char_dynamic(unsigned Block_id, const  UChar_t* inputVector, const size_t& Elements) :
+m_Block_id(Block_id),
+m_inputVector(inputVector),
+m_Elements(Elements)
+{
+
+}
+
+void ROOTProducer::Producer_PImpl::Data_pointer_char_dynamic::addDataBlock2Event(eudaq::RawDataEvent& rev) {
+  try {
+    rev.AddBlock(m_Block_id, m_inputVector, m_Elements);
+  } catch (...) {
+    std::cout << "[Data_pointer_char] unable to Add plane to Event" << std::endl;
+  }
+}
 
 ROOTProducer::Producer_PImpl::Data_pointer_char::Data_pointer_char(unsigned Block_id, const UChar_t* inputVector, size_t Elements) :
 m_Block_id(Block_id),
@@ -379,12 +405,18 @@ void ROOTProducer::Producer_PImpl::sendEvent() {
   if (ev == nullptr) {
     if (!m_data_bool.empty()
         ||
-        !m_data_char.empty()) {
+        !m_data_char.empty()
+        ||
+        !m_data_char_dynamic.empty()){
       createNewEvent();
     } else {
       streamOut << " you have to create the an event before you can send it" << std::endl;
       return;
     }
+  }
+
+  for (auto& e : m_data_char_dynamic) {
+    e.addDataBlock2Event(*ev);
   }
 
   for (auto& e : m_data_bool) {
@@ -443,6 +475,7 @@ void ROOTProducer::Producer_PImpl::setTimeOutTime(int timeOut) {
 void ROOTProducer::Producer_PImpl::resetDataPointer() {
   m_data_bool.clear();
   m_data_char.clear();
+  m_data_char_dynamic.clear();
 }
 
 void ROOTProducer::Producer_PImpl::timeout_log(const std::string& log) {
@@ -529,6 +562,10 @@ void ROOTProducer::Producer_PImpl::setTerminated() {
 
 bool ROOTProducer::Producer_PImpl::ConfigurationSatus() {
   return m_state.getStatus() > unconfigured;
+}
+
+void ROOTProducer::Producer_PImpl::addDynamicSizePointer(unsigned Block_id, const UChar_t* inputVector, const size_t& elements) {
+  m_data_char_dynamic.emplace_back(Block_id, inputVector, elements);
 }
 
 // The constructor must call the eudaq::Producer constructor with the name
@@ -891,6 +928,10 @@ void ROOTProducer::addDataPointer_Uint_t(unsigned Block_id, const UInt_t* inputV
 void ROOTProducer::addDataPointer_ULong64_t(unsigned Block_id, const ULong64_t* inputVector, size_t Elements) {
 
   m_prod->addDataPointer(Block_id, reinterpret_cast<const UChar_t*>(inputVector), Elements * sizeof(ULong64_t));
+}
+
+void ROOTProducer::addDataPointer_UChar_t_variable_length(unsigned Block_id, const unsigned char* inputVector,const size_t& Elements) {
+  m_prod->addDynamicSizePointer(Block_id, inputVector, Elements);
 }
 
 void ROOTProducer::resetDataPointer() {
