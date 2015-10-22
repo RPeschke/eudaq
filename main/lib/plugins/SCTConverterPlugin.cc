@@ -48,7 +48,7 @@ namespace eudaq {
   class SCTConverterPlugin_ITS_ABC : public DataConverterPlugin {
 
     public:
-	
+  
       // This is called once at the beginning of each run.
       // You may extract information from the BORE and/or configuration
       // and store it in member variables to use during the decoding later.
@@ -89,7 +89,7 @@ namespace eudaq {
           StandardPlane plane(PlaneID, EVENT_TYPE_ITS_ABC);
 
         for (size_t j = 0; j < raw->NumBlocks(); ++j) {
-          auto block = raw->GetBlock(0);
+          auto block = raw->GetBlock(j);
 
           std::vector<bool> channels;
           eudaq::uchar2bool(block.data(), block.data() + block.size(), channels);
