@@ -50,7 +50,6 @@ int main(int, char ** argv) {
     batch.pushProcessor(Processors::ShowEventNR(1000));
     batch.pushProcessor(Processors::eventSelector(parsenumbers(events->Value())));
     batch.pushProcessor(Processors::fileWriter());
-
     batch.init();
     batch.run();
     batch.end();

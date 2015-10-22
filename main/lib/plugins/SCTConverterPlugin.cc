@@ -86,25 +86,27 @@ namespace eudaq {
         {
           return false;
         }
+          StandardPlane plane(PlaneID, EVENT_TYPE_ITS_ABC);
 
+        for (size_t j = 0; j < raw->NumBlocks(); ++j) {
+          auto block = raw->GetBlock(0);
 
-        auto block=raw->GetBlock(0);
-        
-        std::vector<bool> channels;
-        eudaq::uchar2bool(block.data(), block.data() + block.size(), channels);
-
-        StandardPlane plane(PlaneID, EVENT_TYPE_ITS_ABC);
-        plane.SetSizeZS(channels.size(), 1,0);
-        unsigned x = 0;
-        unsigned y = 1;
-
-        for (size_t i = 0; i < channels.size();++i ){
-          ++x;
-          if (channels[i]==true)
+          std::vector<bool> channels;
+          eudaq::uchar2bool(block.data(), block.data() + block.size(), channels);
+          if (j==0)
           {
-            plane.PushPixel(x,y,1);
+            plane.SetSizeZS(channels.size(), 1 + raw->NumBlocks(), 0);
           }
+          unsigned x = 0;
+          unsigned y = 1+j;
 
+          for (size_t i = 0; i < channels.size(); ++i) {
+            ++x;
+            if (channels[i] == true) {
+              plane.PushPixel(x, y, 1);
+            }
+
+          }
         }
         sev.AddPlane(plane);
         return true;

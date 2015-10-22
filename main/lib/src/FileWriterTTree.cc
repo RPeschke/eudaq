@@ -86,6 +86,7 @@ void FileWriterTTree::StartRun(unsigned runnumber) {
 
   m_tfile = new TFile(foutput.c_str(), "RECREATE");
   outTtreem_ttree = new TTree("szData", "a simple Tree with simple variables");
+  outTtreem_ttree->SetDirectory(m_tfile->GetDirectory("/"));
   m_event = std::make_shared<rootEvent>(outTtreem_ttree);
 
 }
@@ -132,6 +133,7 @@ FileWriterTTree::~FileWriterTTree() {
  
  if (m_tfile)
  {
+   m_tfile->Write();
   m_tfile->Close();
   delete m_tfile;
   m_tfile = nullptr;
