@@ -334,22 +334,22 @@ namespace eudaq {
       auto size_x = raw->GetBlock(0).size()*8;
 
       plane.SetSizeZS(size_x, raw->NumBlocks(), 0);
-      for (size_t i = 0; i < raw->NumBlocks(); ++i)
+      for (size_t j = 0; j < raw->NumBlocks(); ++j)
       {
 
-        auto block = raw->GetBlock(i);
+        auto block = raw->GetBlock(j);
 
         std::vector<bool> channels;
         eudaq::uchar2bool(block.data(), block.data() + block.size(), channels);
 
         unsigned x = 0;
-        unsigned y = 0;
+        unsigned y = 0+j;
 
         for (size_t i = 0; i < channels.size();++i){
           ++x;
           if (channels[i] == true)
           {
-            plane.PushPixel(x, i, 1);
+            plane.PushPixel(x, y, 1);
           }
 
         }
