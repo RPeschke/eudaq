@@ -48,7 +48,11 @@ namespace eudaq{
       m_write->StartRun(ev.GetRunNumber());
     }
 
-    m_write->WriteBaseEvent(ev);
+    try {
+      m_write->WriteBaseEvent(ev);
+    } catch (...) {
+      return ProcessorBase::stop;
+    }
 
 
     return sucess;
