@@ -428,27 +428,7 @@ class USBPixI4ConverterPlugin : public DataConverterPlugin , public USBPixI4Conv
 	//Here, the data from the RawDataEvent is extracted into a StandardEvent.
 	//The return value indicates whether the conversion was successful.
 	//Again, this is just an example, adapted it for the actual data layout.
-  virtual int IsSyncWithTLU(eudaq::Event const & ev, const eudaq::Event  & tluEvent) const{
-    auto tluid = tluEvent.GetEventNumber();
-    const RawDataEvent & ev_raw = dynamic_cast<const RawDataEvent &>(ev);
-
-    auto eventTrigger = getTrigger(ev_raw.GetBlock(0));
-    unsigned eventID = ev.GetEventNumber();
-    auto sync = compareTLU2DUT( tluid,eventID);
-
-    if (sync == Event_IS_Sync)
-    {
-
-      StandardEvent sev;
-      GetStandardSubEvent(sev, ev);
-      auto plane = sev.GetPlane(0);
-      auto pixels = plane.HitPixels();
-     
-      //  std::cout <<"DUT event: "<< ev.GetEventNumber()<<" trigger id "<<eventTrigger<< "  TLU event "<<tluEvent.GetEventNumber()<< "   hits: " << pixels << "  TLU trigger  " << tluEvent.GetTag("trigger", "") << std::endl;
-
-    }
-    return sync;
-  }
+ 
 	virtual bool GetStandardSubEvent(StandardEvent & sev, const Event & ev) const
 	{
 		if(ev.IsBORE() || ev.IsEORE())
