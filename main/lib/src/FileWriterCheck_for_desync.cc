@@ -9,11 +9,13 @@
 using namespace std;
 
 #define SIGMA_CUT_OFF 40
-#define MEAN_POSITION 1947.25
-
+#define peak_cutoff 5
+#define max_peak_value 1.5
 #define  size_of_my_array 10
+
+
 struct planehit {
-  planehit(double x_, double y_) :x(x_),y(y_){}
+  planehit(double x_, double y_) :x(x_), y(y_) {}
   double x, y;
 };
 class residual_maker {
@@ -24,7 +26,39 @@ struct mean_sigma {
   mean_sigma(double mean_, double sigma_) :mean(mean_), sigma(sigma_) {}
   double mean = 0, sigma = 0;
 };
+template <size_t NBins>
+class histoGram {
+public:
+  histoGram(double min_, double max_):m_min(min_),m_max(max_) {
+    m_step = (m_max - m_min) / NBins;
 
+    for (size_t i = 0; i < NBins; ++i) {
+      m_bins[i] = 0;
+      m_axis[i] = m_min + i*m_step;
+    }
+  }
+
+  void fill(double x) {
+    int index = (x - m_min) / m_step;
+    if (index>=NBins|| index<0)
+    {
+      return;
+    }
+    m_bins[index]++;
+  }
+  std::vector<int> getBins_sorted() {
+    std::vector<int> ret(begin(m_bins),end(m_bins));
+
+    std::sort(begin(ret), end(ret),std::greater<int>());
+
+    return ret;
+  }
+  double m_min, m_max, m_step;
+
+  int m_bins[NBins];
+  double m_axis[NBins];
+};
+using histogram_t = histoGram<5000>;
 mean_sigma get_mean_sigma(const std::vector<double> & v) {
   double sum = std::accumulate(v.begin(), v.end(), 0.0);
   double mean = sum / v.size();
@@ -35,6 +69,45 @@ mean_sigma get_mean_sigma(const std::vector<double> & v) {
   return mean_sigma(mean, stdev);
 }
 
+template <size_t Nbins>
+class rollover_buffer {
+public:
+  rollover_buffer() {
+    for (auto & e: m_buffer)
+    {
+      e = 0;
+    }
+  }
+  void fill(double x) {
+    if (m_index>=Nbins)
+    {
+      m_roll = true;
+      m_index = 0;
+    }
+    m_buffer[m_index++] = x;
+  }
+  
+  double get_mean() const {
+    m_roll = false;
+    double sum_ = 0, counter_ = 0;
+    for (auto & e:m_buffer)
+    {
+      if (e>0)
+      {
+        sum_ += e;
+        ++counter_;
+      }
+    }
+    return sum_/counter_;
+  }
+  bool has_Rollover()const {
+    return m_roll;
+  }
+private:
+  mutable bool m_roll = false;
+  int m_index=0;
+  double m_buffer[Nbins];
+};
 namespace eudaq {
 
 
@@ -58,13 +131,13 @@ private:
   void run_planes(const StandardPlane& planeA, const StandardPlane& planeB);
   void run_plane(const planehit& planeA_hit, const StandardPlane& planeB);
   void push_to_vector(const planehit& planeA_hit, const planehit& planeB_hit);
-  mean_sigma m_old_mean_sigma=mean_sigma(75,10000);
+  mean_sigma m_old_mean_sigma = mean_sigma(75, 10000);
 
   static const int size_of_last = size_of_my_array;
-  double m_last_sigmas[size_of_my_array] ;
-  int last_index = 0;
-  bool isSync = true;
-  double m_avarage_sigma = 10000;
+  rollover_buffer<5> m_rollover;
+  bool first_ = true;
+  double m_avarage_peakness = 10000;
+  histogram_t m_hist = histogram_t(-2000, 3000);
 };
 
 
@@ -82,10 +155,7 @@ size_t findPlaneById(const StandardEvent& sev, size_t id_) {
 
 fileWriterCheck_for_desync::fileWriterCheck_for_desync(const std::string & param)
   :firstEvent(false), m_out(nullptr) {
-  for (auto& e:m_last_sigmas)
-  {
-    e = 0;
-  }
+  
   std::cout << "EUDAQ_DEBUG: This is fileWriterCheck_for_desync::fileWriterCheck_for_desync(" << param << ")" << std::endl;
 }
 
@@ -120,28 +190,38 @@ void fileWriterCheck_for_desync::WriteEvent(const DetectorEvent & devent) {
   }
   if (++m_counter > m_max_counter) {
 
+
+    auto hiracy = m_hist.getBins_sorted();
     auto m = get_mean_sigma(m_res);
-    *m_out << devent.GetEventNumber() << " ; " << m.mean << "; " << m.sigma << " ; " <<m_res.size()<< "\n";
+    double sum_ = std::accumulate(begin(hiracy), end(hiracy), 0);
+    double peakness = m.sigma / ((double)hiracy[0]);
+    *m_out << devent.GetEventNumber() << " ; " << m.mean << "; " << m.sigma << " ; " << m_res.size() << " ; " <<peakness  << "\n";
 #ifdef _DEBUG
     m_out->flush();
 #endif // _DEBUG
-    if (m.sigma>2*m_avarage_sigma)
-    {
-      std::cout << "losing sync after " << devent.GetEventNumber()<< " old sigma value "<<m_avarage_sigma<< "  new sigma value "<< m.sigma << std::endl;
+    if (peakness > peak_cutoff * m_avarage_peakness|| peakness>max_peak_value) {
+      std::cout << "losing sync after " << devent.GetEventNumber() << " old sigma value " << m_avarage_peakness << "  new sigma value " << peakness << std::endl;
       EUDAQ_THROW("losing sync");
     }
-    if (fabs(m.sigma)<1000)
-    {
-      m_last_sigmas[last_index++] = m.sigma;
+    if (fabs(peakness) < 1000) {
+      m_rollover.fill(peakness);
     }
-    if (last_index>=size_of_last)
-    {
-      last_index = 0;
-      m_avarage_sigma = std::accumulate(begin(m_last_sigmas), end(m_last_sigmas), 0)/size_of_last;
+    if (m_rollover.has_Rollover()) {
+      auto peak = m_rollover.get_mean();
+      if (peak>0)
+      {
+        m_avarage_peakness = peak;
+      }
+      else {
+        std::cout << " peak was zero " << std::endl;
+      }
     }
+    
     m_counter = 0;
     m_res.clear();
+    m_hist = histogram_t(-2000, 3000);
     m_old_mean_sigma = m;
+    first_ = false;
   }
   StandardEvent sev = eudaq::PluginManager::ConvertToStandard(devent);
 
@@ -169,7 +249,7 @@ void fileWriterCheck_for_desync::run_planes(const StandardPlane& planeA, const S
   auto cds = planeA.GetPixels<double>();
 
   for (size_t ipix = 0; ipix < cds.size(); ++ipix) {
-    run_plane(planehit(planeA.GetX(ipix), planeA.GetY(ipix)),planeB);
+    run_plane(planehit(planeA.GetX(ipix), planeA.GetY(ipix)), planeB);
 
   }
 
@@ -190,15 +270,16 @@ void fileWriterCheck_for_desync::run_plane(const planehit& planeA_hit, const Sta
 void fileWriterCheck_for_desync::push_to_vector(const planehit& planeA_hit, const planehit& planeB_hit) {
 
 
-  auto res = planeA_hit.x - 3.19042*planeB_hit.x - MEAN_POSITION;
-
-   if (res>m_old_mean_sigma.mean+SIGMA_CUT_OFF
-       ||
-       res<m_old_mean_sigma.mean - SIGMA_CUT_OFF
-       )
-   {
-     return;
-   }
+  auto res = planeA_hit.x - 3.19042*planeB_hit.x ;
+  if (!first_) {
+    if (res > m_old_mean_sigma.mean + SIGMA_CUT_OFF
+        ||
+        res < m_old_mean_sigma.mean - SIGMA_CUT_OFF
+        ) {
+      return;
+    }
+  }
+  m_hist.fill(res);
   m_res.push_back(res);
 }
 
