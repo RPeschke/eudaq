@@ -79,6 +79,10 @@ size_t findPlaneById(const StandardEvent& sev, size_t id_) {
 
 fileWriterCheck_for_desync::fileWriterCheck_for_desync(const std::string & param)
   :firstEvent(false), m_out(nullptr) {
+  for (auto& e:m_last_sigmas)
+  {
+    e = 0;
+  }
   std::cout << "EUDAQ_DEBUG: This is fileWriterCheck_for_desync::fileWriterCheck_for_desync(" << param << ")" << std::endl;
 }
 
@@ -123,7 +127,10 @@ void fileWriterCheck_for_desync::WriteEvent(const DetectorEvent & devent) {
       std::cout << "losing sync after " << devent.GetEventNumber()<< " old sigma value "<<m_avarage_sigma<< "  new sigma value "<< m.sigma << std::endl;
       EUDAQ_THROW("losing sync");
     }
-    m_last_sigmas[last_index++] = m.sigma;
+    if (fabs(m.sigma)<1000)
+    {
+      m_last_sigmas[last_index++] = m.sigma;
+    }
     if (last_index>=size_of_last)
     {
       last_index = 0;
@@ -180,7 +187,7 @@ void fileWriterCheck_for_desync::run_plane(const planehit& planeA_hit, const Sta
 void fileWriterCheck_for_desync::push_to_vector(const planehit& planeA_hit, const planehit& planeB_hit) {
 
 
-  auto res = planeA_hit.x - 3.19042*planeB_hit.x - 978.631;
+  auto res = planeA_hit.x - 3.19042*planeB_hit.x - 1947.25;
 
    if (res>m_old_mean_sigma.mean+25
        ||
