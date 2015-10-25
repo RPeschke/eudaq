@@ -8,6 +8,9 @@
 #include <queue>
 using namespace std;
 
+#define SIGMA_CUT_OFF 40
+#define MEAN_POSITION 1947.25
+
 #define  size_of_my_array 10
 struct planehit {
   planehit(double x_, double y_) :x(x_),y(y_){}
@@ -187,11 +190,11 @@ void fileWriterCheck_for_desync::run_plane(const planehit& planeA_hit, const Sta
 void fileWriterCheck_for_desync::push_to_vector(const planehit& planeA_hit, const planehit& planeB_hit) {
 
 
-  auto res = planeA_hit.x - 3.19042*planeB_hit.x - 1947.25;
+  auto res = planeA_hit.x - 3.19042*planeB_hit.x - MEAN_POSITION;
 
-   if (res>m_old_mean_sigma.mean+25
+   if (res>m_old_mean_sigma.mean+SIGMA_CUT_OFF
        ||
-       res<m_old_mean_sigma.mean - 25
+       res<m_old_mean_sigma.mean - SIGMA_CUT_OFF
        )
    {
      return;
