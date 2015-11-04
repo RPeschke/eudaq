@@ -17,7 +17,7 @@
 #include "eudaq/PluginManager.hh"
 
 #include "eudaq/SCT_defs.hh"
-
+int DUT_OFFSET =- 1;
 
 #ifndef WIN32
   
@@ -43,6 +43,26 @@ namespace eudaq {
     std::string Event_BCID(){ return "Event.BCID"; }
   }
 
+
+  class syncBuffer {
+  public:
+    syncBuffer(const char* fileName) {}
+    syncBuffer() {}
+    int getOffset(unsigned eventNR) {
+    for (auto& e: m_offsetlist)
+    {
+      if (eventNR>=e.first)
+      {
+        return e.second;
+      }
+    }
+    }
+    void setOffset(unsigned eventNR, int offset) {
+      m_offsetlist.emplace_back(eventNR, offset);
+    }
+
+    std::vector<std::pair<unsigned, int>> m_offsetlist;
+   } gSync;
   using namespace sct;
   // Declare a new class that inherits from DataConverterPlugin
   class SCTConverterPlugin_ITS_ABC : public DataConverterPlugin {
@@ -53,25 +73,16 @@ namespace eudaq {
       // You may extract information from the BORE and/or configuration
       // and store it in member variables to use during the decoding later.
       virtual void Initialize(const Event & bore,  const Configuration & cnf) {
-
+        gSync.setOffset(0, 0);
+        gSync.setOffset(6200, -1);
+       // gSync.setOffset(2100, -2);
       }
 
       virtual int IsSyncWithTLU(eudaq::Event const & ev, const eudaq::Event  & tluEvent) const {
-        unsigned triggerID = GetTriggerID(ev);
-        if (triggerID<m_oldID)
-        {
-          triggerID += m_oldID+1;
-        }
-        auto tlu_triggerID = tluEvent.GetEventNumber();
-        auto sync= compareTLU2DUT(tlu_triggerID, triggerID);
 
-
-        if (sync == Event_IS_Sync){
-          m_oldID = triggerID;
-
-        }
-
-        return sync;
+        auto triggerID = (int)ev.GetEventNumber();
+        auto tlu_triggerID = (int)tluEvent.GetEventNumber();
+        return compareTLU2DUT(tlu_triggerID, triggerID+gSync.getOffset(triggerID));
       }
 
 
@@ -80,21 +91,23 @@ namespace eudaq {
         {
           return true;
         }
-        
+        sev.SetTag("SCT_EVENT_NR",ev.GetEventNumber());
         auto raw = dynamic_cast<const RawDataEvent*>(&ev);
         if (!raw)
         {
           return false;
         }
           StandardPlane plane(PlaneID, EVENT_TYPE_ITS_ABC);
-
-        for (size_t j = 0; j < raw->NumBlocks(); ++j) {
+          bool first = true;
+          auto max_blocks =  raw->NumBlocks();
+        for (size_t j = 0; j < max_blocks; ++j) {
           auto block = raw->GetBlock(j);
 
           std::vector<bool> channels;
           eudaq::uchar2bool(block.data(), block.data() + block.size(), channels);
-          if (j==0)
+          if (first)
           {
+            first = false;
             plane.SetSizeZS(channels.size(), 1 + raw->NumBlocks(), 0);
           }
           unsigned x = 0;
@@ -108,6 +121,8 @@ namespace eudaq {
 
           }
         }
+        sev.SetTag("createdAtTime", ev.GetTag("createdAtTime", ""));
+        sev.SetTag("sendAtTime", ev.GetTag("sendAtTime", ""));
         sev.AddPlane(plane);
         return true;
       }
@@ -154,6 +169,13 @@ namespace eudaq {
 
     }
     virtual int IsSyncWithTLU(eudaq::Event const & ev, const eudaq::Event  & tluEvent) const {
+
+      auto triggerID = (int)ev.GetEventNumber();
+      auto tlu_triggerID = (int)tluEvent.GetEventNumber();
+      return compareTLU2DUT(tlu_triggerID, triggerID+gSync.getOffset(triggerID));
+#if 0
+
+
       unsigned triggerID = GetTriggerID(ev);
       if (triggerID < m_oldID)
       {
@@ -169,9 +191,10 @@ namespace eudaq {
       }
 
       return sync;
+#endif // 0
     }
  
-
+    
     // Here, the data from the RawDataEvent is extracted into a StandardEvent.
     // The return value indicates whether the conversion was successful.
     // Again, this is just an example, adapted it for the actual data layout.
@@ -212,14 +235,14 @@ namespace eudaq {
       {
        
         uint64_t data = TTC[i];
-        switch (data >> 60) {
+        uint64_t s = data >> 60;
+        switch (s) {
         case 0xd:
           ProcessTLU_data(data, sev);
           break;
         case 0xe:
           ProcessTDC_data(data, sev);
           break;
-
         case 0xf:
           ProcessTimeStamp_data(data, sev);
           break;
@@ -307,9 +330,10 @@ namespace eudaq {
 
     }
     virtual int IsSyncWithTLU(eudaq::Event const & ev, const eudaq::Event  & tluEvent) const {
-      unsigned triggerID = GetTriggerID(ev);
-      auto tlu_triggerID = tluEvent.GetEventNumber();
-      return compareTLU2DUT(tlu_triggerID, triggerID + 1);
+
+      auto triggerID = (int)ev.GetEventNumber();
+      auto tlu_triggerID = (int)tluEvent.GetEventNumber();
+      return compareTLU2DUT(tlu_triggerID, triggerID + gSync.getOffset(triggerID));
     }
 
 
