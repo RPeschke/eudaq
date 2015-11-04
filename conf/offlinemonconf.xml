@@ -60,13 +60,13 @@
         <PixelY LowerBin="1" upperBin="1000" binSize="10"/>
       </Binning>
     </plane>
-    <plane id="9">
+    <plane id="8">
       <ignorHotPixel>
-            <ignorReginY Begin="0" End="6"/>
+         
       </ignorHotPixel>
       <Binning>
-        <PixelX LowerBin="0" upperBin="128" binSize="1"/>
-        <PixelY LowerBin="0" upperBin="21" binSize="1"/>
+        <PixelX LowerBin="0" upperBin="1280" binSize="1"/>
+        <PixelY LowerBin="0" upperBin="1" binSize="1"/>
       </Binning>
     </plane>
         <plane id="7">
@@ -104,15 +104,15 @@
       </cutOffCondition>
     </Correlation>
         <Correlation>
-      <CorrX planeId="2" plane_axis="y"/>
-      <CorrY planeId="9" plane_axis="y"/>
+      <CorrX planeId="7" plane_axis="x"/>
+      <CorrY planeId="8" plane_axis="x"/>
       <cutOffCondition>
         <!--x*A+y*B+C < D-->
       </cutOffCondition>
     </Correlation>
         <Correlation>
       <CorrX planeId="2" plane_axis="y"/>
-      <CorrY planeId="9" plane_axis="x"/>
+      <CorrY planeId="8" plane_axis="x"/>
       <cutOffCondition>
         <!--x*A+y*B+C < D-->
       </cutOffCondition>
@@ -127,12 +127,12 @@
     </Correlation>
      <CorrelationVSTime>
       <CorrX planeId="2" plane_axis="y"/>
-      <CorrY planeId="9" plane_axis="x"/>
-      <CorrectionFactors x="-0.256" y="1" const="-1065"/>
+      <CorrY planeId="8" plane_axis="x"/>
+      <CorrectionFactors x="-0.018" y="0.0745" const="-1265"/>
     </CorrelationVSTime>
     <CorrelationVSTime>
       <CorrX planeId="2" plane_axis="x"/>
-      <CorrY planeId="9" plane_axis="y"/>
+      <CorrY planeId="8" plane_axis="y"/>
       <CorrectionFactors x="1" y="1" const="0"/>
     </CorrelationVSTime>
   </Correlations>
