@@ -70,6 +70,7 @@ namespace eudaq {
     virtual size_t GetTimeStamp_size(const Event & ev) const {
       return 2;
     }
+#if 0
     virtual int IsSyncWithTLU(eudaq::Event const & ev, const eudaq::Event  & tluEvent) const {
 
 #ifdef TWOTLUSETUP
@@ -132,6 +133,7 @@ namespace eudaq {
       return compareTLU2DUT(tluEvent.GetEventNumber(), trigID);
 #endif
     }
+#endif
     virtual void Initialize(const Event & bore, const Configuration & c) {
 
       c.SetSection("DoubleTluSetup");
