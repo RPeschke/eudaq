@@ -389,9 +389,14 @@ namespace eudaq {
     {
       return;
     }
-    *m_out << "runNr = " << m_run << "   hv = " << Hv << " threshold = " << m_threshold << "  threshold_read_back =  " << m_threshold_readback << " Number_of_Events =  "<<m_events <<"  ";
+    *m_out << "runNr = " << m_run
+      << "   hv = " << Hv
+      << " threshold = " << m_threshold
+      << "  threshold_read_back =  " << m_threshold_readback
+      << " Number_of_Events =  " << m_events << "  "
+      << " total efficiency = " << (double)m_orEvents / m_events<< " ";
     int i = 0;
-    m_outEvent.m_Threshold = m_threshold_readback;
+    m_outEvent.m_Threshold = m_threshold;
     m_outEvent.m_totalNumOfEvents = m_events;
     m_outEvent.m_total_efficiency = (double)m_orEvents / m_events ;
     m_outEvent.m_HV = Hv;
