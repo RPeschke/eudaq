@@ -1,5 +1,6 @@
 #include "eudaq/Processor_merger.hh"
 #include "eudaq/EventSynchronisationBase.hh"
+#include "eudaq/Processors.hh"
 
 namespace eudaq{
 
@@ -54,5 +55,10 @@ namespace eudaq{
 
   }
 
+
+  Processors::processor_up Processors::merger(const SyncBase::MainType& type_, SyncBase::Parameter_ref param_ /*= SyncBase::Parameter_t()*/) {
+    return   Processors::processor_up(new Processor_merger(ProcessorBase::Parameter_t("merger"), type_, param_));
+
+  }
 
 }
