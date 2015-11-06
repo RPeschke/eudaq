@@ -254,8 +254,8 @@ namespace eudaq {
 
   void StandardPlane::SetupResult() const {
     if (m_result_pix) return;
-    m_result_x = &m_x[0];
-    m_result_y = &m_y[0];
+    m_result_x = m_x.data();
+    m_result_y = m_y.data();
     if (GetFlags(FLAG_ACCUMULATE)) {
       m_temp_pix.resize(0);
       m_temp_x.resize(0);
