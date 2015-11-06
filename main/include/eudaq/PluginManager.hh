@@ -42,6 +42,7 @@ namespace eudaq {
     static void InitializeSubEvent(const Event&, const Configuration&);
     static lcio::LCRunHeader * GetLCRunHeader(const DetectorEvent &);
     static StandardEvent ConvertToStandard(const DetectorEvent &);
+    static std::shared_ptr<StandardEvent> ConvertToStandard_ptr(const DetectorEvent &);
     static lcio::LCEvent * ConvertToLCIO(const DetectorEvent &);
 
     static void ConvertStandardSubEvent(StandardEvent &, const Event &);

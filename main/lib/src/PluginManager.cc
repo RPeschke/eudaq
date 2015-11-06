@@ -126,6 +126,25 @@ namespace eudaq {
 		return event;
 	}
 
+  std::shared_ptr<StandardEvent> PluginManager::ConvertToStandard_ptr(const DetectorEvent &dev) {
+    std::shared_ptr<StandardEvent> event = make_shared<StandardEvent>(dev);
+    for (size_t i = 0; i < dev.NumEvents(); ++i) {
+      const Event * ev = dev.GetEvent(i);
+      if (!ev) EUDAQ_THROW("Null event!");
+      if (ev->GetSubType() == "EUDRB") {
+        ConvertStandardSubEvent(*event, *ev);
+      }
+    }
+    for (size_t i = 0; i < dev.NumEvents(); ++i) {
+      const Event * ev = dev.GetEvent(i);
+      if (!ev) EUDAQ_THROW("Null event!");
+      if (ev->GetSubType() != "EUDRB") {
+        ConvertStandardSubEvent(*event, *ev);
+      }
+    }
+    return event;
+  }
+
 #if USE_LCIO
 	lcio::LCEvent * PluginManager::ConvertToLCIO(const DetectorEvent & dev) {
 		lcio::LCEventImpl * event = new lcio::LCEventImpl;
