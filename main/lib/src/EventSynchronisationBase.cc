@@ -84,7 +84,7 @@ namespace eudaq{
   void EventSyncFactory::addComandLineOptions(eudaq::OptionParser & op)
   {
     getImpl().m_default_sync = std::unique_ptr<eudaq::Option<std::string>>(new eudaq::Option<std::string>(op, "s", "sync", getDefaultSync(), "determines which sync algorithm is used"));
- 
+    
   }
 
   EventSyncFactory::Impl& EventSyncFactory::getImpl()
@@ -93,6 +93,11 @@ namespace eudaq{
     return m_impl;
 
   }
-  
+
+  bool EventSyncFactory::DefaultIsSet()
+  {
+    return getImpl().m_default_sync->IsSet();
+  }
+
 
 }

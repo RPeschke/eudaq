@@ -58,6 +58,7 @@ namespace eudaq{
    static std::vector<std::string> GetTypes();
    static std::string  Help_text();
    static void addComandLineOptions(eudaq::OptionParser & op);
+   static bool DefaultIsSet();
    static std::string getDefaultSync();
    
   private:
