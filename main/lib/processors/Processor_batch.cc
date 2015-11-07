@@ -34,7 +34,10 @@ void Processor_batch::end() {
 }
 
 void Processor_batch::pushProcessor(Processor_up processor) {
-
+  if (!processor)
+  {
+    return;
+  }
   m_processors->push_back(std::move(processor));
   auto new_last = m_processors->back().get();
   if (m_last) {
