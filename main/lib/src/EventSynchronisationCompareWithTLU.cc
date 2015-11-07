@@ -55,7 +55,6 @@ namespace eudaq{
 
     ++m_registertProducer;
     m_ProducerEventQueue.resize(m_registertProducer);
-    std::cout << "m_ProducerEventQueue.resize(" << m_registertProducer << ");" << std::endl;
 
 
     if (m_ProducerProFileReader.size() < fileIndex + 1)
