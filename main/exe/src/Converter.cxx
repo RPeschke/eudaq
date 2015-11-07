@@ -45,8 +45,15 @@ int main(int, char ** argv) {
     EUDAQ_LOG_LEVEL(level.Value());
 
     Processor_batch batch;
+    for (size_t i = 0; i < op.NumArgs(); ++i)
+    {
+      batch.pushProcessor(Processors::fileReader(fileConfig(op.GetArg(i))));
 
-    batch.pushProcessor(Processors::fileReader(op));
+    }
+    if (op.NumArgs()>1|| EventSyncFactory::DefaultIsSet())
+    {
+      batch.pushProcessor(Processors::merger(EventSyncFactory::getDefaultSync()));
+    }
     batch.pushProcessor(Processors::ShowEventNR(1000));
     batch.pushProcessor(Processors::eventSelector(parsenumbers(events->Value())));
     batch.pushProcessor(Processors::fileWriter());
