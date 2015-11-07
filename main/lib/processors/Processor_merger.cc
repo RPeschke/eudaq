@@ -33,14 +33,20 @@ ReturnParam Processor_merger::ProcessEvent(event_sp ev, ConnectionName_ref name)
   ev = nullptr;
   auto ret = ProcessorBase::sucess;
   while (m_sync->getNextEvent(ev) && ret == sucess) {
-    ret = processNext(std::move(ev), default_connection());
+    ret = processNext(std::move(ev), random_connection());
   }
 
   return ret;
 }
 
 
-Processor_merger::Processor_merger(ProcessorBase::Parameter_ref name, const SyncBase::MainType& type_, SyncBase::Parameter_ref param_) : ProcessorBase(name), m_type(type_), m_param(param_) {
+Processor_merger::Processor_merger(
+  ProcessorBase::Parameter_ref name, 
+  const SyncBase::MainType& type_, 
+  SyncBase::Parameter_ref param_) 
+  : ProcessorBase(name), 
+  m_type(type_),
+  m_param(param_) {
 
 }
 
