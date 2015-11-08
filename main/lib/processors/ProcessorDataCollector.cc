@@ -7,6 +7,11 @@
 #include <thread>
 #include <memory>
 
+
+#define  CHECK_PACKET(packet,position,expected) \
+  if (packet[position]!=std::string(expected)) \
+    break
+  
 namespace eudaq {
 
 
@@ -47,7 +52,9 @@ private:
   }m_status = waiting;
   std::unique_ptr<std::thread> m_thread;
   ConnectionName_t m_connectionID = random_connection();
+  void handleIdentification(TransportEvent& ev);
 };
+
 
 Processors::processor_up Processors::dataReciver(const std::string& listAdrrs) {
   return std::unique_ptr<ProcessorBase>(new processor_data_collector(listAdrrs));
@@ -79,7 +86,7 @@ ProcessorBase::ReturnParam processor_data_collector::ProcessEvent(event_sp ev, C
 void processor_data_collector::DataThread() {
 
   try {
-    while (m_status!=done) {
+    while (m_status != done) {
       m_dataServer->Process(100000);
     }
   } catch (const std::exception & e) {
@@ -135,48 +142,14 @@ void processor_data_collector::DataHandler(TransportEvent & ev) {
       m_dataServer->SendPacket("ERROR EUDAQ DATA Not accepting new connections", ev.id, true);
       m_dataServer->Close(ev.id);
     }
-                                 break;
+    break;
   case (TransportEvent::DISCONNECT) :
     //std::cout << "Disconnect: " << ev.id << std::endl;
     OnDisconnect(ev.id);
     break;
   case (TransportEvent::RECEIVE) :
     if (ev.id.GetState() == 0) { // waiting for identification
-      // check packet
-      do {
-        size_t i0 = 0, i1 = ev.packet.find(' ');
-        if (i1 == std::string::npos)
-          break;
-        std::string part(ev.packet, i0, i1);
-        if (part != "OK")
-          break;
-        i0 = i1 + 1;
-        i1 = ev.packet.find(' ', i0);
-        if (i1 == std::string::npos)
-          break;
-        part = std::string(ev.packet, i0, i1 - i0);
-        if (part != "EUDAQ")
-          break;
-        i0 = i1 + 1;
-        i1 = ev.packet.find(' ', i0);
-        if (i1 == std::string::npos)
-          break;
-        part = std::string(ev.packet, i0, i1 - i0);
-        if (part != "DATA")
-          break;
-        i0 = i1 + 1;
-        i1 = ev.packet.find(' ', i0);
-        part = std::string(ev.packet, i0, i1 - i0);
-        ev.id.SetType(part);
-        i0 = i1 + 1;
-        i1 = ev.packet.find(' ', i0);
-        part = std::string(ev.packet, i0, i1 - i0);
-        ev.id.SetName(part);
-      } while (false);
-      //std::cout << "client replied, sending OK" << std::endl;
-      m_dataServer->SendPacket("OK", ev.id, true);
-      ev.id.SetState(1); // successfully identified
-      OnConnect(ev.id);
+      handleIdentification(ev);
     } else {
 
       BufferSerializer ser(ev.packet.begin(), ev.packet.end());
@@ -184,10 +157,32 @@ void processor_data_collector::DataHandler(TransportEvent & ev) {
       OnReceive(ev.id, std::move(event));
 
     }
-                                 break;
+    break;
   default:
     std::cout << "Unknown:    " << ev.id << std::endl;
   }
+}
+
+void processor_data_collector::handleIdentification(TransportEvent& ev) {
+  // check packet
+
+  auto splitted_packet = eudaq::split(ev.packet, " ");
+
+  do {
+    if (splitted_packet.empty()) {
+      break;
+    }
+    CHECK_PACKET(splitted_packet, 0, "OK");
+    CHECK_PACKET(splitted_packet, 1, "EUDAQ");
+    CHECK_PACKET(splitted_packet, 2, "DATA");
+
+    ev.id.SetType(splitted_packet[3]);
+    ev.id.SetName(splitted_packet[4]);
+  } while (false);
+  //std::cout << "client replied, sending OK" << std::endl;
+  m_dataServer->SendPacket("OK", ev.id, true);
+  ev.id.SetState(1); // successfully identified
+  OnConnect(ev.id);
 }
 
 }
