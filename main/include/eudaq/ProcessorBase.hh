@@ -69,7 +69,7 @@ public:
   using ConnectionName_t = size_t;
   using ConnectionName_ref = const ConnectionName_t &;
 
-
+  ProcessorBase();
   ProcessorBase(Parameter_ref name);
   virtual ~ProcessorBase() {};
   virtual void init() = 0;
