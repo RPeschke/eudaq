@@ -10,6 +10,10 @@ ProcessorBase::ProcessorBase(ProcessorBase::Parameter_ref name):m_conf(name) {
 
 }
 
+ProcessorBase::ProcessorBase():ProcessorBase(ProcessorBase::Parameter_t("noName")) {
+
+}
+
 void ProcessorBase::AddNextProcessor(Processor_rp next) {
     m_next = next;
   }
