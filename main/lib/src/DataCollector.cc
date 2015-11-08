@@ -33,9 +33,15 @@ unsigned DataCollector::Info::s_counter = 0;
 
 DataCollector::DataCollector(const std::string & name, const std::string & runcontrol, const std::string & listenaddress, const std::string & runnumberfile) :
 CommandReceiver("DataCollector", name, runcontrol, false),
-m_runnumberfile(runnumberfile), m_name(name), m_done(false), m_listening(true),
+m_runnumberfile(runnumberfile), m_name(name), m_done(false), 
+m_listening(true),
 m_dataserver(TransportFactory::CreateServer(listenaddress)),
-m_thread(), m_runnumber(ReadFromFile(runnumberfile, 0U)), m_eventnumber(0), m_runstart(0), m_packetNumberLastPacket(0) {
+m_thread(), 
+m_runnumber(ReadFromFile(runnumberfile, 0U)), 
+m_eventnumber(0), 
+m_runstart(0), 
+m_packetNumberLastPacket(0) 
+{
   m_dataserver->SetCallback(TransportCallback(this, &DataCollector::DataHandler));
   EUDAQ_DEBUG("Instantiated datacollector with name: " + name);
   m_thread = std::unique_ptr<std::thread>(new std::thread(DataCollector_thread, this));
