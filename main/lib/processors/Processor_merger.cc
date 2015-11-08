@@ -33,7 +33,7 @@ ReturnParam Processor_merger::ProcessEvent(event_sp ev, ConnectionName_ref name)
   ev = nullptr;
   auto ret = ProcessorBase::sucess;
   while (m_sync->getNextEvent(ev) && ret == sucess) {
-    ret = processNext(std::move(ev), random_connection());
+    ret = processNext(std::move(ev), m_output);
   }
 
   return ret;
