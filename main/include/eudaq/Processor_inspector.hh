@@ -14,31 +14,7 @@
 
 namespace eudaq {
 
-namespace hidden {
-class ___processor_dummy_void {
 
-};
-template <typename T>
-Processor_up operator+(const ___processor_dummy_void &, T&& t) {
-  return make_Processor_void(std::forward<T>(t));
-}
-
-class ___processor_dummy_event {
-
-};
-template <typename T>
-Processor_up operator+(const ___processor_dummy_event &, T&& t) {
-  return make_Processor_event(std::forward<T>(t));
-}
-
-class ___processor_dummy_full{
-
-};
-template <typename T>
-Processor_up operator+(const ___processor_dummy_full &, T&& t) {
-  return make_Processor(std::forward<T>(t));
-}
-}
 
   class DLLEXPORT Processor_Inspector :public ProcessorBase {
   public:
@@ -135,6 +111,31 @@ Processor_up operator+(const ___processor_dummy_full &, T&& t) {
   Processor_up make_Processor_event(T&& proc_) {
 
     return  Processor_up(new processor_T_event<T>(std::forward<T>(proc_)));
+  }
+  namespace hidden {
+  class ___processor_dummy_void {
+
+  };
+  template <typename T>
+  Processor_up operator+(const ___processor_dummy_void &, T&& t) {
+    return make_Processor_void(std::forward<T>(t));
+  }
+
+  class ___processor_dummy_event {
+
+  };
+  template <typename T>
+  Processor_up operator+(const ___processor_dummy_event &, T&& t) {
+    return make_Processor_event(std::forward<T>(t));
+  }
+
+  class ___processor_dummy_full {
+
+  };
+  template <typename T>
+  Processor_up operator+(const ___processor_dummy_full &, T&& t) {
+    return make_Processor(std::forward<T>(t));
+  }
   }
 }
 #endif // Processor_inspector_h__

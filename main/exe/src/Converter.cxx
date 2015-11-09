@@ -57,7 +57,7 @@ int main(int, char ** argv) {
     }
     batch>>Processors::ShowEventNR(1000)
       >>Processors::eventSelector(parsenumbers(events->Value()))
-      >>Processors::fileWriter()
+      >> Processors::fileWriter();
     batch >> ADD_LAMBDA_PROZESSOR0() {
       std::cout <<  "temp"; 
     };
