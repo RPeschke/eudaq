@@ -21,7 +21,7 @@ public:
   void run();
   template <class T, class... Args>
   void pushNewProcessor(Args&&... args) {
-    pushProcessor(make_Processor<T>(args...));
+    pushProcessor(make_Processor_up<T>(args...));
   }
 private:
   std::unique_ptr<std::vector<Processor_up>> m_processors;
