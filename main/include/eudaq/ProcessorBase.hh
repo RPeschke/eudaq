@@ -75,7 +75,7 @@ public:
   virtual void init() = 0;
   virtual ReturnParam ProcessEvent(event_sp ev, ConnectionName_ref con) = 0;
   virtual void end() = 0;
-
+  virtual void wait() {}
 
   void AddNextProcessor(Processor_rp next);
   

@@ -80,14 +80,11 @@ void Processor_batch::pushProcessor(Processor_up processor) {
 
 
 
-void Processor_batch::run() {
-  ReturnParam ret = sucess;
-  do {
-    ret = ProcessEvent(nullptr, 0);
-    if (ret == ret_error) {
-      std::cout << "an error occurred " << std::endl;
-    }
-  } while (ret != stop);
+void Processor_batch::wait() {
+  for (auto& e:*m_processors)
+  {
+    e->wait();
+  }
 } 
 
 }
