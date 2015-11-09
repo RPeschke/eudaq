@@ -4,6 +4,7 @@
 #include "eudaq/Processor_eventSelectors.hh"
 
 #include "eudaq/Processors.hh"
+#include <algorithm>
 
 namespace eudaq{
 std::unique_ptr<eudaq::ProcessorBase> Processors::eventSelector(const std::vector<unsigned>& eventsOfIntresst, bool doBore , bool doEORE ) {
