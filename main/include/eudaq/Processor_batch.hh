@@ -18,6 +18,7 @@ public:
   void end() override;
   void pushProcessor(Processor_up processor);
   void wait() override;
+  void run();
   template <class T, class... Args>
   void pushNewProcessor(Args&&... args) {
     pushProcessor(make_Processor<T>(args...));

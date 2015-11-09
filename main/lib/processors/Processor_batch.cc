@@ -55,6 +55,7 @@ void Processor_batch::init() {
   {
     e->init();
   }
+  m_first = m_processors->front().get();
 }
 
 void Processor_batch::end() {
@@ -86,5 +87,16 @@ void Processor_batch::wait() {
     e->wait();
   }
 } 
+
+void Processor_batch::run() {
+  ReturnParam ret = sucess;
+  do {
+    ret = ProcessEvent(nullptr, 0);
+    if (ret == ret_error) {
+      std::cout << "an error occurred " << std::endl;
+    }
+  } while (ret != stop);
+  wait();
+}
 
 }
