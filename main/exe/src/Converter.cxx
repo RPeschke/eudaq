@@ -12,6 +12,7 @@
 #include "eudaq/Platform.hh"
 #include "eudaq/Processor_batch.hh"
 #include "eudaq/Processors.hh"
+#include "eudaq/Processor_inspector.hh"
 using namespace eudaq;
 unsigned dbg = 0;
 
@@ -57,7 +58,7 @@ int main(int, char ** argv) {
     batch>>Processors::ShowEventNR(1000)
       >>Processors::eventSelector(parsenumbers(events->Value()))
       >>Processors::fileWriter()
-    batch >> ADD_LAMBDA_PROZESSOR() {
+    batch >> ADD_LAMBDA_PROZESSOR0() {
       std::cout <<  "temp"; 
     };
     batch.init();
