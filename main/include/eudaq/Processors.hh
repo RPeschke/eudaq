@@ -15,6 +15,7 @@ DLLEXPORT processor_up fileReader(const eudaq::fileConfig &);
 DLLEXPORT processor_up fileWriter();
 DLLEXPORT processor_up merger(const SyncBase::MainType& type_, SyncBase::Parameter_ref param_ = SyncBase::Parameter_t());
 DLLEXPORT processor_up dataReciver(const std::string& listAdrrs);
+DLLEXPORT processor_up dataSender(const std::string& serverAdress, const std::string& type_="processor", const std::string& name_="default");
 
 
 
