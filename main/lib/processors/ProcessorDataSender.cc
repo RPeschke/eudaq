@@ -72,7 +72,7 @@ ProcessorBase::ReturnParam processor_data_sender::ProcessEvent(event_sp ev, Conn
   ev->Serialize(ser);
   m_dataclient->SendPacket(ser);
 
-  return ReturnParam::sucess;
+  return processNext(std::move(ev),con);
 }
 
 
