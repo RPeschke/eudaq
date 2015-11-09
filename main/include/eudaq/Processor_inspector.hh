@@ -6,12 +6,22 @@
 #include <type_traits> 
 #include <utility>
 
-
+#ifdef WIN32
 
 #define ADD_LAMBDA_PROZESSOR() hidden::___processor_dummy_void() + []()
 #define ADD_LAMBDA_PROZESSOR(event_ref) hidden::___processor_dummy_event() + [](const eudaq::Event& event_ref) 
 #define ADD_LAMBDA_PROZESSOR(event_ref,COnnectionName) hidden::___processor_dummy_full() + [](const eudaq::Event& event_ref, size_t COnnectionName)
+#else 
 
+#define ADD_LAMBDA_PROZESSOR0() hidden::___processor_dummy_void() + []()
+#define ADD_LAMBDA_PROZESSOR1(event_ref) hidden::___processor_dummy_event() + [](const eudaq::Event& event_ref) 
+#define ADD_LAMBDA_PROZESSOR2(event_ref,COnnectionName) hidden::___processor_dummy_full() + [](const eudaq::Event& event_ref, size_t COnnectionName)
+
+
+#define GET_MACRO(_0, _1, _2, NAME, ...) NAME
+#define ADD_LAMBDA_PROZESSOR(...) GET_MACRO(_0, ##__VA_ARGS__, ADD_LAMBDA_PROZESSOR2, ADD_LAMBDA_PROZESSOR1, ADD_LAMBDA_PROZESSOR0)(__VA_ARGS__)
+
+#endif // WIN32
 namespace eudaq {
 
 namespace hidden {
