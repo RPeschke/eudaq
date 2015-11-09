@@ -28,5 +28,6 @@ private:
 
   Processor_rp m_last = nullptr ,m_first =nullptr;
 };
+DLLEXPORT Processor_batch& operator>> (Processor_batch& batch, Processor_up proc);
 }
 #endif // Processor_batch_h__

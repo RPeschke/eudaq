@@ -99,4 +99,9 @@ void Processor_batch::run() {
   wait();
 }
 
+Processor_batch& operator>>(Processor_batch& batch, Processor_up proc) {
+  batch.pushProcessor(std::move(proc));
+  return batch;
+}
+
 }
