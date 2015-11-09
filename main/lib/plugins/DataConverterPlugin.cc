@@ -36,8 +36,8 @@ size_t DataConverterPlugin::GetTimeStamp_size(const Event & ev) const {
 int DataConverterPlugin::IsSyncWithTLU(eudaq::Event const & ev, const eudaq::Event & tluEvent) const {
   // dummy comparator. it is just checking if the event numbers are the same.
 
-  unsigned triggerID = ev.GetEventNumber();
-  auto tlu_triggerID = tluEvent.GetEventNumber();
+  int triggerID = ev.GetEventNumber();
+  int tlu_triggerID = tluEvent.GetEventNumber();
   return compareTLU2DUT(tlu_triggerID, triggerID);
 }
 
