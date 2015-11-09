@@ -8,9 +8,7 @@
 #include <memory>
 
 
-#define  CHECK_PACKET(packet,position,expected) \
-  if (packet[position]!=std::string(expected)) \
-    break
+
   
 namespace eudaq {
 
@@ -162,23 +160,28 @@ void processor_data_collector::DataHandler(TransportEvent & ev) {
     std::cout << "Unknown:    " << ev.id << std::endl;
   }
 }
-
+void handleNameAndTag(TransportEvent& ev) {
+  auto splitted_packet = eudaq::split(ev.packet, " ");
+  if (splitted_packet.size()<5) {
+    return;
+  }
+  if (splitted_packet[0] != std::string("OK")) {
+    return;
+  }
+  if (splitted_packet[1] != std::string("EUDAQ"))
+  {
+    return;
+  }
+  if (splitted_packet[2] != std::string("DATA")) {
+    return;
+  }
+  ev.id.SetType(splitted_packet[3]);
+  ev.id.SetName(splitted_packet[4]);
+}
 void processor_data_collector::handleIdentification(TransportEvent& ev) {
   // check packet
 
-  auto splitted_packet = eudaq::split(ev.packet, " ");
-
-  do {
-    if (splitted_packet.empty()) {
-      break;
-    }
-    CHECK_PACKET(splitted_packet, 0, "OK");
-    CHECK_PACKET(splitted_packet, 1, "EUDAQ");
-    CHECK_PACKET(splitted_packet, 2, "DATA");
-
-    ev.id.SetType(splitted_packet[3]);
-    ev.id.SetName(splitted_packet[4]);
-  } while (false);
+  handleNameAndTag(ev);
   //std::cout << "client replied, sending OK" << std::endl;
   m_dataServer->SendPacket("OK", ev.id, true);
   ev.id.SetState(1); // successfully identified
