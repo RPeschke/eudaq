@@ -47,16 +47,19 @@ int main(int, char ** argv) {
     Processor_batch batch;
     for (size_t i = 0; i < op.NumArgs(); ++i)
     {
-      batch.pushProcessor(Processors::fileReader(fileConfig(op.GetArg(i))));
+      batch>>Processors::fileReader(fileConfig(op.GetArg(i)));
 
     }
     if (op.NumArgs()>1|| EventSyncFactory::DefaultIsSet())
     {
-      batch.pushProcessor(Processors::merger(EventSyncFactory::getDefaultSync()));
+      batch>>Processors::merger(EventSyncFactory::getDefaultSync());
     }
-    batch.pushProcessor(Processors::ShowEventNR(1000));
-    batch.pushProcessor(Processors::eventSelector(parsenumbers(events->Value())));
-    batch.pushProcessor(Processors::fileWriter());
+    batch>>Processors::ShowEventNR(1000)
+      >>Processors::eventSelector(parsenumbers(events->Value()))
+      >>Processors::fileWriter()
+    batch >> ADD_LAMBDA_PROZESSOR() {
+      std::cout <<  "temp"; 
+    };
     batch.init();
     batch.run();
     batch.end();
