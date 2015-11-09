@@ -90,7 +90,7 @@ DLLEXPORT ProcessorBase::ConnectionName_t default_connection();
 DLLEXPORT ProcessorBase::ConnectionName_t random_connection();
 
 template<class T, class... Args>
-Processor_up make_Processor(Args&&... args) {
+Processor_up make_Processor_up(Args&&... args) {
   auto p = new T(std::forward<Args>(args)...);
   return Processor_up(p);
 }
