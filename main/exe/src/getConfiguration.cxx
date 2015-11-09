@@ -1,10 +1,10 @@
-#include "eudaq\ProcessorBase.hh"
-#include "eudaq\OptionParser.hh"
-#include "eudaq\FileWriter.hh"
-#include "eudaq\Logger.hh"
-#include "eudaq\Processor_inspector.hh"
-#include "eudaq\baseFileReader.hh"
-#include "eudaq\EventSynchronisationBase.hh"
+#include "eudaq/ProcessorBase.hh"
+#include "eudaq/OptionParser.hh"
+#include "eudaq/FileWriter.hh"
+#include "eudaq/Logger.hh"
+#include "eudaq/Processor_inspector.hh"
+#include "eudaq/baseFileReader.hh"
+#include "eudaq/EventSynchronisationBase.hh"
 
 using namespace eudaq;
 
