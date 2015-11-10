@@ -53,7 +53,7 @@ namespace eudaq {
     static unsigned getUniqueIdentifier(const Event &);
     static bool isTLU(const Event&);
 
-    static size_t GetNumberOfROF(const eudaq::Event& pac);
+    static size_t GetNumberOfEvents(const eudaq::Event& pac);
 
     /** Get the correct plugin implementation according to the event type.
      */

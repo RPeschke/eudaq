@@ -35,9 +35,9 @@ namespace eudaq{
     if (BOREEvent->IsPacket())
     {
       m_outPutQueue.push(BOREEvent);
-      for (size_t i = 0; i < PluginManager::GetNumberOfROF(*BOREEvent); ++i)
+      for (size_t i = 0; i < PluginManager::GetNumberOfEvents(*BOREEvent); ++i)
       {
-        addBORE_Event(fileIndex, PluginManager::ExtractEventN(BOREEvent,i));
+        addBORE_BaseEvent(fileIndex, PluginManager::ExtractEventN(BOREEvent, i));
       }
 
     }
@@ -115,9 +115,9 @@ namespace eudaq{
     }
     if (Ev->IsPacket())
     {
-      for (size_t i = 0; i < PluginManager::GetNumberOfROF(*Ev); ++i)
+      for (size_t i = 0; i < PluginManager::GetNumberOfEvents(*Ev); ++i)
       {
-        AddEventToProducerQueue(fileIndex, PluginManager::ExtractEventN(Ev, i));
+        AddBaseEventToProducerQueue(fileIndex, PluginManager::ExtractEventN(Ev, i));
       }
 
     }

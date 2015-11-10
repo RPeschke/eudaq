@@ -168,8 +168,8 @@ public:
   virtual t_eventid const & GetEventType() const;
 
 
-  virtual std::shared_ptr<eudaq::Event> ExtractEventN(std::shared_ptr<eudaq::Event> ev, size_t NumberOfROF);
-  virtual size_t GetNumberOfROF(const eudaq::Event& pac);
+  virtual event_sp ExtractEventN(event_sp ev, size_t EventNr);
+  virtual size_t GetNumberOfEvents(const eudaq::Event& pac);
 
   virtual bool isTLU(const Event&);
 

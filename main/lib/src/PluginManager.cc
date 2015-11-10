@@ -189,9 +189,9 @@ namespace eudaq {
     return GetInstance().GetPlugin(*pac).ExtractEventN(pac, NumberOfROF);
   }
 
-  size_t PluginManager::GetNumberOfROF(const eudaq::Event& pac)
+  size_t PluginManager::GetNumberOfEvents(const eudaq::Event& pac)
   {
-    return GetInstance().GetPlugin(pac).GetNumberOfROF(pac);
+    return GetInstance().GetPlugin(pac).GetNumberOfEvents(pac);
 
   }
 	unsigned PluginManager::getUniqueIdentifier(const Event &ev)

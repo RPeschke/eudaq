@@ -61,7 +61,7 @@ DataConverterPlugin::t_eventid const & DataConverterPlugin::GetEventType() const
   return m_eventtype;
 }
 
-std::shared_ptr<eudaq::Event> DataConverterPlugin::ExtractEventN(std::shared_ptr<eudaq::Event> ev, size_t NumberOfROF) {
+event_sp DataConverterPlugin::ExtractEventN(event_sp ev, size_t NumberOfROF) {
   return nullptr;
 }
 
@@ -73,7 +73,7 @@ unsigned DataConverterPlugin::getUniqueIdentifier(const eudaq::Event & ev) {
   return m_thisCount;
 }
 
-size_t DataConverterPlugin::GetNumberOfROF(const eudaq::Event& pac) {
+size_t DataConverterPlugin::GetNumberOfEvents(const eudaq::Event& pac) {
   return 1;
 }
 
