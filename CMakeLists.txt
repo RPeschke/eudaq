@@ -187,6 +187,12 @@ IF(BUILD_SyncTest)
   add_subdirectory(syncTest)
 ENDIF()
 
+option(BUILD_Tests "Compile tests" OFF)
+IF(BUILD_Tests)
+  add_subdirectory(tests/network)
+  add_subdirectory(tests/eventGenerator)
+ENDIF()
+
 
 ###############################################
 # LaTeX target to compile the PDF user manual #
