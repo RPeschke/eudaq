@@ -10,8 +10,11 @@ namespace eudaq{
   Processors::processor_up Processors::fileWriter() {
     return __make_unique<ProcessorFileWriter>();
   }
+  Processors::processor_up fileWriter(const std::string& name, const std::string param_/*=""*/) {
+    return __make_unique<ProcessorFileWriter>(name,param_);
+  }
 
-  ProcessorFileWriter::ProcessorFileWriter(const std::string & name, const std::string & params /*= ""*/):Processor_Inspector(Parameter_t(""))  {
+  ProcessorFileWriter::ProcessorFileWriter(const std::string & name, const std::string & params /*= ""*/):Processor_Inspector(Parameter_t("")),m_default(false),m_name(name),m_params(params)  {
 
   }
 
@@ -41,7 +44,7 @@ namespace eudaq{
 
 
 
-  ReturnParam ProcessorFileWriter::inspecktEvent(const Event& ev, ConnectionName_ref con) {
+  ReturnParam ProcessorFileWriter::inspectEvent(const Event& ev, ConnectionName_ref con) {
 
     if (m_first) {
       m_first = false;

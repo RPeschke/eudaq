@@ -12,7 +12,7 @@ public:
   ProcessorFileWriter();
   void init() override;
   void end() override;
-  virtual ReturnParam inspecktEvent(const Event&, ConnectionName_ref con);
+  virtual ReturnParam inspectEvent(const Event&, ConnectionName_ref con);
 
 private:
   std::unique_ptr<FileWriter> m_write;

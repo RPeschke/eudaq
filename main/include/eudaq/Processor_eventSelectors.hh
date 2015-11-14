@@ -9,7 +9,7 @@ class DLLEXPORT select_events :public Processor_Inspector {
 public:
   select_events(const std::vector<unsigned>& eventsOfIntresst, bool doBore = true, bool doEORE = true);
 
-  virtual ReturnParam inspecktEvent(const Event&ev, ConnectionName_ref con) override;
+  virtual ReturnParam inspectEvent(const Event&ev, ConnectionName_ref con) override;
 
   bool m_do_bore = false, m_do_eore = false;
   std::vector<unsigned> m_eventsOfInterest;

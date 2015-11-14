@@ -13,7 +13,7 @@ namespace eudaq{
     if (!ev) {
       return stop;
     }
-    auto ret = inspecktEvent(*ev,con);
+    auto ret = inspectEvent(*ev,con);
 
     if (ret != sucess) {
       return ret;
@@ -30,6 +30,7 @@ namespace eudaq{
   Processor_Inspector::Processor_Inspector() : ProcessorBase(Parameter_t("unnamed")) {
 
   }
+
 
 }
 

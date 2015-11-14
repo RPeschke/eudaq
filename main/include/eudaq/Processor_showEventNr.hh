@@ -6,7 +6,7 @@ class DLLEXPORT ShowEventNR :public Processor_Inspector {
 public:
 
 
-  virtual ReturnParam inspecktEvent(const Event&, ConnectionName_ref con) override;
+  virtual ReturnParam inspectEvent(const Event&, ConnectionName_ref con) override;
   virtual void init();
 
   class timeing {

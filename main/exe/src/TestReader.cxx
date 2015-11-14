@@ -30,7 +30,7 @@ using namespace std;
 class displayEvent :public eudaq::Processor_Inspector {
 public:
   displayEvent() {}
-  virtual ReturnParam inspecktEvent(const eudaq::Event& dev, ConnectionName_ref con) override {
+  virtual ReturnParam inspectEvent(const eudaq::Event& dev, ConnectionName_ref con) override {
     std::cout << dev << std::endl;
     return ProcessorBase::sucess;
   }
@@ -40,7 +40,7 @@ public:
 class displayEventDump :public eudaq::Processor_Inspector {
 public:
   displayEventDump() {}
-  virtual ReturnParam inspecktEvent(const eudaq::Event& ev, ConnectionName_ref con) override {
+  virtual ReturnParam inspectEvent(const eudaq::Event& ev, ConnectionName_ref con) override {
 
 
     unsigned num = 0;
@@ -96,7 +96,7 @@ public:
 class displayStandardEvent :public eudaq::Processor_Inspector {
 public:
   displayStandardEvent() {}
-  virtual ReturnParam inspecktEvent(const eudaq::Event& ev, ConnectionName_ref con) override {
+  virtual ReturnParam inspectEvent(const eudaq::Event& ev, ConnectionName_ref con) override {
     auto sev = dynamic_cast<const eudaq::StandardEvent*>(&ev);
 
     unsigned boardnum = 0;
@@ -142,7 +142,7 @@ public:
     if ((nbore != 1) || (neore > 1)) std::cout << "Probably corrupt file." << std::endl;
 
   }
-  virtual ReturnParam inspecktEvent(const eudaq::Event& ev, ConnectionName_ref con) override {
+  virtual ReturnParam inspectEvent(const eudaq::Event& ev, ConnectionName_ref con) override {
     if (ev.IsBORE()) {
       nbore++;
       if (nbore > 1) {

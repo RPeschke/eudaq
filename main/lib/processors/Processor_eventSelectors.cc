@@ -12,11 +12,11 @@ std::unique_ptr<eudaq::ProcessorBase> Processors::eventSelector(const std::vecto
 
 }
 
-select_events::select_events(const std::vector<unsigned>& eventsOfIntresst, bool doBore /*= true*/, bool doEORE /*= true*/) :Processor_Inspector(ProcessorBase::Parameter_t("")), m_eventsOfInterest(eventsOfIntresst), m_do_bore(doBore), m_do_eore(doEORE) {
+select_events::select_events(const std::vector<unsigned>& eventsOfIntresst, bool doBore /*= true*/, bool doEORE /*= true*/) : m_eventsOfInterest(eventsOfIntresst), m_do_bore(doBore), m_do_eore(doEORE) {
 
 }
 
-ProcessorBase::ReturnParam select_events::inspecktEvent(const Event&ev, ConnectionName_ref con) {
+ProcessorBase::ReturnParam select_events::inspectEvent(const Event&ev, ConnectionName_ref con) {
   if (ev.IsBORE() && m_do_bore) {
     return ProcessorBase::sucess;
   }
@@ -28,7 +28,7 @@ ProcessorBase::ReturnParam select_events::inspecktEvent(const Event&ev, Connecti
     return ProcessorBase::sucess;
   }
 
-  if (ev.GetEventNumber() > m_eventsOfInterest.back()) {
+  if (ev.GetEventNumber() > m_eventsOfInterest.back() && !m_do_eore) {
     return ProcessorBase::stop;
   }
 

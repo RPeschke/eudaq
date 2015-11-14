@@ -30,7 +30,7 @@ namespace eudaq{
     std::cout << "Event nr: " << ev.GetEventNumber() << " current rate = " << (int)m_timming.freq_current << " [events/s].  overall rate  = " << (int)m_timming.freq_all_time<< " [events/s]." <<std::endl;
   }
 
-  ReturnParam ShowEventNR::inspecktEvent(const Event& ev, ConnectionName_ref con)
+  ReturnParam ShowEventNR::inspectEvent(const Event& ev, ConnectionName_ref con)
   {
 
     if (ev.GetEventNumber() <10)
