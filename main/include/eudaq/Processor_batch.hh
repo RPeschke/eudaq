@@ -5,6 +5,7 @@
 #include "eudaq/ProcessorBase.hh"
 #include "eudaq/Platform.hh"
 #include <memory>
+#include "Processor_inspector.hh"
 namespace eudaq {
 
 class DLLEXPORT Processor_batch :public ProcessorBase {
@@ -29,5 +30,12 @@ private:
   Processor_rp m_last = nullptr ,m_first =nullptr;
 };
 DLLEXPORT Processor_batch& operator>> (Processor_batch& batch, Processor_up proc);
+
+
+template <typename T>
+Processor_batch& operator>> (Processor_batch& batch, T&& lamdbaProcessor) {
+  return batch >> make_Processor(std::forward<T>(lamdbaProcessor));
+}
+
 }
 #endif // Processor_batch_h__
