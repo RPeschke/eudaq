@@ -6,6 +6,7 @@
 
 #include <thread>
 #include <memory>
+#include "eudaq/Utils.hh"
 
 
 
@@ -18,7 +19,7 @@ class processor_data_collector :public ProcessorBase {
 public:
   processor_data_collector(const std::string& listAdress);
   ~processor_data_collector();
-  virtual void init() { m_status = runnning; };
+  virtual void init();
   virtual ReturnParam ProcessEvent(event_sp ev, ConnectionName_ref con);
   virtual void end() { m_status = waiting; };
   void DataThread();
@@ -75,6 +76,19 @@ processor_data_collector::processor_data_collector(const std::string& listAdress
 processor_data_collector::~processor_data_collector() {
   m_status = done;
   m_thread->join();
+}
+
+void processor_data_collector::init() {
+  auto start = std::clock();
+  while (std::clock() - start < 10000 && m_buffer.empty()) {
+    mSleep(100);
+  }
+
+  if (m_buffer.empty())
+  {
+    EUDAQ_THROW("trying to start the data collector wihout any connected to it");
+  }
+  m_status = runnning;
 }
 
 ProcessorBase::ReturnParam processor_data_collector::ProcessEvent(event_sp ev, ConnectionName_ref con) {
