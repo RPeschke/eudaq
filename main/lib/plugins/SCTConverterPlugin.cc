@@ -82,7 +82,7 @@ namespace eudaq {
 
         auto triggerID = (int)ev.GetEventNumber();
         auto tlu_triggerID = (int)tluEvent.GetEventNumber();
-        return compareTLU2DUT(tlu_triggerID, triggerID+gSync.getOffset(triggerID));
+        return compareTLU2DUT(tlu_triggerID, triggerID);
       }
 
 
