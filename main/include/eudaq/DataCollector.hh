@@ -42,7 +42,7 @@ namespace eudaq {
       void DataThread();
     protected:
       
-      std::shared_ptr<JSON> buildJsonConfigHeader( unsigned int runnumber );
+      
 
 
     private:
