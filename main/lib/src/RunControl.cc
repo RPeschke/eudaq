@@ -121,8 +121,8 @@ namespace eudaq {
     SendCommand("CLEAR");
     mSleep(500);
     // give the data collectors time to prepare
-    for (std::map<size_t, std::string>::iterator it = m_dataaddr.begin(); it != m_dataaddr.end(); ++it){
-      SendReceiveCommand("PREPARE", to_string(m_runnumber), GetConnection(it->first));
+    for (auto&e: m_dataaddr){
+      SendReceiveCommand("PREPARE", to_string(m_runnumber), GetConnection(e.first));
     }
     mSleep(1000);
     SendCommand("START", to_string(m_runnumber));
@@ -364,8 +364,8 @@ namespace eudaq {
       if (isDefaultDC){
         // check that we do not override a previously connected DC
         bool matches = false;
-        for (std::vector<std::string>::iterator it = otherDC.begin(); it != otherDC.end(); ++it){
-          if (GetConnection(i).GetName() == *it){
+        for (auto& it : otherDC){
+          if (GetConnection(i).GetName() == it){
             matches = true;
           }
         }
@@ -406,8 +406,8 @@ namespace eudaq {
     SendCommand("LOG", m_logaddr);
 
     // loop over data collectors and announce LC
-    for (std::map<size_t, std::string>::iterator it = m_dataaddr.begin(); it != m_dataaddr.end(); ++it){
-      SendCommand("DATA", it->second, id);
+    for (auto & e : m_dataaddr) {
+      SendCommand("DATA", e.second, id);
     }
   }
 
@@ -420,10 +420,10 @@ namespace eudaq {
 
     // search for applicable DC
     bool foundDC = false;
-    for (std::map<size_t, std::string>::iterator it = m_dataaddr.begin(); it != m_dataaddr.end(); ++it){
-      if (GetConnection(it->first).GetName() == id.GetName()){
+    for (auto& e : m_dataaddr){
+      if (GetConnection(e.first).GetName() == id.GetName()){
         foundDC = true;
-        SendCommand("DATA", it->second, id);
+        SendCommand("DATA", e.second, id);
       }
     }
     // if not found, use default DC

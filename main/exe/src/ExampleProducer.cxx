@@ -225,13 +225,18 @@ int main(int /*argc*/, const char ** argv) {
                                    "The minimum level for displaying log messages locally");
   eudaq::Option<std::string> name(op, "n", "name", "Example", "string",
                                   "The name of this Producer");
+  
   try {
     // This will look through the command-line arguments and set the options
     op.Parse(argv);
     // Set the Log level for displaying messages based on command-line
     EUDAQ_LOG_LEVEL(level.Value());
     std::cout << "Example Producer name = \"" << name.Value() << "\" connected to " << rctrl.Value() << std::endl;
-    eudaq::mSleep(1500);
+  if (name.IsSet())
+  {
+    eudaq::mSleep(1000);
+  }
+    eudaq::mSleep(3000);
     // Create a producer
     ExampleProducer producer(name.Value(), rctrl.Value());
     // And set it running...
