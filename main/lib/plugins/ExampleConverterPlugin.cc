@@ -90,12 +90,6 @@ namespace eudaq {
         return true;
       }
 
-#if USE_LCIO
-      // This is where the conversion to LCIO is done
-    virtual lcio::LCEvent * GetLCIOEvent(const Event * /*ev*/) const {
-        return 0;
-      }
-#endif
 
     private:
 
