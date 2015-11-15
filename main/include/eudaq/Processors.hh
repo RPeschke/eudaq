@@ -15,7 +15,7 @@ DLLEXPORT processor_i_up eventSelector(const std::vector<unsigned>& eventsOfIntr
 DLLEXPORT processor_i_up ShowEventNR(size_t repetition);
 DLLEXPORT processor_up fileReader(const eudaq::fileConfig &);
 DLLEXPORT processor_i_up fileWriter();
-DLLEXPORT processor_i_up fileWriter(const std::string& name, const std::string param_ = "");
+DLLEXPORT processor_i_up fileWriter(const std::string& name, const std::string& param_ = "");
 
 
 DLLEXPORT processor_up merger(const SyncBase::MainType& type_, SyncBase::Parameter_ref param_ = SyncBase::Parameter_t());

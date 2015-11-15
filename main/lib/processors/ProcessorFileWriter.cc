@@ -10,7 +10,7 @@ namespace eudaq{
   Processors::processor_i_up Processors::fileWriter() {
     return  Processors::processor_i_up(new ProcessorFileWriter());
   }
-  Processors::processor_i_up fileWriter(const std::string& name, const std::string param_/*=""*/) {
+  Processors::processor_i_up fileWriter(const std::string& name, const std::string& param_/*=""*/) {
     return  Processors::processor_i_up(new ProcessorFileWriter(name, param_));
   }
 
