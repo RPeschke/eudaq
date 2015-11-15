@@ -22,7 +22,7 @@ class PyProducer : public eudaq::Producer {
     void SendEvent(uint64_t* data, size_t size) {
       RawDataEvent ev(m_name, m_run, ++m_evt);
         ev.AddBlock(0, data, size);
-        eudaq::DataSender::SendEvent(ev);
+        eudaq::Producer::SendEvent(ev);
       }
     
     void SendPacket( uint64_t* meta_data, size_t meta_data_size, uint64_t* data, size_t data_size ) {
@@ -30,7 +30,7 @@ class PyProducer : public eudaq::Producer {
       RawDataEvent packet(m_name, m_run, ++m_evt);
       packet.SetFlags(eudaq::Event::FLAG_PACKET);
       packet.AddBlock(0, data, data_size);
-      eudaq::DataSender::SendEvent(packet);
+      eudaq::Producer::SendEvent(packet);
            
       for (int i = 0; i < meta_data_size; i++){
         if (i==0)
@@ -42,7 +42,7 @@ class PyProducer : public eudaq::Producer {
 
         }
       }
-        eudaq::DataSender::SendEvent(packet);
+      eudaq::Producer::SendEvent(packet);
       }
 //     void sendPacket() {
 //     	eudaq::PyPacket * p = eudaq::PyPacket::getNextToSend();
@@ -78,7 +78,7 @@ class PyProducer : public eudaq::Producer {
 	eudaq::mSleep(100);
       }
       if (m_internalstate == Running) {
-	eudaq::DataSender::SendEvent(RawDataEvent::BORE(m_name, m_run));
+        eudaq::Producer::SendEvent(RawDataEvent::BORE(m_name, m_run));
 	SetStatus(eudaq::Status::LVL_OK, "");
       }
     }
@@ -91,7 +91,7 @@ class PyProducer : public eudaq::Producer {
 	eudaq::mSleep(100);
       }
       if (m_internalstate == Stopped) {
-	eudaq::DataSender::SendEvent(RawDataEvent::EORE(m_name, m_run, ++m_evt));
+        eudaq::Producer::SendEvent(RawDataEvent::EORE(m_name, m_run, ++m_evt));
 	SetStatus(eudaq::Status::LVL_OK);
       }
     }
