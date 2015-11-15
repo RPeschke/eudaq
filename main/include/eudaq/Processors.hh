@@ -4,6 +4,7 @@
 #include <memory>
 #include "eudaq/Platform.hh"
 #include "EventSynchronisationBase.hh"
+#include "eudaq/eudaq_types.hh"
 namespace eudaq {
 class ProcessorBase;
 class Processor_Inspector;
@@ -19,7 +20,7 @@ DLLEXPORT processor_i_up fileWriter(const std::string& name, const std::string& 
 
 
 DLLEXPORT processor_up merger(const SyncBase::MainType& type_, SyncBase::Parameter_ref param_ = SyncBase::Parameter_t());
-DLLEXPORT processor_up dataReciver(const std::string& listAdrrs,std::string& outPut_connectionName);
+DLLEXPORT processor_up dataReciver(const std::string& listAdrrs, eudaq_types::outPutString outPut_connectionName);
 DLLEXPORT processor_up dataReciver(const std::string& listAdrrs);
 
 

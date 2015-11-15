@@ -19,13 +19,15 @@
 #include "eudaq/ProcessorFileWriter.hh"
 #include "eudaq/Processor_batch.hh"
 
+
+using eudaq_types::outPutString;
 namespace eudaq {
 
-
+TYPE_CLASS(outPut_EventNr, unsigned&);
 
 class P_addMeta_data_to_Bore :public ProcessorBase {
 public:
-  P_addMeta_data_to_Bore(const Configuration & param, unsigned& outEventNumber) :m_config(param), EventNumber(outEventNumber) {
+  P_addMeta_data_to_Bore(const Configuration & param, outPut_EventNr outEventNumber) :m_config(param), EventNumber(outEventNumber) {
 
   }
   void init() override {
@@ -43,15 +45,8 @@ public:
         EUDAQ_INFO("Run " + to_string(ev->GetRunNumber()) + ", EORE = " + to_string(ev->GetEventNumber()));
       }
     }
-    EventNumber = ev->GetEventNumber();
-    ReturnParam ret;
-    try {
-       ret = processNext(std::move(ev), con);
-    } catch (...) {
-      std::cout << "unable to write Event to disk" << std::endl;
-      ret = skip_event;
-    }
-    return ret;
+    necessary_CONVERSION(EventNumber)= ev->GetEventNumber();
+    return processNext(std::move(ev), con);
   }
 
   void end() override {
@@ -60,7 +55,7 @@ public:
 private:
   Time m_runstart = Time(0);
   const Configuration  m_config;
-  unsigned& EventNumber;
+  outPut_EventNr EventNumber;
 };
 
 
@@ -75,7 +70,7 @@ m_runnumber(ReadFromFile(runnumberfile, 0U)),
 m_eventnumber(0)
 
 {
-  m_dataReciever = Processors::dataReciver(listenaddress,m_ConnectionName);
+  m_dataReciever = Processors::dataReciver( listenaddress, outPutString(m_ConnectionName));
   EUDAQ_DEBUG("Instantiated datacollector with name: " + name);
   EUDAQ_DEBUG("Listen address=" + m_ConnectionName);
   CommandReceiver::StartThread();
@@ -109,7 +104,7 @@ void DataCollector::OnConfigure(const Configuration & param) {
     >> Processors::merger(param.Get("SyncAlgorithm", "DetectorEvents"))
     >> Processors::ShowEventNR(1000)
     >> Processors::waitForEORE(param.Get("EndOfRunTimeOut", 1000000))
-    >> make_Processor_up<P_addMeta_data_to_Bore>(param,m_eventnumber)
+    >> make_Processor_up<P_addMeta_data_to_Bore>(param,outPut_EventNr( m_eventnumber))
     >> m_pwriter.get();
 
   

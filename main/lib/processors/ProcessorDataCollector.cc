@@ -60,10 +60,10 @@ private:
 Processors::processor_up Processors::dataReciver(const std::string& listAdrrs) {
   return std::unique_ptr<ProcessorBase>(new processor_data_collector(listAdrrs));
 }
-Processors::processor_up  Processors::dataReciver(const std::string& listAdrrs, std::string& outPut_connectionName) {
+Processors::processor_up  Processors::dataReciver(const std::string& listAdrrs, eudaq_types::outPutString outPut_connectionName) {
   
-  auto ret = new processor_data_collector(listAdrrs);
-  outPut_connectionName = ret->ConnectionString();
+  auto ret = new processor_data_collector( listAdrrs);
+  necessary_CONVERSION(outPut_connectionName) = ret->ConnectionString();
   return  std::unique_ptr<ProcessorBase>(ret);
 
   

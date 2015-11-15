@@ -161,6 +161,7 @@ public:
 private:
   unsigned  nbore = 0, neore = 0, ndata = 0;
 };
+using namespace eudaq;
 int main(int /*argc*/, char ** argv) {
 
   eudaq::OptionParser op("EUDAQ Raw Data file reader", "1.0",
@@ -187,21 +188,19 @@ int main(int /*argc*/, char ** argv) {
     if (sync.IsSet()) {
       batch.pushProcessor(eudaq::Processors::merger("DetectorEvents"));
     }
-    batch.pushNewProcessor<countBORE_AND_EORE>();
-    batch.pushProcessor(eudaq::Processors::ShowEventNR(1000));
-
-    batch.pushProcessor(eudaq::Processors::eventSelector(parsenumbers(do_data.Value()), do_bore.IsSet(), do_eore.IsSet()));
-
-    batch.pushNewProcessor<displayEvent>();
+    batch >> make_Processor_up<countBORE_AND_EORE>()
+      >>eudaq::Processors::ShowEventNR(1000)
+      >>eudaq::Processors::eventSelector(parsenumbers(do_data.Value()), do_bore.IsSet(), do_eore.IsSet())
+      >> make_Processor_up<displayEvent>();
     if (do_dump.IsSet()) {
-      batch.pushNewProcessor<displayEventDump>();
+      batch>> make_Processor_up<displayEventDump>();
     }
 
     if (do_proc.IsSet() || do_zs.IsSet()) {
-      batch.pushNewProcessor<convert2Standard>();
-      batch.pushNewProcessor<displayEvent>();
+      batch >> make_Processor_up<convert2Standard>();
+      batch >> make_Processor_up<displayEvent>();
       if (do_zs.IsSet()) {
-        batch.pushNewProcessor<displayStandardEvent>();
+        batch >> make_Processor_up<displayStandardEvent>();
       }
 
     }
