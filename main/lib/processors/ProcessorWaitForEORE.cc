@@ -3,6 +3,10 @@
 #include <atomic>
 
 
+#define  waiting 0
+#define runnning 1
+
+
 namespace eudaq {
 class addEORE {
 public:
@@ -24,13 +28,14 @@ class Processor_WaitForEORE :public ProcessorBase {
 public:
   Processor_WaitForEORE(int timeWaiting);
   virtual void init() override;
-  virtual void end() override {}
+  virtual void end() override;
   virtual ReturnParam ProcessEvent(event_sp , ConnectionName_ref con) override;
   virtual void wait() override;
 private:
   std::atomic<int> m_numOfBoreEvents = 0, m_numOfEoreEvents = 0;
   int m_timeWaiting;
   std::atomic<int> m_lastEvent;
+  std::atomic<int> m_status = waiting;
 };
 
 Processor_WaitForEORE::Processor_WaitForEORE(int timeWaiting) : m_timeWaiting(timeWaiting) {
@@ -41,7 +46,12 @@ void Processor_WaitForEORE::init() {
   m_numOfBoreEvents = 0;
   m_numOfEoreEvents = 0;
   m_lastEvent = MAXINT32;
+  m_status = runnning;
 
+}
+
+void Processor_WaitForEORE::end() {
+  m_status = waiting;
 }
 
 ProcessorBase::ReturnParam Processor_WaitForEORE::ProcessEvent(event_sp ev, ConnectionName_ref con) {
@@ -56,9 +66,15 @@ ProcessorBase::ReturnParam Processor_WaitForEORE::ProcessEvent(event_sp ev, Conn
 
 void Processor_WaitForEORE::wait() {
 
- 
-  while (m_numOfBoreEvents != m_numOfEoreEvents || m_numOfBoreEvents==0) {
-    if ((static_cast<int>(std::clock()) - m_lastEvent) > m_timeWaiting) {
+ while (true) {
+   if (m_status != runnning) {
+     break;
+   }
+   if (m_numOfBoreEvents == m_numOfEoreEvents)  {
+     break;
+   }
+
+   if ((static_cast<int>(std::clock()) - m_lastEvent) > m_timeWaiting) {
       std::cout << "timeout" << std::endl;
       break;
     }
