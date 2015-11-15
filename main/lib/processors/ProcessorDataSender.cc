@@ -4,8 +4,9 @@
 #include "eudaq/Exception.hh"
 #include "eudaq/Processors.hh"
 
-#include <thread>
+
 #include <memory>
+#include "eudaq/Processor_inspector.hh"
 // this is a macro to give throw the error from the function itself and not from a helper function 
 #define CHECK_RECIVED_PACKET(packet,position,expectedString) \
   if(packet[position] != std::string(expectedString))\
@@ -15,12 +16,12 @@ namespace eudaq {
 
 
 
-class processor_data_sender :public ProcessorBase {
+class processor_data_sender :public Processor_Inspector {
 public:
   processor_data_sender(const std::string& serverAdress, const std::string & type = "", const std::string & name = "");
   
   virtual void init() { m_status = runnning; };
-  virtual ReturnParam ProcessEvent(event_sp ev, ConnectionName_ref con);
+  virtual ReturnParam inspectEvent(const Event &ev, ConnectionName_ref con);
   virtual void end() { m_status = waiting; };
 
 private:
@@ -63,21 +64,20 @@ processor_data_sender::processor_data_sender(const std::string& serverAdress, co
   }
   CHECK_RECIVED_PACKET(split2, 0, "OK");
 }
-ProcessorBase::ReturnParam processor_data_sender::ProcessEvent(event_sp ev, ConnectionName_ref con) {
+
+ProcessorBase::ReturnParam processor_data_sender::inspectEvent(const Event &ev, ConnectionName_ref con) {
   if (!m_dataclient) {
     EUDAQ_THROW("Transport not connected error");
   }
 
   BufferSerializer ser;
-  ev->Serialize(ser);
+  ev.Serialize(ser);
   m_dataclient->SendPacket(ser);
-
-  return processNext(std::move(ev),con);
 }
 
 
-Processors::processor_up Processors::dataSender(const std::string& serverAdress, const std::string& type_, const std::string& name_) {
-  return Processors::processor_up(new processor_data_sender(serverAdress, type_, name_));
+Processors::processor_i_up Processors::dataSender(const std::string& serverAdress, const std::string& type_, const std::string& name_) {
+  return Processors::processor_i_up(new processor_data_sender(serverAdress, type_, name_));
 }
 
 }
