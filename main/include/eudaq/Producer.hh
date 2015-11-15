@@ -2,18 +2,21 @@
 #define EUDAQ_INCLUDED_Producer
 
 #include "eudaq/CommandReceiver.hh"
-#include "eudaq/DataSender.hh"
 #include "eudaq/Platform.hh"
 #include <string>
+#include <memory>
+#include "eudaq/Processor_inspector.hh"
+
 
 namespace eudaq {
-
+class Processor_Inspector;
+class Event;
   /**
    * The base class from which all Producers should inherit.
    * It is both a CommandReceiver, listening to commands from RunControl,
    * and a DataSender, sending data to a DataCollector.
    */
-  class DLLEXPORT Producer : public CommandReceiver, public DataSender {
+  class DLLEXPORT Producer : public CommandReceiver {
     public:
       /**
        * The constructor.
@@ -22,8 +25,11 @@ namespace eudaq {
       Producer(const std::string & name, const std::string & runcontrol);
       virtual ~Producer() {}
 
-      virtual void OnData(const std::string & param);
+      void SendEvent(const Event &);
     private:
+      virtual void OnData(const std::string & param) override final;
+      std::unique_ptr<Processor_Inspector> m_dataSender;
+      std::string m_name;
   };
 
 }
