@@ -45,7 +45,7 @@ namespace eudaq {
     const std::string& get_name() const{ return m_name; }
   protected:
     Status m_status;
-    TransportClient * m_cmdclient;
+    std::unique_ptr<TransportClient> m_cmdclient;
   private:
     bool m_done;
     std::string m_type, m_name;
