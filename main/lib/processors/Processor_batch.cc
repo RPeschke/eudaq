@@ -140,4 +140,63 @@ Processor_batch& operator>>(Processor_batch& batch, Processor_up proc) {
    return std::unique_ptr<Processor_batch>(new Processor_batch());
  }
 
+ ReturnParam Processor_i_batch::inspectEvent(const Event& ev, ConnectionName_ref con) {
+   for (auto e:m_processors_rp) {
+     auto ret = e->inspectEvent(ev, con);
+     if (ret!=sucess) {
+       return ret;
+     }
+   }
+   return ProcessorBase::sucess;
+ }
+
+ void Processor_i_batch::init() {
+   for (auto& e : reverse(m_processors_rp)) {
+     e->init();
+   }
+   m_first = m_processors_rp.front();
+ }
+
+ void Processor_i_batch::end() {
+   for (auto& e : m_processors_rp) {
+     e->end();
+   }
+ }
+
+ void Processor_i_batch::wait() {
+   for (auto& e : m_processors_rp) {
+     e->wait();
+   }
+ }
+
+ void Processor_i_batch::pushProcessor(processor_i_up processor) {
+   if (!processor) {
+     EUDAQ_THROW("trying to push Empty Processor to batch");
+   }
+   pushProcessor(processor.get());
+   m_processors->push_back(std::move(processor));
+ }
+
+ void Processor_i_batch::pushProcessor(processor_i_rp processor) {
+   if (!processor) {
+     EUDAQ_THROW("trying to push Empty Processor to batch");
+   }
+
+   m_processors_rp.push_back(processor);
+   auto new_last = m_processors_rp.back();
+   if (m_last) {
+     m_last->AddNextProcessor(new_last);
+   }
+
+   m_last = new_last;
+ }
+
+ void Processor_i_batch::reset() {
+   for (auto& e : m_processors_rp) {
+     e->wait();
+   }
+   m_processors->clear();
+   m_processors_rp.clear();
+ }
+
 }
