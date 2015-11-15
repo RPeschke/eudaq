@@ -23,7 +23,6 @@ namespace eudaq {
       const std::string & listenaddress)
     : CommandReceiver("LogCollector", "", runcontrol, false),
     m_done(false),
-    m_listening(true),
     m_logserver(TransportFactory::CreateServer(listenaddress)),
     m_filename("../logs/" + Time::Current().Formatted("%Y-%m-%d.log")),
     m_file(m_filename.c_str(), std::ios_base::app)
@@ -56,66 +55,51 @@ namespace eudaq {
   }
 
   void LogCollector::DoReceive(const LogMessage & ev) {
-    std::ostringstream buf;
-    ev.Write(buf);
-    m_file.write(buf.str().c_str(), buf.str().length());
-	m_file.flush();
+    ev.Write(m_file);
+	  m_file.flush();
     OnReceive(ev);
   }
 
+  void handleNameAndTag1(TransportEvent& ev) {
+    auto splitted_packet = eudaq::split(ev.packet, " ");
+    if (splitted_packet.size() < 5) {
+      return;
+    }
+    if (splitted_packet[0] != std::string("OK")) {
+      return;
+    }
+    if (splitted_packet[1] != std::string("EUDAQ")) {
+      return;
+    }
+    if (splitted_packet[2] != std::string("LOG")) {
+      return;
+    }
+    ev.id.SetType(splitted_packet[3]);
+    ev.id.SetName(splitted_packet[4]);
+  }
+
+void LogCollector::HandleUnidentified(TransportEvent & ev) {
+    // check packet
+
+    handleNameAndTag1(ev);
+    m_logserver->SendPacket("OK", ev.id, true);
+    ev.id.SetState(1); // successfully identified
+    OnConnect(ev.id);
+  }
   void LogCollector::LogHandler(TransportEvent & ev) {
-    //std::cout << "LogHandler()" << std::endl;
+    
     switch (ev.etype) {
-      case (TransportEvent::CONNECT):
-        //std::cout << "Connect:    " << ev.id << std::endl;
-        if (m_listening) {
-          m_logserver->SendPacket("OK EUDAQ LOG LogCollector", ev.id, true);
-        } else {
-          m_logserver->SendPacket("ERROR EUDAQ LOG Not accepting new connections", ev.id, true);
-          m_logserver->Close(ev.id);
-        }
+    case (TransportEvent::CONNECT) :
+       m_logserver->SendPacket("OK EUDAQ LOG LogCollector", ev.id, true);
         break;
       case (TransportEvent::DISCONNECT):
-        //std::cout << "Disconnect: " << ev.id << std::endl;
         OnDisconnect(ev.id);
         break;
       case (TransportEvent::RECEIVE):
         if (ev.id.GetState() == 0) { // waiting for identification
-          // check packet
-          do {
-            size_t i0 = 0, i1 = ev.packet.find(' ');
-            if (i1 == std::string::npos) break;
-            std::string part(ev.packet, i0, i1);
-            if (part != "OK") break;
-            i0 = i1+1;
-            i1 = ev.packet.find(' ', i0);
-            if (i1 == std::string::npos) break;
-            part = std::string(ev.packet, i0, i1-i0);
-            if (part != "EUDAQ") break;
-            i0 = i1+1;
-            i1 = ev.packet.find(' ', i0);
-            if (i1 == std::string::npos) break;
-            part = std::string(ev.packet, i0, i1-i0);
-            if (part != "LOG") break;
-            i0 = i1+1;
-            i1 = ev.packet.find(' ', i0);
-            part = std::string(ev.packet, i0, i1-i0);
-            ev.id.SetType(part);
-            i0 = i1+1;
-            i1 = ev.packet.find(' ', i0);
-            part = std::string(ev.packet, i0, i1-i0);
-            ev.id.SetName(part);
-          } while(false);
-          //std::cout << "client replied, sending OK" << std::endl;
-          m_logserver->SendPacket("OK", ev.id, true);
-          ev.id.SetState(1); // successfully identified
-          OnConnect(ev.id);
+          HandleUnidentified(ev);
         } else {
-          //std::cout << "Receive:    " << ev.id << " " << ev.packet << std::endl;
-          //for (size_t i = 0; i < 8 && i < ev.packet.size(); ++i) {
-          //    std::cout << to_hex(ev.packet[i], 2) << ' ';
-          //}
-          //std::cout << ")" << std::endl;
+
           BufferSerializer ser(ev.packet.begin(), ev.packet.end());
           std::string src = ev.id.GetType();
           if (ev.id.GetName() != "") src += "." + ev.id.GetName();
@@ -126,6 +110,8 @@ namespace eudaq {
         std::cout << "Unknown:    " << ev.id << std::endl;
     }
   }
+
+
 
   void LogCollector::LogThread() {
     try {

@@ -23,20 +23,20 @@ namespace eudaq {
     public:
       LogCollector(const std::string & runcontrol,
           const std::string & listenaddress);
+      virtual void OnTerminate() override { eudaq::mSleep(1000); }
+      virtual void OnServer() override;
 
       virtual void OnConnect(const ConnectionInfo & /*id*/) {}
-      virtual void OnDisconnect(const ConnectionInfo & /*id*/) {}
-      virtual void OnStopRun(unsigned /*runnumber*/) { eudaq::mSleep(1000); }
-      virtual void OnTerminate() { eudaq::mSleep(1000); }
-      virtual void OnServer();
-      virtual void OnReceive(const LogMessage & msg) {};
+      virtual void OnDisconnect(const ConnectionInfo & /*id*/)  {}
+      virtual void OnReceive(const LogMessage & msg)  {};
       virtual ~LogCollector();
 
       void LogThread();
     private:
       void LogHandler(TransportEvent & ev);
+      void HandleUnidentified(TransportEvent & ev);
       void DoReceive(const LogMessage & msg);
-      bool m_done, m_listening;
+      bool m_done;
       TransportServer * m_logserver; ///< Transport for receiving log messages
 //      pthread_t m_thread;
 //      pthread_attr_t m_threadattr;
