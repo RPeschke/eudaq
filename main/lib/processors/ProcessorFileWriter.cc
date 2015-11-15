@@ -7,11 +7,11 @@
 namespace eudaq{
   using ReturnParam = ProcessorBase::ReturnParam;
 
-  Processors::processor_up Processors::fileWriter() {
-    return __make_unique<ProcessorFileWriter>();
+  Processors::processor_i_up Processors::fileWriter() {
+    return  Processors::processor_i_up(new ProcessorFileWriter());
   }
-  Processors::processor_up fileWriter(const std::string& name, const std::string param_/*=""*/) {
-    return __make_unique<ProcessorFileWriter>(name,param_);
+  Processors::processor_i_up fileWriter(const std::string& name, const std::string param_/*=""*/) {
+    return  Processors::processor_i_up(new ProcessorFileWriter(name, param_));
   }
 
   ProcessorFileWriter::ProcessorFileWriter(const std::string & name, const std::string & params /*= ""*/):m_default(false),m_name(name),m_params(params)  {

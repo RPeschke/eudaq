@@ -61,8 +61,8 @@ namespace eudaq{
     m_start_time = std::clock();
   }
 
-  Processors::processor_up Processors::ShowEventNR(size_t repetition) {
-    return __make_unique<eudaq::ShowEventNR>(repetition);
+  Processors::processor_i_up Processors::ShowEventNR(size_t repetition) {
+    return  Processors::processor_i_up (new eudaq::ShowEventNR(repetition));
   }
 
 

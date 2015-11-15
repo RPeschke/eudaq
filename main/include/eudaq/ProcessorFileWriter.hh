@@ -7,18 +7,21 @@ namespace eudaq {
 class FileWriter;
 class DLLEXPORT  ProcessorFileWriter :public Processor_Inspector {
 public:
-  ProcessorFileWriter(const std::string & name, const std::string & params /*= ""*/);
+  ProcessorFileWriter(const std::string & name, const std::string & params = "");
 
   ProcessorFileWriter();
   void init() override;
   void end() override;
   virtual ReturnParam inspectEvent(const Event&, ConnectionName_ref con);
-
+   uint64_t FileBytes() const ;
+   void SetFilePattern(const std::string & p); 
+   void StartRun(unsigned runNumber);
 private:
   std::unique_ptr<FileWriter> m_write;
   bool m_first = true;
-  std::string m_name, m_params;
+  std::string m_name, m_params,m_pattern;
   bool m_default = false;
+  unsigned m_runNumber = 0;
 };
 }
 
