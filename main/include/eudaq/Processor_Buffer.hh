@@ -10,7 +10,7 @@ namespace eudaq {
 
 class Proccessor_Buffer :public ProcessorBase {
 public:
-  Proccessor_Buffer(Parameter_ref conf);
+  Proccessor_Buffer();
   ~Proccessor_Buffer() {}
   virtual ReturnParam ProcessEvent(event_sp ev, ConnectionName_ref con) override;
   virtual void init() override;

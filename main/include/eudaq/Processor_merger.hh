@@ -12,7 +12,7 @@ namespace eudaq{
   class Processor_merger :public ProcessorBase{
   public:
     virtual ReturnParam ProcessEvent(event_sp ev,ConnectionName_ref name) override;
-    Processor_merger(ProcessorBase::Parameter_ref name, const SyncBase::MainType& type_, SyncBase::Parameter_ref param_ = SyncBase::Parameter_t());
+    Processor_merger(const SyncBase::MainType& type_, SyncBase::Parameter_ref param_ = SyncBase::Parameter_t());
     virtual ~Processor_merger(){}
     virtual void init() override;
     virtual void end() override;

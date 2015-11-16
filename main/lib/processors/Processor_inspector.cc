@@ -22,12 +22,9 @@ namespace eudaq{
     return processNext(std::move(ev),con);
   }
 
-  Processor_Inspector::Processor_Inspector(Parameter_ref conf) :ProcessorBase(conf)
-  {
+  
 
-  }
-
-  Processor_Inspector::Processor_Inspector() : ProcessorBase(Parameter_t("unnamed")) {
+  Processor_Inspector::Processor_Inspector()  {
 
   }
 

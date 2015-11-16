@@ -31,24 +31,7 @@ using ProcessorOptions_up = std::unique_ptr < ProcessorOptions >;
 using ProcessorOptions_rp = ProcessorOptions*;
 
 
-class DLLEXPORT ProcessorConf {
-public:
-  explicit ProcessorConf(const std::string& name,int pos =0 ) :m_name(name),m_pos(pos) {}
-  explicit ProcessorConf(const char* name, int pos = 0) :m_name(name), m_pos(pos) {}
-  std::string getName() const {
-    return m_name;
-  }
-  ProcessorConf& setPos(int pos) {
-    m_pos = pos;
-    return *this;
-  }
-  int getPos()const {
-    return m_pos;
-  }
-private:
-  std::string m_name;
-  int m_pos = 0;
-};
+
 
 
 class DLLEXPORT ProcessorBase {
@@ -64,13 +47,12 @@ public:
   };
 
   using MainType = std::string;
-  using Parameter_t = ProcessorConf;
-  using Parameter_ref = const Parameter_t&;
+
   using ConnectionName_t = size_t;
   using ConnectionName_ref = const ConnectionName_t &;
 
   ProcessorBase();
-  ProcessorBase(Parameter_ref name);
+  //ProcessorBase(Parameter_ref name);
   virtual ~ProcessorBase() {};
   virtual void init() = 0;
   virtual ReturnParam ProcessEvent(event_sp ev, ConnectionName_ref con) = 0;
@@ -81,7 +63,6 @@ public:
   
 protected:
   ReturnParam processNext(event_sp ev, ConnectionName_ref con);
-  Parameter_t m_conf;
 private:
   Processor_rp m_next = nullptr;
 };

@@ -41,11 +41,9 @@ ReturnParam Processor_merger::ProcessEvent(event_sp ev, ConnectionName_ref name)
 
 
 Processor_merger::Processor_merger(
-  ProcessorBase::Parameter_ref name, 
   const SyncBase::MainType& type_, 
   SyncBase::Parameter_ref param_) 
-  : ProcessorBase(name), 
-  m_type(type_),
+  : m_type(type_),
   m_param(param_) {
 
 }
@@ -62,7 +60,7 @@ void Processor_merger::end() {
 
 
 Processors::processor_up Processors::merger(const SyncBase::MainType& type_, SyncBase::Parameter_ref param_ /*= SyncBase::Parameter_t()*/) {
-  return   Processors::processor_up(new Processor_merger(ProcessorBase::Parameter_t("merger"), type_, param_));
+  return   Processors::processor_up(new Processor_merger(type_, param_));
 
 }
 

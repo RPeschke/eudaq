@@ -18,7 +18,7 @@ namespace eudaq{
 
 
     
-    Process_eventOfInterest(Parameter_ref, const std::vector <unsigned>& );
+    Process_eventOfInterest(const std::vector <unsigned>& );
     
   private:
     std::vector <unsigned> m_events;
@@ -31,7 +31,7 @@ namespace eudaq{
 
 
 
-  Process_eventOfInterest::Process_eventOfInterest(Parameter_ref conf, const std::vector <unsigned>& events) :Processor_Inspector(conf), m_events(events)
+  Process_eventOfInterest::Process_eventOfInterest( const std::vector <unsigned>& events) : m_events(events)
   {
 
   }

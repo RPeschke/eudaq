@@ -16,7 +16,7 @@ namespace eudaq{
   public:
 
 
-    Processor_add2queue(Parameter_ref conf, ConnectionName_ref con_);
+    Processor_add2queue(ConnectionName_ref con_);
 
     void init() override;
     virtual void initialize() = 0;

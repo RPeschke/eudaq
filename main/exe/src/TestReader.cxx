@@ -79,7 +79,7 @@ public:
 
 class convert2Standard :public eudaq::ProcessorBase {
 public:
-  convert2Standard() :ProcessorBase(Parameter_t("unnamed")) {}
+  convert2Standard()  {}
   virtual void init() {}
   virtual void end() {}
   virtual ReturnParam ProcessEvent(eudaq::event_sp ev, ConnectionName_ref con) {

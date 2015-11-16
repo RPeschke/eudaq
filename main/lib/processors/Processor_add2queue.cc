@@ -1,7 +1,7 @@
 #include "eudaq/Processor_add2queue.hh"
 namespace eudaq{
   using ReturnParam = ProcessorBase::ReturnParam;
-  eudaq::Processor_add2queue::Processor_add2queue(Parameter_ref conf, ConnectionName_ref con_) :ProcessorBase(conf), m_con(con_)
+  eudaq::Processor_add2queue::Processor_add2queue(ConnectionName_ref con_) : m_con(con_)
   {
     m_status = running;
   }

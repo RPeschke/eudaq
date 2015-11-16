@@ -8,8 +8,7 @@ namespace eudaq{
 
 
 
-  Proccessor_Buffer::Proccessor_Buffer(Parameter_ref conf) :ProcessorBase(conf)
-  {
+  Proccessor_Buffer::Proccessor_Buffer() {
 
   }
 

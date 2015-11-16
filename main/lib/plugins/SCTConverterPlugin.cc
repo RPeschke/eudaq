@@ -420,7 +420,7 @@ namespace eudaq {
 
   class mergeITSDAQStreams : public ProcessorBase{
   public:
-    mergeITSDAQStreams(Parameter_ref conf) :ProcessorBase(conf){}
+    mergeITSDAQStreams() {}
     virtual ReturnParam ProcessEvent(event_sp ev, ConnectionName_ref con) override {
       if (!ev)
       {
@@ -489,7 +489,7 @@ namespace eudaq {
 
   class SCT_COMPARE : public ProcessorBase{
   public:
-    SCT_COMPARE(Parameter_ref conf) :ProcessorBase(conf){}
+    SCT_COMPARE() {}
     virtual ReturnParam ProcessEvent(event_sp ev, ConnectionName_ref con) override {
       bool same = true;
       if (ev->IsBORE())

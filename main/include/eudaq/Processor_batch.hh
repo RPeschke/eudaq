@@ -13,7 +13,6 @@ class DLLEXPORT Processor_batch :public ProcessorBase {
 
 public:
   virtual ReturnParam ProcessEvent(event_sp ev, ConnectionName_ref con) override;
-  Processor_batch(Parameter_ref name);
   Processor_batch();
   virtual ~Processor_batch();
   void init() override;

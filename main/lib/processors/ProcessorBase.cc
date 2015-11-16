@@ -6,11 +6,11 @@ namespace eudaq{
   
 
 
-ProcessorBase::ProcessorBase(ProcessorBase::Parameter_ref name):m_conf(name) {
+// ProcessorBase::ProcessorBase(ProcessorBase::Parameter_ref name):m_conf(name) {
+// 
+// }
 
-}
-
-ProcessorBase::ProcessorBase():ProcessorBase(ProcessorBase::Parameter_t("noName")) {
+ProcessorBase::ProcessorBase()  {
 
 }
 

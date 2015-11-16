@@ -6,7 +6,7 @@ namespace eudaq{
 
 
   class Processor_convert_2_StandardEvent :public ProcessorBase{
-    Processor_convert_2_StandardEvent(Parameter_t conf) :ProcessorBase(std::move(conf)){}
+    Processor_convert_2_StandardEvent() {}
 
     virtual ReturnParam ProcessEvent(event_sp ev, ConnectionName_ref con) override;
   };

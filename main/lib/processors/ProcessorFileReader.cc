@@ -14,7 +14,7 @@ Processors::processor_up Processors::fileReader(const fileConfig & op) {
 }
 
 
-ProcessorFileReader::ProcessorFileReader(const fileConfig & op) : Processor_add2queue(Parameter_t(""),random_connection()),  m_fName(op) {
+ProcessorFileReader::ProcessorFileReader(const fileConfig & op) : Processor_add2queue(random_connection()),  m_fName(op) {
 
 }
 

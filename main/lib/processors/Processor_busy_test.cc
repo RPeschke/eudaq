@@ -4,7 +4,7 @@ namespace eudaq{
 
 
   using ReturnParam = ProcessorBase::ReturnParam;
-  Processor_busy_test::Processor_busy_test(Parameter_ref conf) :Processor_Inspector(conf)
+  Processor_busy_test::Processor_busy_test() 
   {
 
   }

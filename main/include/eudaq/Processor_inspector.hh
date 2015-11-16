@@ -20,7 +20,7 @@ namespace eudaq {
   public:
 
 
-    Processor_Inspector(Parameter_ref conf);
+
     Processor_Inspector();
 
     void init() override {}
@@ -35,7 +35,7 @@ namespace eudaq {
   template <typename T>
   class  processor_T : public Processor_Inspector {
   public:
-    processor_T(Parameter_ref conf, T&& proc_) :Processor_Inspector(conf), m_proc(std::forward<T>(proc_)) {}
+
 
     processor_T(T&& proc_) : m_proc(std::forward<T>(proc_)) {}
     
@@ -51,10 +51,6 @@ namespace eudaq {
 
 
 
-  template <typename T>
-  Processor_up make_Processor(eudaq::ProcessorBase::Parameter_ref conf, T&& proc_) {
-    return Processor_up(new processor_T<T>(conf, std::forward<T>(proc_)));
-  }
   template <typename T>
   Processor_up make_Processor(T&& proc_) {
 

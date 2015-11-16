@@ -34,14 +34,8 @@ reverse_wrapper<Cont> reverse(Cont& cont) {
 
 namespace eudaq {
 using ReturnParam = ProcessorBase::ReturnParam;
-Processor_batch::Processor_batch(Parameter_ref name) :ProcessorBase(name), m_processors(__make_unique<std::vector<Processor_up>>()) {
+Processor_batch::Processor_batch() : m_processors(__make_unique<std::vector<Processor_up>>()) {
 
-
-}
-
-
-
-Processor_batch::Processor_batch():Processor_batch(Parameter_t("")) {
 
 }
 
