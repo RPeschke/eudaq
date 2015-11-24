@@ -190,6 +190,7 @@ ENDIF()
 option(BUILD_Tests "Compile tests" OFF)
 IF(BUILD_Tests)
   add_subdirectory(tests/network)
+  add_subdirectory(tests/tasks)
 ENDIF()
 
 
