@@ -37,7 +37,7 @@ ProcessorBase::ConnectionName_t default_connection() {
 }
 
 ProcessorBase::ConnectionName_t random_connection() {
-  static int i = 100;
+  static ProcessorBase::ConnectionName_t  i = 100;
   return ++i;
 }
 

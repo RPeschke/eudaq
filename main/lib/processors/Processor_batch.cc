@@ -130,6 +130,36 @@ Processor_batch& operator>>(Processor_batch& batch, Processor_up proc) {
    return batch;
  }
 
+ Processor_batch_up operator>>(Processor_up proc1, Processor_rp proc2) {
+   auto ret = Processor_batch_up(new Processor_batch());
+   ret->pushProcessor(std::move(proc1));
+   ret->pushProcessor(proc2);
+   return ret;
+ }
+
+ Processor_batch_up operator>>(Processor_up proc1, Processor_up proc2) {
+   auto ret = Processor_batch_up(new Processor_batch());
+   ret->pushProcessor(std::move(proc1));
+   ret->pushProcessor(std::move(proc2));
+   return ret;
+ }
+
+ 
+ Processor_batch_up operator>>(Processor_batch_up batch, Processor_rp proc) {
+   batch->pushProcessor(proc);
+   return batch;
+ }
+
+ Processor_batch_up operator>>(Processor_batch_up batch, Processor_up proc) {
+   batch->pushProcessor(std::move(proc));
+   return batch;
+ }
+
+ Processor_batch_up operator>>(Processor_batch_up batch, processor_i_up proc) {
+   batch->pushProcessor(std::move(proc));
+   return batch;
+ }
+
  std::unique_ptr<Processor_batch> make_batch() {
    return std::unique_ptr<Processor_batch>(new Processor_batch());
  }
@@ -191,6 +221,20 @@ Processor_batch& operator>>(Processor_batch& batch, Processor_up proc) {
    }
    m_processors->clear();
    m_processors_rp.clear();
+ }
+
+
+
+ void Processor_batch_splitter::init() {
+   for (auto& e : reverse(m_processors_rp)) {
+     e->init();
+   }
+ }
+
+ void Processor_batch_splitter::end() {
+   for (auto& e : m_processors_rp) {
+     e->end();
+   }
  }
 
 }

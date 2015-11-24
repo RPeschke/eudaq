@@ -19,7 +19,6 @@ namespace eudaq {
 
 
 class ProcessorBase;
-class ProcessorOptions;
 
 
 using Processor_sp = std::shared_ptr < ProcessorBase >;
@@ -27,8 +26,6 @@ using Processor_up = std::unique_ptr < ProcessorBase >;
 
 using Processor_rp = ProcessorBase*;  //reference pointer 
 
-using ProcessorOptions_up = std::unique_ptr < ProcessorOptions >;
-using ProcessorOptions_rp = ProcessorOptions*;
 
 
 
@@ -48,7 +45,7 @@ public:
 
   using MainType = std::string;
 
-  using ConnectionName_t = size_t;
+  using ConnectionName_t = int;
   using ConnectionName_ref = const ConnectionName_t &;
 
   ProcessorBase();
