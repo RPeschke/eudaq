@@ -14,13 +14,14 @@
 #include "eudaq/Processors.hh"
 #include "eudaq/Processor_inspector.hh"
 using namespace eudaq;
+using namespace Processors;
 unsigned dbg = 0;
 
 
 
 int main(int, char ** argv) {
 
-  std::clock_t    mid_ = 0 ,end_=0;
+
 
     eudaq::OptionParser op("EUDAQ File Converter", "1.0", "", 1);
 
@@ -46,6 +47,7 @@ int main(int, char ** argv) {
     EUDAQ_LOG_LEVEL(level.Value());
 
     Processor_batch batch;
+
     for (size_t i = 0; i < op.NumArgs(); ++i)
     {
       batch>>Processors::fileReader(fileConfig(op.GetArg(i)));
@@ -58,9 +60,7 @@ int main(int, char ** argv) {
     batch>>Processors::ShowEventNR(1000)
       >>Processors::eventSelector(parsenumbers(events->Value()))
       >> Processors::fileWriter();
-    batch >> ADD_LAMBDA_PROZESSOR0() {
-      std::cout <<  "temp"; 
-    };
+
     batch.init();
     batch.run();
     batch.end();
@@ -70,8 +70,8 @@ int main(int, char ** argv) {
     std::cout << "Time: " << (std::clock() - start) / (double) (CLOCKS_PER_SEC / 1000) << " ms" << std::endl;
     return op.HandleMainException();
   }
-  end_ = std::clock();
-  std::cout << "Time: " << (end_ - start) / (double) (CLOCKS_PER_SEC / 1000) << " ms" << std::endl;
+
+  std::cout << "Time: " << (std::clock() - start) / (double)(CLOCKS_PER_SEC / 1000) << " ms" << std::endl;
   if (dbg > 0)std::cout << "almost done with Converter. exiting" << std::endl;
   return 0;
 }
