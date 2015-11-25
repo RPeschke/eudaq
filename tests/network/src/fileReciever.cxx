@@ -1,7 +1,7 @@
-#include "eudaq\Processor_batch.hh"
-#include "eudaq\Processors.hh"
-#include "eudaq\baseFileReader.hh"
-#include "eudaq\OptionParser.hh"
+#include "eudaq/Processor_batch.hh"
+#include "eudaq/Processors.hh"
+#include "eudaq/baseFileReader.hh"
+#include "eudaq/OptionParser.hh"
 
 using namespace eudaq;
 using namespace Processors;
